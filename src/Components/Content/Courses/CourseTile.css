@@ -1,0 +1,53 @@
+.courseTile{
+    height: 200px;
+    width: 200px;  
+    padding: 10px;  
+    box-sizing: border-box;
+    display: inline-block;
+    margin: 10px 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);    
+    transition: 500ms;
+    display: inline-block;
+    vertical-align: top;
+    cursor: pointer;
+    background-image: linear-gradient(rgba(128, 128, 128, 0), rgba(128, 128, 128, 0), rgba(128, 128, 128, 0), rgba(128, 128, 128, 0), rgba(124, 140, 148, 0.1));
+    position: relative;
+}
+.courseTileTitle{
+    width: 180px;
+    display: inline-block;
+    margin-top: 20px;    
+    font-size: 20px;
+}
+.courseTileTitleEdit input{        
+    width: calc(100% - 20px);
+}
+.courseTileDescription{
+    margin-top: 10px;    
+    height: 80px;
+    font-size: 12px;
+    width: 180px;
+    display: inline-block;
+}
+.courseTileDescription textarea{
+    width: calc(100% - 20px);
+
+}
+.newCourseButton{
+    display: flex;
+    justify-content: center;
+    align-items: center;    
+    height: 100%;
+    font-size: 20px;
+}
+.courseTile:hover{
+    /* transform: scale(1.01); */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);    
+    width: 204px;
+    width: 204px;
+    margin: 8px 3px;    
+}
+.buttonHolder{
+    margin-top: 10px;    
+    width: calc(100%);
+}

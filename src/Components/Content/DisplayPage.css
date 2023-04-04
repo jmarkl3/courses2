@@ -1,0 +1,39 @@
+.displayPageOuter{
+    width: 100%;
+    min-height: 200px;
+    background-color: white;
+    margin-top: -40px;    
+}
+.displayPageInner{
+    background-color: white;
+    border: 1px solid rgba(128, 128, 128, 0.466);
+    min-height: 300px;
+    width: 900px;
+    display: inline-block;
+    margin-bottom: 40px;
+    transition: 500ms;
+    padding: 10px;
+    box-sizing: border-box;
+}
+.displayPageInnerNavOpen{
+    margin-left: 250px;
+}
+@media screen and (max-width: 1200px){
+    .displayPageInnerNavOpen{
+        width:calc(100% - 300px);
+    }
+}
+@media screen and (max-width: 850px){
+    .displayPageInner{
+        width:90%;        
+    }
+    .displayPageInnerNavOpen{
+        margin-left: 40px;
+        width: 90%;        
+    }
+}
+@media screen and (max-width: 550px){
+    .displayPageInner{
+        width:500px;
+    }
+}

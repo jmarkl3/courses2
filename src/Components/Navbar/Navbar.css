@@ -1,0 +1,77 @@
+.navbar{
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.2);
+    text-align: center;
+    color: white;
+    position: absolute;
+    top: 0;
+    box-sizing: border-box;
+}
+.navbar img{
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
+.navBarInner{
+    width: 800px;
+    display: inline-block;      
+    box-sizing: border-box;
+    height: 60px;
+    position: relative;
+}
+.top{
+    position: absolute;
+    top: 5px;
+}
+.bottom{
+    position: absolute;
+    bottom: 5px;    
+}
+.left{
+    position: absolute;
+    left: 0px;
+}
+.right{
+    position: absolute;
+    right: 0px;
+}
+.navbarCenter{
+    display: inline-block;
+    height: 90%;
+}
+.navbar button{
+    background-color: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.568);    
+    font-weight: bold;
+    cursor: pointer;
+    outline: none;
+    transition: 400ms;    
+    text-align: left;
+    padding: 0;
+    margin-right: 20px;
+    background-color: rgba(255, 255, 255, 0);
+    background-image: none;
+    box-shadow: none;
+    width: auto;
+}
+.navbar button:last-child{
+    margin-right: 0px;
+}
+.navbar button:hover{
+    color: white;    
+}
+@media screen and (max-width: 850px){
+    .navBarInner{
+        width:90%;         
+    }
+}
+@media screen and (max-width: 550px){
+    .top{
+        display: none;
+    }
+    .bottom{
+        display: none;
+    }
+}
+
