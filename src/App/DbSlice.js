@@ -1,9 +1,8 @@
-import { createSlice, isRejected } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 import {initializeApp} from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { get, getDatabase, push, ref, set, update } from "firebase/database";
-import { act } from "react-dom/test-utils";
-import { getFirstItem, getItem, getLastItemID, getSection, insertItem, newIDsObject, nItemsInObject, objectToArray, removeItem } from "./functions";
+import { getFirstItem, getItem, getLastItemID, insertItem, newIDsObject, nItemsInObject, objectToArray, removeItem } from "./functions";
 
 // #region firebase config
 
@@ -81,6 +80,7 @@ const dbslice = createSlice({
     reducers: {
         
         // #region loading data
+        // The loading data actions put data into the store when it is loaded from the database
 
         setCourseData (state, action) {        
             state.courseData = action.payload;
@@ -96,9 +96,10 @@ const dbslice = createSlice({
         // #endregion  loading data
 
         // #region selections
-
-        // Set the selected course ID
+        // The selections actions select items such as chapters, sections, and elements based on their ID
+        
         selectCourse(state, action) {
+            // Set the selected course ID
             state.selectedCourseID = action.payload;
         },
         selectChapter(state, action) {
@@ -110,10 +111,55 @@ const dbslice = createSlice({
         selectElement(state, action) {
             state.selectedElementID = action.payload;
         },
+        selectFirst(state, action) {
+            // If there is no course data, return
+            if(!state.courseData)
+                return
+            
+            // If there is a specified first chapter, use that
+            var firstChapter = null
+            if(action?.payload?.chapterID){
+                firstChapter = getItem(state.courseData, action?.payload?.chapterID)
+            }
+            // Else just get the first one
+            else{
+                firstChapter = getFirstItem(state.courseData.items)
+            }
+            // If there was no first chapter found there may be no chapters in the course
+            if(!firstChapter)
+                return
+
+            // Set the selected chapter to the specied one or the first one
+            state.selectedChapterID = firstChapter.id
+
+            // Get the first section in the chapter (or the specified one)
+            var firstSection = null
+            if(action?.payload?.sectionID && action?.payload?.chapterID){
+                firstSection = getItem(state.courseData, action?.payload?.chapterID, action?.payload?.sectionID)
+            }else{
+                firstSection = getFirstItem(firstChapter.items)
+            }                        
+            if(!firstSection)
+                return
+            state.selectedSectionID = firstSection.id
+            
+            // Get the first element in the chapter (or the specified one)
+            var firstElement = null
+            if(action?.payload?.sectionID && action?.payload?.chapterID && action?.payload?.elementID){
+                firstElement = getItem(state.courseData, action?.payload?.chapterID, action?.payload?.sectionID, action?.payload?.elementID)
+            }else{
+                firstElement = getFirstItem(firstSection.items)
+            }                        
+            if(!firstElement)
+                return
+            state.selectedElementID = firstElement.id
+            
+        },
 
         // #endregion selections
 
         // #region course actions
+        // The course actions are actions pertaining to the course such as adding, deleting, copying, or updating a course
 
         addCourse(state, action){
              // Get a ref to the places the new course data will be stored
@@ -180,7 +226,6 @@ const dbslice = createSlice({
         },
         updateCourseInfo (state, action) {  
             // Make sure the payload is valid
-            console.log("updateCourseInfo " +action.payload.newName)            
             if(!action.payload || !action.payload.courseID || !action.payload.newName) return
             // Update the course info (will only change the name and description, will not affect the items or other data)
             update(ref(database, 'coursesApp/coursesMetaData/'+action.payload.courseID), {name: action.payload.newName, description: action.payload.newDescription})
@@ -190,7 +235,8 @@ const dbslice = createSlice({
         // #endregion course actions
 
         // #region chapter actions
-        
+        // The chapter actions are actions pertaining to the course such as adding, deleting, or copying a chapter
+
         addChapter(state, action){
 
             // Get a ref to the places the new course data will be stored
@@ -232,7 +278,8 @@ const dbslice = createSlice({
         // #endregion chapter actions
        
         // #region section actions
-                
+        // The section actions are actions pertaining to the section such as adding, deleting, or copying a chapter
+
         addSection(state, action){
             if(!action.payload || !action.payload.chapterID) return
 
@@ -278,7 +325,8 @@ const dbslice = createSlice({
         // #endregion section actions
 
         // #region element actions
-                
+        // The element tttttare actions pertaining to the element such as adding, deleting, or copying a chapter
+  
         addElement(state, action){
             if(!action.payload || !action.payload.chapterID || !action.payload.sectionID) return
                         
@@ -331,6 +379,7 @@ const dbslice = createSlice({
         // #endregion element actions
         
         // #region drag and drop actions
+        // The drag and drop actions are called when a sidebar element is dragged, dropped, or hovered over
 
         // Saves the drag start chapterID, sectionID, and elementID
         sidenavDragStart(state, action){
@@ -524,6 +573,7 @@ const dbslice = createSlice({
         // #endregion drag and drop actions
 
         // #region helper actions
+        // the helper actions do anything else such as updating specified database values
 
         updateItemInfo (state, action) {  
             if(!action.payload.chapterID){
@@ -549,50 +599,7 @@ const dbslice = createSlice({
 
             set(ref(database, dbString), action.payload.value)
         },
-        selectFirst (state, action) {
-            // If there is no course data, return
-            if(!state.courseData)
-                return
-            
-            // If there is a specified first chapter, use that
-            var firstChapter = null
-            if(action?.payload?.chapterID){
-                firstChapter = getItem(state.courseData, action?.payload?.chapterID)
-            }
-            // Else just get the first one
-            else{
-                firstChapter = getFirstItem(state.courseData.items)
-            }
-            // If there was no first chapter found there may be no chapters in the course
-            if(!firstChapter)
-                return
 
-            // Set the selected chapter to the specied one or the first one
-            state.selectedChapterID = firstChapter.id
-
-            // Get the first section in the chapter (or the specified one)
-            var firstSection = null
-            if(action?.payload?.sectionID && action?.payload?.chapterID){
-                firstSection = getItem(state.courseData, action?.payload?.chapterID, action?.payload?.sectionID)
-            }else{
-                firstSection = getFirstItem(firstChapter.items)
-            }                        
-            if(!firstSection)
-                return
-            state.selectedSectionID = firstSection.id
-            
-            // Get the first element in the chapter (or the specified one)
-            var firstElement = null
-            if(action?.payload?.sectionID && action?.payload?.chapterID && action?.payload?.elementID){
-                firstElement = getItem(state.courseData, action?.payload?.chapterID, action?.payload?.sectionID, action?.payload?.elementID)
-            }else{
-                firstElement = getFirstItem(firstSection.items)
-            }                        
-            if(!firstElement)
-                return
-            state.selectedElementID = firstElement.id
-            
-        },
 
         // #endregion helper actions
     }
@@ -603,6 +610,8 @@ const dbslice = createSlice({
 export const dbsliceReducer = dbslice.reducer;
 // Loading actions
 export const {setCourseData, setCoursesData} = dbslice.actions;
+// Selection actions
+export const {selectCourse, selectChapter, selectSection, selectElement} = dbslice.actions;
 // Course actions
 export const {addCourse, deleteCourse, copyCourse, updateCourseInfo} = dbslice.actions;
 // Chapter actions
@@ -611,8 +620,6 @@ export const {addChapter, deleteChapter, copyChapter} = dbslice.actions;
 export const {addSection, deleteSection, copySection} = dbslice.actions;
 // Element actions
 export const {addElement, deleteElement, copyElement} = dbslice.actions;
-// Selection actions
-export const {selectCourse, selectChapter, selectSection, selectElement} = dbslice.actions;
 // Sidenav drag and drop actions
 export const {sidenavDragStart, sidenavDragEnd, sidenavDragOver} = dbslice.actions;
 // Helper actions

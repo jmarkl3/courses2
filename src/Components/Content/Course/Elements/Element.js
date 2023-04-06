@@ -1,17 +1,18 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import ElementEdit from './Edit/ElementEdit.js'
 import ElementDisplayBlock from "./Display/ElementDisplayBlock.js"
 import { useSelector } from 'react-redux';
+import "./Element.css"
 
-function Element({element}) {
-    const courseEditMode = useSelector((state) => state.appslice.courseEditMode);
+function Element({elementData}) {
+    const editMode = useSelector((state) => state.appslice.editMode);
     
   return (
-    <div>
-        {courseEditMode ?
-            <ElementEdit element={element}></ElementEdit>
+    <div className='element'>
+        {editMode ?
+            <ElementEdit elementData={elementData}></ElementEdit>
         :
-            <ElementDisplayBlock element={element}></ElementDisplayBlock>
+            <ElementDisplayBlock elementData={elementData}></ElementDisplayBlock>
         }
     </div>
   )

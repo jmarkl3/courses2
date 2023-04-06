@@ -10,14 +10,18 @@ const appSlice = createSlice({
         // Admin mode is when the user is viewing a course without timers
         adminMode: false,
         // When this is true the user is editing a course
-        courseEditMode: true,
-        // When this is true the user is editing a course but viewing it as a student would
-        courseEditPreviewMode: false,
+        editMode: true,
+        // When this changes the element edit component will minimize or expand based on the value
+        minimizeAll: false,
     },
     reducers: {
         // Determines if the sidenav will show along with other corresponding css classes
         setSideNavOpen(state, action) {
             state.sideNavOpen = action.payload;
+        },
+        // Puts the course in edit mode
+        setEditMode(state, action) {
+            state.editMode = action.payload;
         },
         // Determines if the sidenav will show along with other corresponding css classes
         setPreviewMode(state, action) {
@@ -27,14 +31,15 @@ const appSlice = createSlice({
         setAdminMode(state, action) {
             state.adminMode = action.payload;
         },
-        setCourseEditMode(state, action) {
-            state.courseEditMode = action.payload;
+        toggleMinimizeAll(state, action) {
+            state.minimizeAll = !state.minimizeAll;
         },
-        setCourseEditPreviewMode(state, action) {
-            state.courseEditPreviewMode = action.payload;
+        togglePreviewMode(state, action) {
+            state.previewMode = !state.previewMode;
         }
+
 
     }
 })
 export const appSliceReducer = appSlice.reducer;
-export const {setSideNavOpen, setPreviewMode, setAdminMode, setCourseEditMode, setCourseEditPreviewMode} = appSlice.actions;
+export const {setSideNavOpen, setPreviewMode, setAdminMode, setEditMode, toggleMinimizeAll, togglePreviewMode} = appSlice.actions;

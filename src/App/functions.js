@@ -1,3 +1,5 @@
+// #region conversion functions
+// The conversion functions convert one data type to another
 export function objectToArray(obj) {
     if(!obj) return []
     // Turn an object into an array of objects
@@ -20,9 +22,12 @@ export function arrayToObject(array){
     })
     return tempObject
 }
-export function dontClickThrough(e){
-    e.stopPropagation()    
-}
+
+// #endregion conversion functions
+
+// #region getter functions
+// The getter functions get things from input data
+
 export function getItem(courseData, chapterID, sectionID, elementID){
     // If there is no chapterID, return the courseData
     if(!chapterID) return {...courseData}
@@ -42,10 +47,36 @@ export function getItem(courseData, chapterID, sectionID, elementID){
     // Return the element
     return {...element}
 }
+
+export function getFirstItem(object){
+    var tempArray = objectToArray(object)
+    if(!tempArray || !tempArray.length) return null
+    return tempArray[0]
+}
+
 export function getChapter(courseData, chapterID){
     var chapter = courseData?.items[chapterID]    
     return  {...chapter}
 }
+export function getLastItemID(object){
+    var tempArray = objectToArray(object)
+    if(!tempArray || !tempArray.length) return null
+    return tempArray[tempArray.length - 1].id
+}
+
+export function nItemsInObject(object){
+    if(!object) return 0
+    var tempObject = {...object}
+    var tempArray = objectToArray(tempObject)
+    if(!tempArray || !tempArray.length) return 0
+    return tempArray?.length
+}
+
+// #endregion getter functions
+
+// #region modifier functions
+// The modifier functions modify and return data 
+
 export function removeItem(object, itemToRemoveID){
     var tempObject = {...object}
     delete tempObject[itemToRemoveID]
@@ -104,27 +135,6 @@ export function insertItem(object, itemToInsert, itemToInsertAfterID){
     return arrayToObject(tempArray)     
     
 }
-export function nItemsInObject(object){
-    if(!object) return 0
-    var tempObject = {...object}
-    var tempArray = objectToArray(tempObject)
-    if(!tempArray || !tempArray.length) return 0
-    return tempArray?.length
-}
-export function getLastItemID(object){
-    var tempArray = objectToArray(object)
-    if(!tempArray || !tempArray.length) return null
-    return tempArray[tempArray.length - 1].id
-}
-export function getFirstItem(object){
-    var tempArray = objectToArray(object)
-    if(!tempArray || !tempArray.length) return null
-    return tempArray[0]
-}
-export function newID(){
-    return Math.random().toString(36).substr(2, 9)+""+Date.now().toString(36);
-    // Date.now().toString(36) + Math.floor(Math.pow(10, 12) + Math.random() * 9*Math.pow(10, 12)).toString(36)
-}
 
 export function newIDsObject(object){
     // Put a new ID in the temp object
@@ -144,3 +154,19 @@ export function newIDsObject(object){
     // Return the obect
     return tempObject
 }
+
+// #endregion modifier functions
+
+// #region general helper functions
+// The general helper functions do anything that is not in another category
+
+export function dontClickThrough(e){
+    e.stopPropagation()    
+}
+export function newID(){
+    return Math.random().toString(36).substr(2, 9)+""+Date.now().toString(36);
+    // Date.now().toString(36) + Math.floor(Math.pow(10, 12) + Math.random() * 9*Math.pow(10, 12)).toString(36)
+}
+
+// #endregion general helper functions
+

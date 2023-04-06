@@ -19,7 +19,7 @@ function Course() {
     <>
         <Sidebar></Sidebar>
         <div className='course'>
-          {/* <ElementMapper></ElementMapper> */}
+          <ElementMapper></ElementMapper>
         </div>
     </>
   )

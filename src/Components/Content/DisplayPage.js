@@ -9,21 +9,27 @@ import { useSelector } from 'react-redux'
 function DisplayPage() {
     const sideNavOpen = useSelector(state => state.appslice.sideNavOpen)
     const selectedCourseID = useSelector(state => state.dbslice.selectedCourseID)
+
+//         {/* `displayPagePage ${(sideNavOpen && selectedCourseID) ? "displayPageInnerNavOpen":""} */}
+
+
   return (
-    <div>
-        <div className='topImage'>
-            <img src={topImage}></img>
+    <>    
+        <div className='pagePackground'>
+            <div className='topImage'>
+                <img src={topImage}></img>
+            </div>        
         </div>
-        <div className='displayPageOuter'>
-            <div className={`displayPageInner ${(sideNavOpen && selectedCourseID) ? "displayPageInnerNavOpen":""}`}>
+        <div className={`pageOuter ${(sideNavOpen && selectedCourseID) ? "pageOuterNavOpen":""}`}>
+            <div className='pageInner'>
                 {selectedCourseID ? 
                     <Course></Course>
                     :
                     <Courses></Courses>
                 }
             </div>
-        </div>
-    </div>
+        </div>  
+    </>
   )
 }
 

@@ -3,9 +3,10 @@
     background-color: rgba(0, 0, 0, 0.2);
     text-align: center;
     color: white;
-    position: absolute;
+    position: fixed;
     top: 0;
     box-sizing: border-box;
+    z-index: 2;
 }
 .navbar img{
     height: 100%;

@@ -1,0 +1,37 @@
+.element{
+    position: relative;
+}
+.topLeft{
+    position: absolute;
+    top: 0;
+    left: 0;
+    cursor: pointer;
+    border: 1px solid rgba(175, 175, 175, 0.685);
+    border-radius: 5px;
+}
+.bottomLeft{
+    position: absolute;
+    bottom: 5px;
+    left: 5px;
+    cursor: pointer;
+    border: 1px solid rgba(175, 175, 175, 0.685);
+    border-radius: 5px;
+}
+.topLeft:hover{
+    background-color: rgba(212, 255, 255, 0.507);    
+    border: 1px solid rgba(130, 255, 255, 0.685);
+
+}
+.elementHoverShow{
+    display: none;
+    box-sizing: border-box;    
+}
+.square30{
+    height: 30px;
+    width: 30px;
+}
+.element:hover .elementHoverShow{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

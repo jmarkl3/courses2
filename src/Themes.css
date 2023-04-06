@@ -1,0 +1,41 @@
+.darkTheme .pagePackground{
+    background-color: #474444;
+    color: white;
+}
+.darkTheme .pageInner{
+    background-color: #474444;    
+}
+.darkTheme .sidebar{
+    background-color: #474444;
+}
+.darkTheme .topRightMenu {
+    background-color: #474444;      
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);  
+}
+.darkTheme .confirmationBox {
+    background-color: #474444;          
+}
+.darkTheme textarea {
+    background-color: #474444;          
+    color: white;
+}
+.darkTheme input {
+    background-color: #474444;          
+    color: white;
+}
+.darkTheme select {
+    background-color: #474444;          
+    color: white;
+}
+.darkTheme button {
+    background-color: #474444;          
+    background-image: linear-gradient(gray, rgb(65, 65, 65), rgb(10, 10, 10));
+    color: white;
+}
+.darkTheme .elementDisplay  {
+    background-color: rgb(61, 61, 87);
+    background-image: linear-gradient(rgb(107, 107, 131), rgba(207, 207, 235, 0));
+}
+.darkTheme .courseTile{
+    color: white;
+}
