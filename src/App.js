@@ -11,14 +11,20 @@ import "./Themes.css"
 /*
 
   element mapping
-    edit mode
     view mode (and prevew mode)
-
+      multiple choice
     rich text editor
+      for edit and view mode
 
   user data
+    auth
     saves
     displays
+
+  account page
+    themes
+    logout
+    current classes
 
   section timer
     save in edit mode
@@ -28,20 +34,28 @@ import "./Themes.css"
 
   timed camera
 
-  language support
+  multi language support
 
-  account page
+  user reports
 
 */
 /*
   ________________________________________________________________________________
   Misc notes
 
+  when creating a new course there are some initial functinality that could be looked at
+
   multi select
     starts on long press
     put ID in array
     shows options at top
     cancel, delete all
+
+  security
+    firebase rules
+    eliptical curve or rsa 
+      user needs to log in multiple ways though
+      maybe on first login saves private key to local storage
 
   on sectoin or chapter delete select the previous or next one
   function can look for previous, if no previous look for next

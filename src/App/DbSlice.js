@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import {initializeApp} from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { get, getDatabase, push, ref, set, update } from "firebase/database";
+import { get, getDatabase, push, ref, remove, set, update } from "firebase/database";
 import { getFirstItem, getItem, getLastItemID, insertItem, newIDsObject, nItemsInObject, objectToArray, removeItem, removeUndefined } from "./functions";
 
 // #region firebase config
@@ -30,8 +30,7 @@ export const database = getDatabase(app)
 const defaultElement = {
     name: "new element",
     index: 0,    
-    type: "text",
-    content: "new element",
+    type: "Text",
 }
 
 const defaultSection = {
@@ -608,14 +607,18 @@ const dbslice = createSlice({
         // #region helper actions
         // the helper actions do anything else such as updating specified database values
 
-        updateItemInfo (state, action) {  
+        updateItemInfo(state, action) { 
             if(!action.payload.chapterID){
                 console.log("updateItemInfo: missing payload chapterID")
                 return
             }
-            if(!action.payload.value|| typeof(action.payload.value) !== "string" || action.payload.value.replaceAll(" ", "") === ""){
+            if(action.payload.value == undefined || action.payload.value == null){
                 console.log("updateItemInfo: missing payload value", action.payload.value)
                 return
+            }
+            if(typeof(action.payload.value) === "string" && action.payload.value.replaceAll(" ", "") === ""){
+                console.log("updateItemInfo: payload value empty string", action.payload.value)
+                
             }
 
             var dbString = 'coursesApp/coursesData/'+state.selectedCourseID+'/items/'+action.payload.chapterID
@@ -626,10 +629,21 @@ const dbslice = createSlice({
             if(action.payload.elementID){
                 dbString += "/items/"+action.payload.elementID
             }
-            // Could have called this property
-            dbString += "/"+action.payload.type
+            if(action.payload.additionalPathString){
+                dbString += action.payload.additionalPathString
+            }
+            // If the type is delete remove the specified item, otherwise set the value
+            if(action.payload.type === "delete"){
+                remove(ref(database, dbString))
 
-            set(ref(database, dbString), action.payload.value)
+            }else{
+                // Could have called this property
+                dbString += "/"+action.payload.type                
+
+                // Set the value
+                set(ref(database, dbString), action.payload.value)
+
+            }
         },
 
 

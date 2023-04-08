@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import expandIcon from "../../../../../Images/expandIcon.png"
 import ConfirmationBox from '../../../../../Utils/ConfirmationBox'
 import { addElement, copyElement, deleteElement, updateItemInfo } from '../../../../../App/DbSlice'
+import MultipleChoiceEdit from './MultipleChoiceEdit'
 
 function ElementEditBlock({elementData}) {
   const [expanded, setExpanded] = useState(true)
@@ -20,7 +21,7 @@ function ElementEditBlock({elementData}) {
   useEffect(() => {
     if(selectedElementID === elementData.id){
       setExpanded(true)
-      elementEditBlockRef.current?.scrollIntoView()
+      //elementEditBlockRef.current?.scrollIntoView()
 
     }
     
@@ -76,6 +77,7 @@ function ElementEditBlock({elementData}) {
     if (elementData?.type === "Text")
         return (
             <div className='elementTextDisplay'>
+              <textarea onChange={elemetContentChanged} ref={contentInputRef} defaultValue={elementData?.content}></textarea>
                 {/* <Tiptap elementData={elementData} elemetContentChanged={elemetContentChanged}></Tiptap>                     */}
             </div>
             // <textarea defaultValue={elementData?.content} ref={contentInputRef} onChange={elemetContentChanged} placeholder="Message to display"></textarea>
@@ -97,7 +99,7 @@ function ElementEditBlock({elementData}) {
                 <div className='urlInput'>
                     <input 
                       className='urlInput' 
-                      placeholder='video Source'
+                      placeholder='Video Source. In youtube click share, then <embed> then copy the url where it says src="url"'
                       title='Click on share on youtube, then copy the url where it says src="url"'  
                       defaultValue={elementData?.content} 
                       ref={contentInputRef} 
@@ -158,58 +160,7 @@ function ElementEditBlock({elementData}) {
     else if(elementData?.type === "Multiple Choice")
         return (
             <div className='multipleChoiceTextArea'>
-                {/* <textarea 
-                  defaultValue={elementData?.content} 
-                  ref={contentInputRef} 
-                  onChange={elemetContentChanged} 
-                  placeholder="Question Prompt"
-                ></textarea>
-                <button 
-                  // onClick={addMultipleChoiceOption}
-                >
-                  Add Answer Choice
-                </button>
-                <select 
-                  ref={elementQuestionTypeRef} 
-                  onChange={()=>{questionTypeChanged(elementData.id)}} 
-                  defaultValue={elementData.questionType}
-                  >
-                    <option title="Feedback and correctness will display when the user makes a selection.">Show Feedback</option>
-                    <option title="Feedback and correctness will display when the user makes a selection.">No Feedback</option>                        
-                    
-                </select>
-                {itemsArray(elementData?.answerChoices).map(answerChoice => (
-                    <div key={answerChoice.id} className='answerChoice' draggable onDragOver={e=>e.preventDefault()} onDragStart={()=>{answerToMoveIDRef.current = answerChoice.id}} onDrop={()=>updateQuestionChoiceOrderFunction(answerChoice.id)}>
-                        <div className='inlineBlock width80'>
-                            <input 
-                                defaultValue={answerChoice?.content} 
-                                onChange={()=>updateAnswerText(answerChoice.id)}
-                                id={"answerChoiceText" + answerChoice.id + elementData.id}
-                                placeholder={"Answer Choice Prompt"}
-                            >
-                            </input>
-                            <input 
-                                defaultValue={answerChoice.feedback} 
-                                onChange={()=>updateAnswerFeedback(answerChoice.id)}
-                                id={"answerChoiceFeedback"+answerChoice.id + elementData.id}
-                                placeholder={"Answer Choice Feedback"}
-                            >
-                            </input>
-                        </div>
-                        <div className='answerChoiceCorrect'>
-                            <input 
-                                id={"answerChoiceCorrect"+answerChoice.id}
-                                style={{width: "100%",}}
-                                title={"Set As Correct Option"} 
-                                type={"checkbox"} 
-                                defaultChecked={answerChoice.correct}
-                                onChange={()=>updateAnswerCorrect(answerChoice.id)}
-                            >
-                            </input> 
-                            <div title="Delete Answer Choice" onClick={()=>deleteAnswerChoice(answerChoice.id)}>X</div>
-                        </div>
-                    </div>
-                ))} */}
+               <MultipleChoiceEdit elementData={elementData} contentInputRef={contentInputRef} elemetContentChanged={elemetContentChanged}></MultipleChoiceEdit>
             </div>
         )   
     else
@@ -240,8 +191,6 @@ function ElementEditBlock({elementData}) {
           >
               <option>Text</option>
               <option>Title</option>
-              <option>Title 2</option>
-              <option>Title 3</option>
               <option>Video</option>
               <option>Image</option>
               <option>Multiple Choice</option>
@@ -253,7 +202,7 @@ function ElementEditBlock({elementData}) {
         </div>
         {expanded && displayContent()}
           <div 
-          className='bottomLeft expandButton'
+          className='bottomLeft expandButton hoverOpacity'
           title={expanded ? "Minimize":"Expand"}
           onClick={()=>setExpanded(!expanded)}
         >

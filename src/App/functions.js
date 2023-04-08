@@ -31,7 +31,7 @@ export function arrayToObject(array){
 export function getItem(courseData, chapterID, sectionID, elementID){
     if(!courseData) return null
     // If there is no chapterID, return the courseData
-    if(!chapterID) return {...courseData}
+    if(!chapterID || !courseData?.items) return {...courseData}
 
     // Get the chapter
     var chapter = courseData?.items[chapterID]
@@ -125,7 +125,7 @@ export function insertItem(object, itemToInsert, itemToInsertAfterID){
     // Put each item in the array with an updated index
     itemArray.forEach((item, index) => {        
         // If this is not the item to insert
-        if(item.id !== itemToInsert.id){
+        if(item?.id !== itemToInsert?.id){
             // Set the index based on array index plus the index offset
             item.index = indexCounter
             // Increment the index counter

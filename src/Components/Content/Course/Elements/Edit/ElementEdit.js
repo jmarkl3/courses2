@@ -6,7 +6,7 @@ import editIcon from "../../../../../Images/editIconS.png"
 import "./ElementEdit.css"
 
 function ElementEdit({elementData}) {
-    const previewMode = useSelector((state) => state.appslice.courseEditPreviewMode);
+    const previewMode = useSelector((state) => state.appslice.previewMode);
     // If this is true the element displays as an edit block regardless of preview mode
     const [previewOverride, setPreviewOverride] = useState()
     const sectionTypeRef = useRef()
@@ -15,7 +15,6 @@ function ElementEdit({elementData}) {
         <div>
             {(previewMode && !previewOverride)?
                 <div className='previewElement'>
-                    <div className='previewEditButton'>Edit</div>
                     <ElementDisplayBlock elementData={elementData}></ElementDisplayBlock>
                 </div>
                 :
@@ -23,7 +22,7 @@ function ElementEdit({elementData}) {
             }
             {previewMode && 
                 <div 
-                    className='topLeft square30 elementHoverShow' 
+                    className='topLeft square30 elementHoverShow hoverOpacity' 
                     onClick={()=>setPreviewOverride(!previewOverride)}
                 >
                     {previewOverride ? 

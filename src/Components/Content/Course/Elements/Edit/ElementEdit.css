@@ -56,19 +56,23 @@
     object-fit: contain;
 }
 .answerChoice{
+    position: relative;
     margin: 10px;
+    border: 1px solid gray;
+    padding: 5px;
 }
 .answerChoice input{
-    width: 100%;
-}
-.answerChoiceCorrect{
-    display: inline-block;
+    width: 80%;
+    margin: 2px;
 }
 .answerChoiceCorrect input{
     width: 20px;
     height: 20px;
-    box-shadow: none;
-    margin: 0 10px;
+    box-shadow: none;    
+    position: absolute;
+    right: 5px;
+    top: 35px;
+    margin: 0;
 }
 .multipleChoiceTextArea textarea{
     height: 60px;
@@ -93,13 +97,9 @@
     text-align: left;
 }
 .expandButton{
-    opacity: 0.5;
     height: 20px;
     width: 20px;
     user-select: none;
-}
-.expandButton:hover{
-    opacity: 1;
 }
 .bottomPadding5{
     padding-bottom: 5px;
