@@ -69,6 +69,8 @@ function SidenavSectionRow({itemData, chapterID, setSectionRenaming}) {
   }
   function deleteSectionFunction(){
     dispatcher(deleteSection({chapterID: chapterID, sectionID: itemData.id}))
+    dispatcher(selectFirst({chapterID: chapterID}))
+
   }
 
   function editName(){

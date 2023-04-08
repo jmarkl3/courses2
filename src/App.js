@@ -12,7 +12,9 @@ import "./Themes.css"
 
   element mapping
     edit mode
-    view mode
+    view mode (and prevew mode)
+
+    rich text editor
 
   user data
     saves
@@ -34,6 +36,15 @@ import "./Themes.css"
 /*
   ________________________________________________________________________________
   Misc notes
+
+  multi select
+    starts on long press
+    put ID in array
+    shows options at top
+    cancel, delete all
+
+  on sectoin or chapter delete select the previous or next one
+  function can look for previous, if no previous look for next
 
   themes in account page
 

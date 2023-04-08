@@ -80,6 +80,11 @@ function SidenavChapterRow({itemData}) {
     dispatcher(selectFirst({chapterID: itemData?.id}))
 
   }
+  function deleteChapterFunction(){
+    dispatcher(deleteChapter(itemData.id))
+    dispatcher(selectFirst())
+
+  }
   return (
     <div 
       className='sidenavRowOuter noPaddingLeft'
@@ -127,7 +132,7 @@ function SidenavChapterRow({itemData}) {
       <ConfirmationBox 
         message={confirmDeleteMessage}
         cancel={() => {setConfirmDeleteMessage()}}
-        confirm={() => {dispatcher(deleteChapter(itemData.id))}}
+        confirm={deleteChapterFunction}
       ></ConfirmationBox>
     </div>
   )

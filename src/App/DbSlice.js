@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import {initializeApp} from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { get, getDatabase, push, ref, set, update } from "firebase/database";
-import { getFirstItem, getItem, getLastItemID, insertItem, newIDsObject, nItemsInObject, objectToArray, removeItem } from "./functions";
+import { getFirstItem, getItem, getLastItemID, insertItem, newIDsObject, nItemsInObject, objectToArray, removeItem, removeUndefined } from "./functions";
 
 // #region firebase config
 
@@ -269,6 +269,14 @@ const dbslice = createSlice({
 
             // Add the new chapter to the course data items object (representing chapters)
             var updatedChapters = insertItem(state.courseData.items, chapterWithNewIDs, action.payload.id)
+            
+            // Select the new chapter
+            state.selectedChapterID = chapterWithNewIDs.id
+            // Select the first section in the new chapter
+            var firstSection = getFirstItem(chapterWithNewIDs.items)?.id
+            state.selectedSectionID = firstSection.id
+            // Select the first element in the first section of the new chapter
+            state.selectedElementID = getFirstItem(firstSection.items)?.id
 
             // state.debug2 = chapterWithNewIDs
             set(ref(database, 'coursesApp/coursesData/'+state.selectedCourseID+'/items'), updatedChapters)
@@ -305,7 +313,8 @@ const dbslice = createSlice({
             set(ref(database, 'coursesApp/coursesData/'+state.selectedCourseID+'/items/'+action.payload.chapterID+"/items/"+action.payload.sectionID), null)
         },
         copySection(state, action){
-       
+            if(!action.payload || !action.payload.sectionToCopy || !action.payload.chapterID) return            
+
             // Updaet the IDs of the section and all of its children           
             var sectionWithNewIDs = newIDsObject(action.payload.sectionToCopy)
             // Update the name of the section to show it is a copy
@@ -316,6 +325,11 @@ const dbslice = createSlice({
 
             // Add the new chapter to the course data items object (representing chapters)
             var updatedSections = insertItem(chapter.items, sectionWithNewIDs, action.payload.sectionToCopy.id)
+
+            // Select the new section
+            state.selectedSectionID = sectionWithNewIDs.id
+            // Select the first element in the new section (if there is one)
+            state.selectedElementID = getFirstItem(sectionWithNewIDs.items)?.id
 
             // state.debug2 = chapterWithNewIDs
             set(ref(database, 'coursesApp/coursesData/'+state.selectedCourseID+'/items/'+action.payload.chapterID+"/items"), updatedSections)
@@ -343,18 +357,34 @@ const dbslice = createSlice({
             }
             newItem.id = newDbLocationRef.key
 
-            // Insert it into the section items object if the index is not the last one
-        // if(action.payload.index < nItemsInObject(state.courseData.items[action.payload.chapterID].items[action.payload.sectionID].items)){
-            
-            
-        // }
+            if(action.payload.afterID){
+                // Get the section items object
+                var section = getItem(state.courseData, action.payload.chapterID, action.payload.sectionID)
+                var updatedElements = insertItem(section.items, newItem, action.payload.afterID)
+                updatedElements = removeUndefined(updatedElements)
+                
+                // Insert it into the section items object if the index is not the last one
+                set(ref(database, "coursesApp/coursesData/"+state.selectedCourseID+"/items/"+action.payload.chapterID+"/items/"+action.payload.sectionID+"/items"), updatedElements)
+            }
+            else{
+                // Insert it into the section items object if the index is not the last one
+            // if(action.payload.index < nItemsInObject(state.courseData.items[action.payload.chapterID].items[action.payload.sectionID].items)){
+                
+                
+            // }
+    
+                // Add it to the db
+                set(newDbLocationRef, newItem)
 
-            // Add it to the db
-            set(newDbLocationRef, newItem)
+            }
+
+            // Select the new element
+            //state.selectedElementID = newItem.id
         },
         deleteElement(state, action){
             if(!action.payload || !action.payload.sectionID || !action.payload.chapterID || !action.payload.elementID) return            
             set(ref(database, 'coursesApp/coursesData/'+state.selectedCourseID+'/items/'+action.payload.chapterID+"/items/"+action.payload.sectionID+"/items/"+action.payload.elementID), null)
+       
         },
         copyElement(state, action){
             if(!action?.payload || !action.payload?.chapterID || !action?.payload?.sectionID || !action?.payload?.elementToCopy) return
@@ -363,14 +393,17 @@ const dbslice = createSlice({
             var newElementRef = push(ref(database, 'coursesApp/coursesData/'+state.selectedCourseID+'/items/'+action.payload.chapterID+'/items/'+action.payload.sectionID+'/items'))
             
             // Adjust the name of the element to show it is a copy
-            var elementToCopyTemp = {...action.payload.elementToCopy}
-            elementToCopyTemp.name = elementToCopyTemp.name + " copy"
-            elementToCopyTemp.id = newElementRef.key
+            var copiedElement = {...action.payload.elementToCopy}
+            copiedElement.name = copiedElement.name + " copy"
+            copiedElement.id = newElementRef.key
                         
             // Insert it into the section items object
             var section = getItem(state.courseData, action.payload.chapterID, action.payload.sectionID)
-            var updatedSectionItems = insertItem(section.items, elementToCopyTemp, action.payload.elementToCopy.id)
+            var updatedSectionItems = insertItem(section.items, copiedElement, action.payload.elementToCopy.id)
             
+            // Select the new element
+            state.selectedElementID = copiedElement.id
+
             // Put it in the database
             set(ref(database, 'coursesApp/coursesData/'+state.selectedCourseID+'/items/'+action.payload.chapterID+'/items/'+action.payload.sectionID+'/items'), updatedSectionItems)
 
@@ -411,7 +444,7 @@ const dbslice = createSlice({
 
             // Check to see if the item is being dropped onto itself
             if(state.dragStartIDs.elementID == action.payload.elementID && state.dragStartIDs.sectionID == action.payload.sectionID && state.dragStartIDs.chapterID == action.payload.chapterID){
-                console.log("Dropped onto itself")
+                // console.log("Dropped onto itself")
                 return
             }
             
@@ -593,9 +626,8 @@ const dbslice = createSlice({
             if(action.payload.elementID){
                 dbString += "/items/"+action.payload.elementID
             }
+            // Could have called this property
             dbString += "/"+action.payload.type
-
-            console.log("updating: ", dbString)
 
             set(ref(database, dbString), action.payload.value)
         },

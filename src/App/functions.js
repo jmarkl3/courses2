@@ -29,6 +29,7 @@ export function arrayToObject(array){
 // The getter functions get things from input data
 
 export function getItem(courseData, chapterID, sectionID, elementID){
+    if(!courseData) return null
     // If there is no chapterID, return the courseData
     if(!chapterID) return {...courseData}
 
@@ -82,23 +83,49 @@ export function removeItem(object, itemToRemoveID){
     delete tempObject[itemToRemoveID]
     return tempObject
 }
+/**
+ * Returns an object with any undefined items removed
+ * @param {*} object 
+ * @returns 
+ */
+export function removeUndefined(object){
+    if(typeof(object) !== "Object") return object
+    var tempArray = []
+    Object.entries(object).forEach(([key, value]) => {
+        if(value !== undefined){
+            var tempValue = removeUndefined(value)
+            tempArray.push(tempValue)
+        }
+    })
+    return arrayToObject(tempArray)
+}
+/**
+ * Takes in an object, item, and ID
+ * Returns an object with the item inserted after the item with the ID
+ * @param {*} object 
+ * @param {*} itemToInsert 
+ * @param {*} itemToInsertAfterID 
+ * @returns 
+ */
 export function insertItem(object, itemToInsert, itemToInsertAfterID){
 
     // Create an array from the object (will be sorted by current index)
     var itemArray = objectToArray(object)
-    console.log("itemArray", itemArray)
     
     var tempArray = []
+
+    // If the itemToInsertAfterID == -1 it is a flag to insert the item at the beginning of the array
+    if(itemToInsertAfterID == -1)
+        itemArray.push(itemToInsert)
+
     // Flag variable to determine index offset
     var indexOffset = 0
     var insertedItem = false
     var indexCounter = 0
     // Put each item in the array with an updated index
     itemArray.forEach((item, index) => {        
-        console.log("item", item.name, index)
         // If this is not the item to insert
         if(item.id !== itemToInsert.id){
-            console.log("adding it ", itemToInsert.id," !== " ,item.id)
             // Set the index based on array index plus the index offset
             item.index = indexCounter
             // Increment the index counter
@@ -107,13 +134,10 @@ export function insertItem(object, itemToInsert, itemToInsertAfterID){
             // Push the item to the temp array
             tempArray.push(item)
 
-        }else{
-            console.log("not adding it")
         }
 
         // If the id of the current item is the id of the item to insert after, insert the new item
-        if(item.id === itemToInsertAfterID){  
-            console.log("adding it after found item")          
+        if(item.id === itemToInsertAfterID && itemToInsertAfterID != -1){  
             // The id will be the id of the item to insert after plus one
             itemToInsert.index = indexCounter 
             // Incremet the index counter

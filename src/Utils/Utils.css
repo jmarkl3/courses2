@@ -5,6 +5,7 @@
   width: 300px;
   left: calc(50vw - 150px);
   top: calc(50vh - 200px);
+  padding: 10px;
   padding-top: 30px;
   box-sizing: border-box;
   border-radius: 5px;
@@ -13,10 +14,14 @@
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
   text-align: center;
 }
+.sideNavLeftAdjust{
+  left: calc(50vw + 0px);
+}
 .confirmationBox .buttons{
   position: absolute;
   bottom: 5px;
   width: 100%;
+  left: 0px;
 }
 .topRight{
   position: absolute;

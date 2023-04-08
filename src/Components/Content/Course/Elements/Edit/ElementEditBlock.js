@@ -2,39 +2,70 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import expandIcon from "../../../../../Images/expandIcon.png"
 import ConfirmationBox from '../../../../../Utils/ConfirmationBox'
+import { addElement, copyElement, deleteElement, updateItemInfo } from '../../../../../App/DbSlice'
 
 function ElementEditBlock({elementData}) {
-
-  const elementContentRef = useRef()
-  const elementTypeRef = useRef()
-  const elementNameRef = useRef()  
   const [expanded, setExpanded] = useState(true)
   const [confirmationBoxMessage, setConfirmationBoxMessage] = useState()
   const minimizeAll = useSelector((state) => state.appslice.minimizeAll);
+  const selectedChapterID = useSelector((state) => state.dbslice.selectedChapterID);
+  const selectedSectionID = useSelector((state) => state.dbslice.selectedSectionID);
+  const selectedElementID = useSelector((state) => state.dbslice.selectedElementID);
 
   useEffect(() => {
-    setExpanded(minimizeAll)
+    setExpanded(!minimizeAll)
   }, [minimizeAll])    
 
-  function confirmationBoxFunction(){
+  const elementEditBlockRef = useRef()
+  useEffect(() => {
+    if(selectedElementID === elementData.id){
+      setExpanded(true)
+      elementEditBlockRef.current?.scrollIntoView()
 
+    }
+    
+  }, [selectedElementID]) 
+
+  function confirmationBoxFunction(){
+    dispacher(deleteElement({chapterID: selectedChapterID, sectionID: selectedSectionID, elementID: elementData.id }))
+    setConfirmationBoxMessage()
   }
   const dispacher = useDispatch()
 
+  const updateContentTimer = useRef()
+  const contentInputRef = useRef()
   function elemetContentChanged(){
-
+    clearTimeout(updateContentTimer.current)
+    updateContentTimer.current = setTimeout(() => {
+      dispacher(updateItemInfo({chapterID: selectedChapterID, sectionID: selectedSectionID, elementID: elementData.id, type: "content", value: contentInputRef.current.value}))
+    }, 1000)
   }
+  const updateNameTimer = useRef()
+  const nameInputRef = useRef()
   function elemetNameChanged(){
+    console.log("name changed")
+    clearTimeout(updateNameTimer.current)
+    updateNameTimer.current = setTimeout(() => {
+      dispacher(updateItemInfo({chapterID: selectedChapterID, sectionID: selectedSectionID, elementID: elementData.id, type: "name", value: nameInputRef.current.value}))
+
+    }, 1000)
+  }
+  const typeInputRef = useRef()
+  function elemetTypeChanged(){
+      dispacher(updateItemInfo({chapterID: selectedChapterID, sectionID: selectedSectionID, elementID: elementData.id, type: "type", value: typeInputRef.current.value}))
 
   }
   function confirmDelete(){
+    setConfirmationBoxMessage("Are you sure you want to delete this element?")
 
   }
   function copyElementFunction(){
-
+    dispacher(copyElement({chapterID: selectedChapterID, sectionID: selectedSectionID, elementToCopy: elementData}))
+  
   }
   function addElementFunction(){
-    //dispacher(addElement({afterID: elementData.id}))
+    dispacher(addElement({chapterID: selectedChapterID, sectionID: selectedSectionID, afterID: elementData.id}))
+    
   }
   // This will imediately update element/propertyName ex: element/name = "new name"
   function updateElementProperty(propertyName){
@@ -47,14 +78,14 @@ function ElementEditBlock({elementData}) {
             <div className='elementTextDisplay'>
                 {/* <Tiptap elementData={elementData} elemetContentChanged={elemetContentChanged}></Tiptap>                     */}
             </div>
-            // <textarea defaultValue={elementData?.content} ref={elementContentRef} onChange={elemetContentChanged} placeholder="Message to display"></textarea>
+            // <textarea defaultValue={elementData?.content} ref={contentInputRef} onChange={elemetContentChanged} placeholder="Message to display"></textarea>
         )
     if (elementData?.type === "Title" || elementData?.type === "Title 2" || elementData?.type === "Title 3")
         return (
             <div className='urlInput' >
                 <input 
                   defaultValue={elementData?.content} 
-                  ref={elementContentRef} 
+                  ref={contentInputRef} 
                   onChange={elemetContentChanged} 
                   placeholder="Title"
                 ></input>
@@ -69,7 +100,7 @@ function ElementEditBlock({elementData}) {
                       placeholder='video Source'
                       title='Click on share on youtube, then copy the url where it says src="url"'  
                       defaultValue={elementData?.content} 
-                      ref={elementContentRef} 
+                      ref={contentInputRef} 
                       onChange={elemetContentChanged}
                      ></input>
                 </div>
@@ -85,7 +116,7 @@ function ElementEditBlock({elementData}) {
                       placeholder='Image Source' 
                       title='Click on share on youtube, then copy the url where it says src="url"'  
                       defaultValue={elementData?.content} 
-                      ref={elementContentRef} 
+                      ref={contentInputRef} 
                       onChange={elemetContentChanged}
                     ></input>
                 </div>
@@ -99,7 +130,7 @@ function ElementEditBlock({elementData}) {
             <div className='promptTextArea'>
                 <textarea 
                   defaultValue={elementData?.content} 
-                  ref={elementContentRef} 
+                  ref={contentInputRef} 
                   onChange={elemetContentChanged} 
                   placeholder="Question Prompt"
                 ></textarea>
@@ -110,7 +141,7 @@ function ElementEditBlock({elementData}) {
             <div className='promptTextArea'>
                 <input 
                   defaultValue={elementData?.content2} 
-                  ref={elementContentRef} 
+                  ref={contentInputRef} 
                   placeholder="Input Title"
                   ></input>
                 <select title='Input Type'>
@@ -129,7 +160,7 @@ function ElementEditBlock({elementData}) {
             <div className='multipleChoiceTextArea'>
                 {/* <textarea 
                   defaultValue={elementData?.content} 
-                  ref={elementContentRef} 
+                  ref={contentInputRef} 
                   onChange={elemetContentChanged} 
                   placeholder="Question Prompt"
                 ></textarea>
@@ -185,7 +216,7 @@ function ElementEditBlock({elementData}) {
         return (
             <textarea 
               defaultValue={elementData?.content} 
-              ref={elementContentRef} 
+              ref={contentInputRef} 
               onChange={elemetContentChanged} 
               placeholder="Message to display"
             ></textarea>
@@ -194,17 +225,17 @@ function ElementEditBlock({elementData}) {
 
   return (
     <>
-      <div className='elementDisplay bottomPadding5'>                  
+      <div className='elementDisplay bottomPadding5' ref={elementEditBlockRef}>                  
         <div className='elementEditOptions'>
           <input 
             className='' 
             defaultValue={elementData?.name} 
-            ref={elementNameRef} 
+            ref={nameInputRef} 
             onChange={elemetNameChanged}
           ></input>
           <select 
-            ref={elementTypeRef} 
-            // onChange={elementTypeChanged} 
+            ref={typeInputRef} 
+            onChange={elemetTypeChanged} 
             defaultValue={elementData?.type}
           >
               <option>Text</option>
@@ -229,7 +260,7 @@ function ElementEditBlock({elementData}) {
           <img src={expandIcon}></img>
         </div>
       </div>
-      <ConfirmationBox message={confirmationBoxMessage} confirm={confirmationBoxFunction} close={()=>setConfirmationBoxMessage(null)}></ConfirmationBox>
+      <ConfirmationBox message={confirmationBoxMessage} confirm={confirmationBoxFunction} cancel={()=>setConfirmationBoxMessage(null)}></ConfirmationBox>
       <button style={{margin: "0px", width: "100%"}} onClick={addElementFunction}>Add Element</button>        
     </>
   )

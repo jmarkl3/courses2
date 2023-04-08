@@ -9,13 +9,17 @@ import "./SideNav.css"
 function SideNav() {    
     const sideNavOpen = useSelector(state => state.appslice.sideNavOpen)
     const courseData = useSelector((state) => state.dbslice.courseData);
+    const selectedChapterID = useSelector((state) => state.dbslice.selectedChapterID);
+    const selectedSectionID = useSelector((state) => state.dbslice.selectedSectionID);
+    const selectedElementID = useSelector((state) => state.dbslice.selectedElementID);
     const dispacher = useDispatch()    
 
     // The array of chapters to be displayed in the sidebar as rows
     const [itemArray, setItemArray] = useState([])
     useEffect(() => {
         setItemArray(objectToArray(courseData?.items))
-        dispacher(selectFirst())
+        if(!selectedChapterID)
+            dispacher(selectFirst())
     }, [courseData])
 
     function addChapterFunction(){
