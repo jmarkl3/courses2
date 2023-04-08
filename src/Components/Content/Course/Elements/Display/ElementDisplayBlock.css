@@ -1,0 +1,150 @@
+.elementViewDisplay{
+    font-family: latoblack, sans-serif;
+    line-height: 20px;
+    width: 100%;
+    height: auto;
+    box-sizing: border-box;
+    display: inline-block;
+    margin: 5px 0px;
+    /* border-bottom: 1px solid rgba(128, 128, 128, 0.5); */
+}
+.elementViewDisplay iframe{
+    padding: 20px 20px;
+    width: calc(100% - 40px);
+    aspect-ratio:9/6;
+}
+.elementTextDisplay{
+    white-space: pre-wrap ;
+    text-align: left;
+    padding: 0 20px;
+    box-sizing: border-box;
+    font-size: 16px;
+    font-weight: 100;
+    margin: 0;
+}
+.elementViewDisplay img{
+    width: 100%;
+}
+.quizElementDisplay{
+    text-align: center;
+}
+.quizElementDisplay textarea{
+    width: 90%;
+    height: 120px;
+    outline: none;
+    padding: 10px;
+    box-sizing: border-box;
+}
+.quizElementPrompt{
+    margin-bottom: 20px;
+    margin-top: 20px;
+    text-align: left;
+    font-weight: bold;
+}
+.feedback{
+    text-align: left;
+    padding-left: 30px;
+    padding-top: 10px;
+}
+.correctFeedback{
+    color: rgb(6, 175, 6);
+    font-weight: bold;
+}
+.incorrectFeedback{
+    color: rgb(202, 105, 105);
+}
+.selectedAnser{
+    border: 1px solid gray;
+}
+
+.elementDisplayTitle{
+    font-size: 34px;
+    font-weight: bold;
+    padding: 40px 0 40px 0;
+}
+.elementDisplayTitle2{
+    font-size: 24px;
+    font-weight: bold;
+    text-align: left;
+    padding: 10px 20px 0px 20px;
+}
+.elementDisplayTitle3{
+    font-size: 20px;
+    font-weight: bold;
+    text-align: left;
+    font-style:oblique;
+    padding: 0px 20px 0px 20px;
+    color: rgb(75, 74, 74);
+}
+.answerChoiceDisplay{
+    text-align: left;
+    padding-left: 20px;
+}
+.answerChoiceDisplay input{
+    width: 20px;
+    height: 100%;
+    display: inline-block;
+    vertical-align: top;
+    cursor: pointer;
+}
+.answerChoiceDisplayText{
+    display: inline-block;
+    width: calc(100% - 30px);
+}
+.elementDisplayPreview{
+    padding: 0 40px;
+    position: relative;
+}
+.saveIndicator{
+    color: white;
+    background-color: green;      
+    transition: 3000ms;
+    position: absolute;
+    bottom: -20px;
+    right: 80px;
+    border-radius: 3px;
+    padding: 2px 5px;
+}
+.saveIndicatorError{
+    color: white;
+    background-color: red;  
+}
+.saveIndicatorFade{
+    opacity: 0;
+}
+.feedback {
+    width: 80%;
+}
+.menuBar button{
+    margin: 2px;
+    width: auto;
+    background-color: rgba(128, 128, 128, 0);
+    background-image: linear-gradient(rgba(128, 128, 128, 0), rgba(128, 128, 128, 0));
+    vertical-align: top;
+    margin: 0;
+    border: 1px solid gray;
+    box-shadow: none;
+    padding: 0;
+}
+.menuBar button img{
+    height: 100%;
+    width: 100%;
+}
+.menuBar p{    
+    margin: 0;
+    padding: 0 5px;
+    vertical-align: top;
+}
+.elementInput{
+    display: inline-block;
+}
+.elementInput input{
+    outline: none;
+    border: none;
+    height: 30px;
+    width: 200px;
+    box-shadow: 0px 3px 6px rgba(66, 66, 66, 0.541) inset;
+    padding: 5px 10px;
+    box-sizing: border-box;
+    margin: 10px;
+}
