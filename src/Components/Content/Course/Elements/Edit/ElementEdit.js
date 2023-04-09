@@ -12,27 +12,28 @@ function ElementEdit({elementData}) {
     const sectionTypeRef = useRef()
 
     return (
-        <div>
+        <>
+            <div className='elementPreviewEditButton'>
+                {previewMode && 
+                    <div 
+                        className='topLeft square20 hoverOpacity2' 
+                        onClick={()=>setPreviewOverride(!previewOverride)}
+                        title={`${previewOverride ? "Done" : "Edit"}`}
+                    >
+                        {previewOverride ? 
+                            "✔" 
+                            : 
+                            <img src={editIcon}></img>
+                        }
+                    </div>
+                }
+            </div>
             {(previewMode && !previewOverride)?
-                <div className='previewElement'>
-                    <ElementDisplayBlock elementData={elementData}></ElementDisplayBlock>
-                </div>
+                <ElementDisplayBlock elementData={elementData}></ElementDisplayBlock>                
                 :
                 <ElementEditBlock elementData={elementData}></ElementEditBlock>
             }
-            {previewMode && 
-                <div 
-                    className='topLeft square30 elementHoverShow hoverOpacity' 
-                    onClick={()=>setPreviewOverride(!previewOverride)}
-                >
-                    {previewOverride ? 
-                        "✔" 
-                        : 
-                        <img src={editIcon}></img>
-                    }
-                </div>
-            }
-        </div>
+        </>
     )
 }
 

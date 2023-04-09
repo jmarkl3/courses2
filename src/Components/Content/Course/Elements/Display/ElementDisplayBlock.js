@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import "./ElementDisplayBlock.css"
+import MulltipleChoiceDisplay from './MulltipleChoiceDisplay'
 
 function ElementDisplayBlock({elementData}) {
   
@@ -53,25 +54,7 @@ function ElementDisplayBlock({elementData}) {
                 </div>
             </div>
         )
-    }
-    else if(elementData?.type === "Title 2"){
-        return (
-            <div className='elementViewDisplay'>
-                <div className='elementDisplayTitle2'>
-                   {elementData?.content}
-                </div>
-            </div>
-        )
-    }
-    else if(elementData?.type === "Title 3"){
-        return (
-            <div className='elementViewDisplay'>
-                <div className='elementDisplayTitle3'>
-                   {elementData?.content}
-                </div>
-            </div>
-        )
-    }
+    }    
     else if(elementData?.type === "Video")
         return (
             <div className='elementViewDisplay'>
@@ -86,43 +69,52 @@ function ElementDisplayBlock({elementData}) {
         )
     else if(elementData?.type === "Text Input")
         return (
-            <>
-                <>
+            <div className='textInputDisplay'>
+                <div className='textInputDisplayPrompt'>
                     {elementData?.content}
-                </>
+                </div>
                 <textarea placeholder='Type your answer here' ref={responseInputRef} onChange={responseNeedsSave} defaultValue={userResponse?.content}></textarea>
-            </>
+            </div>
         )
     else if(elementData?.type === "Input Field")
         return (
-            <div className='elementInput'>
-                <div className='elementTextDisplay quizElementPrompt'>
+            <div className={`inputElement inputElement${elementData.inputSize}`}>
+                <div className='elementInputLabel'>
                     {elementData?.content}
                 </div>
-                <input placeholder='Type your answer here' ref={responseInputRef} onChange={responseNeedsSave} defaultValue={userResponse?.content}></input>
+                {elementData?.inputType === "Select" ?
+                    <select>
+                        {/* {console.log("elementData?.content?.split(",")")}
+                        {console.log(elementData?.content2?.split(","))} */}
+                        {elementData?.content2?.split(",").map(optionValue => (
+                            <option>{optionValue}</option>
+                        ))}
+                    </select>
+                    :
+                    <input placeholder='Type your answer here' ref={responseInputRef} onChange={responseNeedsSave} defaultValue={userResponse?.content}></input>                    
+                }
             </div>
         )
     else if(elementData?.type === "Multiple Choice")
         return (
             <>
-                {/* <MulltipleChoiceDisplay elementData={elementData} userResponse={userResponse} saveUserResponseLocal={saveUserResponseLocal}></MulltipleChoiceDisplay> */}
+                <MulltipleChoiceDisplay elementData={elementData} userResponse={userResponse}></MulltipleChoiceDisplay>
             </>
         ) 
     else {
       return(
-        <div>
-          element
+        <>
           {elementData?.name}
-        </div>
+        </>
       )
     }
   
   }
   
   return (
-    <div>   
+    <>   
         {displayContent()}
-    </div>
+    </>
   )
 }
 

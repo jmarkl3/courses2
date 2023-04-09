@@ -1,5 +1,8 @@
-// #region conversion functions
-// The conversion functions convert one data type to another
+// #region conversion functions (The conversion functions convert one data type to another)
+
+/**
+ * Input is an object, output is an array sorted by index
+ */
 export function objectToArray(obj) {
     if(!obj) return []
     // Turn an object into an array of objects

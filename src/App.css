@@ -22,7 +22,7 @@ input{
   padding: 5px 10px;
   border: none;
   outline: none;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.466) inset;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5) inset;
   width: 100%;
   height: 30px;
   box-sizing: border-box;
@@ -44,6 +44,11 @@ textarea{
 }
 select{
   margin: 0 5px;
+  outline: none;
+  border: none;
+  height: 30px;
+  width: 200px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5) inset;
 }
 select:last-child{
   margin-right: 0;
@@ -80,6 +85,14 @@ button:hover{
   transition: 250ms;
 }
 .hoverOpacity:hover{
+  opacity: 1;
+
+}
+.hoverOpacity2{
+  opacity: 0.1;
+  transition: 250ms;
+}
+.hoverOpacity2:hover{
   opacity: 1;
 
 }

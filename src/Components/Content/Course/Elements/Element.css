@@ -1,5 +1,6 @@
 .element{
-    position: relative;
+    position: relative;   
+    display: inline-block; 
 }
 .topLeft{
     position: absolute;
@@ -29,6 +30,10 @@
 .square30{
     height: 30px;
     width: 30px;
+}
+.square20{
+    height: 20px;
+    width: 20px;
 }
 .element:hover .elementHoverShow{
     display: flex;

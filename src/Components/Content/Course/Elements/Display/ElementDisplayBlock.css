@@ -15,8 +15,7 @@
 }
 .elementTextDisplay{
     white-space: pre-wrap ;
-    text-align: left;
-    padding: 0 20px;
+    text-align: left;    
     box-sizing: border-box;
     font-size: 16px;
     font-weight: 100;
@@ -147,4 +146,49 @@
     padding: 5px 10px;
     box-sizing: border-box;
     margin: 10px;
+}
+.inputElement{
+    display: inline-block;
+    margin: 10px;
+}
+.inputElement select{
+    width: 100%;
+    text-align: center;
+}
+.inputElementWhole{
+    width: calc(100% - 20px);    
+}
+.inputElementHalf{
+    width: calc(50% - 20px);
+}
+.inputElementThird{
+    width: calc(33% - 20px);
+}
+.inputElementQuarter{
+    width: calc(25% - 20px);
+
+}
+.multipleChoice{
+    min-width: 400px;
+}
+.multipleChoice input{
+    border: none;
+    box-shadow: none;
+}
+.textInputDisplay{
+    width: 100%;
+    text-align: left;
+}
+.textInputDisplay textarea{
+    max-width: calc(100% - 20px);
+    min-width: calc(100% - 20px);
+    height: 60px;
+}
+.textInputDisplayPrompt{
+    padding-bottom: 20px;
+    padding-top: 20px;
+    font-weight: bold;
+}
+.elementInputLabel{
+    margin-bottom: 5px;
 }

@@ -12,11 +12,13 @@ function ElementEditBlock({elementData}) {
   const selectedChapterID = useSelector((state) => state.dbslice.selectedChapterID);
   const selectedSectionID = useSelector((state) => state.dbslice.selectedSectionID);
   const selectedElementID = useSelector((state) => state.dbslice.selectedElementID);
+  const inputTypeInputRef = useRef()
+  const inputSizeInputRef = useRef()
 
   useEffect(() => {
     setExpanded(!minimizeAll)
   }, [minimizeAll])    
-
+  
   const elementEditBlockRef = useRef()
   useEffect(() => {
     if(selectedElementID === elementData.id){
@@ -39,6 +41,14 @@ function ElementEditBlock({elementData}) {
     clearTimeout(updateContentTimer.current)
     updateContentTimer.current = setTimeout(() => {
       dispacher(updateItemInfo({chapterID: selectedChapterID, sectionID: selectedSectionID, elementID: elementData.id, type: "content", value: contentInputRef.current.value}))
+    }, 1000)
+  }
+  const updateContent2Timer = useRef()
+  const content2InputRef = useRef()
+  function elemetContent2Changed(){
+    clearTimeout(updateContent2Timer.current)
+    updateContent2Timer.current = setTimeout(() => {
+      dispacher(updateItemInfo({chapterID: selectedChapterID, sectionID: selectedSectionID, elementID: elementData.id, type: "content2", value: content2InputRef.current.value}))
     }, 1000)
   }
   const updateNameTimer = useRef()
@@ -69,10 +79,13 @@ function ElementEditBlock({elementData}) {
     
   }
   // This will imediately update element/propertyName ex: element/name = "new name"
-  function updateElementProperty(propertyName){
-
+  function updateElementProperty(propertyName, propertyValue){
+    if(!propertyName)
+      return
+    if(propertyValue == undefined || propertyValue == null)
+      return
+    dispacher(updateItemInfo({chapterID: selectedChapterID, sectionID: selectedSectionID, elementID: elementData.id, type: propertyName, value: propertyValue}))
   }
-
   function displayContent(){
     if (elementData?.type === "Text")
         return (
@@ -140,21 +153,45 @@ function ElementEditBlock({elementData}) {
         )
         else if(elementData?.type === "Input Field")
         return (                   
-            <div className='promptTextArea'>
+            <div >
+              <div className='elementEditOptions'>
                 <input 
-                  defaultValue={elementData?.content2} 
+                  defaultValue={elementData?.content} 
                   ref={contentInputRef} 
-                  placeholder="Input Title"
-                  ></input>
-                <select title='Input Type'>
+                  placeholder="Input Label"
+                  onChange={elemetContentChanged} 
+                ></input>
+                <select 
+                  title='Input Type'
+                  ref={inputTypeInputRef}
+                  onChange={()=>updateElementProperty("inputType", inputTypeInputRef.current.value)}
+                  defaultValue={elementData?.inputType}
+                >
                     <option>Text</option>
                     <option>Select</option>
                 </select>
-                <select title='Input Size'>
-                    <option>Half</option>
+                <select 
+                  title='Input Size'
+                  ref={inputSizeInputRef}
+                  onChange={()=>updateElementProperty("inputSize", inputSizeInputRef.current.value)}
+                  defaultValue={elementData?.inputSize}
+                >
                     <option>Whole</option>
+                    <option>Half</option>
                     <option>Third</option>                        
+                    <option>Quarter</option>                        
                 </select>
+              </div>
+              <div>
+                {elementData.inputType === "Select" &&
+                  <input 
+                    defaultValue={elementData?.content2} 
+                    ref={content2InputRef} 
+                    placeholder="Select Options (seperated by commas)"
+                    onChange={elemetContent2Changed} 
+                  ></input>
+                }
+              </div>
             </div>                
         )
     else if(elementData?.type === "Multiple Choice")
@@ -196,6 +233,7 @@ function ElementEditBlock({elementData}) {
               <option>Multiple Choice</option>
               <option>Text Input</option>
               <option>Input Field</option>
+              <option>Input Form</option>
           </select>
           <button onClick={confirmDelete}>Delete</button>
           <button onClick={copyElementFunction}>Copy</button>

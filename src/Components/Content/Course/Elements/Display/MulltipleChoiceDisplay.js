@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux'
 import { objectToArray } from '../../../../../App/functions'
 // import { itemsArray, saveUserResponse } from '../../../../../App/DBSlice'
 
-function MulltipleChoiceDisplay({elementData, userResponse, saveUserResponseLocal}) {
+function MulltipleChoiceDisplay({elementData, userResponse}) {
     const [questionFeedback, setQustionFeedback] = useState()
     const [questionCorrect, setQuetionCorrect] = useState()
     const [selectedAnswerChoices, setselectedAnswerChoices] = useState()
@@ -17,6 +17,9 @@ function MulltipleChoiceDisplay({elementData, userResponse, saveUserResponseLoca
         }
     },[userResponse])
 
+    /**
+     * Save the response in the db
+     */
     function saveUserResponseFunction(answerID){      
         // Create a response object
         var responseObject = {
@@ -28,7 +31,9 @@ function MulltipleChoiceDisplay({elementData, userResponse, saveUserResponseLoca
         //dispatcher(saveUserResponse({response: responseObject, elementID: elementData?.id}))
         saveUserResponseLocal(responseObject)
     }
+    function saveUserResponseLocal(responseObject){
 
+    }
     function saveAnswerInDB(answerData){
         ////console.log("savind answer response: "+answerData.id)
         // Get the answerData and make sure there are no undefined values
@@ -57,6 +62,9 @@ function MulltipleChoiceDisplay({elementData, userResponse, saveUserResponseLoca
         return answerData        
 
     }
+    /**
+     * Sets the local state to display the selection
+     */
     function setSelectedAnswer(answerData){   
         if(!answerData)     
             return               
@@ -64,15 +72,18 @@ function MulltipleChoiceDisplay({elementData, userResponse, saveUserResponseLoca
         setQustionFeedback(answerData.feedback)
         setselectedAnswerID(answerData.id)
     }
-
+    /**
+     * When the user selects an answer this function is called
+     */
     function selectedAnswer(answerData){
-        // console.log("selected answer for "+elementData?.id +" "+answerData.id)
-        setSelectedAnswer(answerData)
+        setSelectedAnswer(answerData)        
         saveUserResponseFunction(answerData.id)
-        //saveAnswerInDB(answerData)
 
     }
-
+ 
+    /**
+     * If the selected answer id matches it returns a class based on correct or incorrect
+     */
     function selectedAnswerClass(answerID){
 
         if(answerID !== selectedAnswerID || elementData?.questionType === "No Feedback")
@@ -92,8 +103,8 @@ function MulltipleChoiceDisplay({elementData, userResponse, saveUserResponseLoca
     }
 
   return (
-    <div className='multipleChoiceTextArea'>
-            <div className='quizElementPrompt'>
+    <div className='multipleChoice'>
+        <div className='quizElementPrompt'>
             {elementData.content}
         </div>
         {objectToArray(elementData?.answerChoices).map(answerChoice => (

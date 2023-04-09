@@ -10,27 +10,31 @@ import "./Themes.css"
 
 /*
 
-  element mapping
-    view mode (and prevew mode)
-      multiple choice
-    rich text editor
-      for edit and view mode
+  rich text editor
 
   user data
     auth
     saves
     displays
+    saved confirmation    
 
   account page
-    themes
     logout
     current classes
+
+  themes on account page
+
 
   section timer
     save in edit mode
     display in view mode
     updates in view mode
     saves into user data
+
+  next section
+    button goes to next section
+    checks input status
+    checks timer status
 
   timed camera
 

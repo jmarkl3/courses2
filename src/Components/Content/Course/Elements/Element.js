@@ -8,13 +8,13 @@ function Element({elementData}) {
     const editMode = useSelector((state) => state.appslice.editMode);
     
   return (
-    <div className='element'>
+    <>
         {editMode ?
             <ElementEdit elementData={elementData}></ElementEdit>
         :
             <ElementDisplayBlock elementData={elementData}></ElementDisplayBlock>
         }
-    </div>
+    </>
   )
 }
 

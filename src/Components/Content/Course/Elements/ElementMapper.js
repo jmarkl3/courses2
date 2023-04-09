@@ -21,14 +21,14 @@ function ElementMapper() {
     }, [courseData, selectedChapterID, selectedSectionID])
 
     return (
-        <div>
+        <>
             {(editMode) &&
                 <SectionEditOptions></SectionEditOptions>
             }
             {elementsArray.map(element => (                
                 <Element elementData={element} key={element.id}></Element>                
             ))}
-        </div>
+        </>
     )
 }
 
