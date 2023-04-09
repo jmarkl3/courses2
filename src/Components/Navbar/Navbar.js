@@ -3,7 +3,7 @@ import "./Navbar.css"
 import starIcon from "../../Images/starIconW.png"
 import { useDispatch } from 'react-redux'
 import { selectCourse } from '../../App/DbSlice'
-import { setSideNavOpen } from '../../App/AppSlice'
+import { setSideNavOpen, toggleShowAuthMenu } from '../../App/AppSlice'
 
 function Navbar() {
     const dispacher = useDispatch()
@@ -33,7 +33,7 @@ function Navbar() {
             <div className='bottom right'>
                 <button>Support</button>
                 <button>Cart</button>
-                <button>Account</button>
+                <button onClick={()=>dispacher(toggleShowAuthMenu())}>Account</button>
             </div>
         </div>
     </div>

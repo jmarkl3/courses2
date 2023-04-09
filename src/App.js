@@ -1,17 +1,19 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import './App.css';
-import { database, setCourseData, setCoursesData } from './App/DbSlice';
+import { auth, database, setCourseData, setCoursesData, setUserID } from './App/DbSlice';
 import DisplayPage from './Components/Content/DisplayPage';
 import Navbar from './Components/Navbar/Navbar';
 import { onValue } from 'firebase/database';
 import { ref } from 'firebase/database';
 import "./Themes.css"
+import AuthMenu from './Components/Auth/AuthMenu';
+import { onAuthStateChanged } from 'firebase/auth';
 
 /*
   
   user data
-    auth
+    auth css    
     saves
     displays
     saved confirmation    
@@ -170,6 +172,7 @@ function App() {
 
   // Load the meta data so all of the course tiles can be displayed
   useEffect(() => {   
+    authListener()
     loadCoursesData()
   }, [])
 
@@ -204,12 +207,20 @@ function App() {
 
   }
 
+  function authListener(){
+    onAuthStateChanged(auth, (user) => {
+      dispatcher(setUserID(user.uid))
+
+    })
+  }
+
   return (
     <div className="App">
       <Navbar></Navbar>
       <div className={(editMode && !previewMode) ? "darkTheme":""}>
         <DisplayPage></DisplayPage>
       </div>
+      <AuthMenu></AuthMenu>
     </div>
   );
 }

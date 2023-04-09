@@ -75,9 +75,16 @@ const dbslice = createSlice({
         sidenavHoverItemID: null,
         // The type of item being dragged determines the type of drop and how the bottom bars are displayed
         dragItemType: null,
+        userId: null,
     },
     reducers: {
         
+        // #region auth
+        setUserID(state, action){
+            state.userId = action.payload;
+        },
+        // #endregion auth
+
         // #region loading data
         // The loading data actions put data into the store when it is loaded from the database
 
@@ -670,5 +677,7 @@ export const {addElement, deleteElement, copyElement} = dbslice.actions;
 export const {sidenavDragStart, sidenavDragEnd, sidenavDragOver} = dbslice.actions;
 // Helper actions
 export const {updateItemInfo, selectFirst} = dbslice.actions;
+// Auth actions
+export const {setUserID} = dbslice.actions;
 
 // #endregion exports

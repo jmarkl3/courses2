@@ -13,6 +13,7 @@ const appSlice = createSlice({
         editMode: true,
         // When this changes the element edit component will minimize or expand based on the value
         minimizeAll: false,
+        showAuthMenu: false,
     },
     reducers: {
         // Determines if the sidenav will show along with other corresponding css classes
@@ -36,10 +37,14 @@ const appSlice = createSlice({
         },
         togglePreviewMode(state, action) {
             state.previewMode = !state.previewMode;
+        },
+        toggleShowAuthMenu(state, action) {
+            console.log("toggleShowAuthMenu")
+            state.showAuthMenu = !state.showAuthMenu;
         }
 
 
     }
 })
 export const appSliceReducer = appSlice.reducer;
-export const {setSideNavOpen, setPreviewMode, setAdminMode, setEditMode, toggleMinimizeAll, togglePreviewMode} = appSlice.actions;
+export const {setSideNavOpen, setPreviewMode, setAdminMode, setEditMode, toggleMinimizeAll, togglePreviewMode, toggleShowAuthMenu} = appSlice.actions;
