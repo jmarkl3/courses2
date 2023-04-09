@@ -9,9 +9,7 @@ import { ref } from 'firebase/database';
 import "./Themes.css"
 
 /*
-
-  rich text editor
-
+  
   user data
     auth
     saves
@@ -46,6 +44,11 @@ import "./Themes.css"
 /*
   ________________________________________________________________________________
   Misc notes
+
+  question parser
+    paste question text from page and it will parse what is input into a multiple choice element
+
+  video element display height width ratio css from other app
 
   when creating a new course there are some initial functinality that could be looked at
 

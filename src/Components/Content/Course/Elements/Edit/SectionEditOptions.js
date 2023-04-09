@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { toggleMinimizeAll, togglePreviewMode } from '../../../../App/AppSlice';
-import { getItem, objectToArray } from '../../../../App/functions';
-import ConfirmationBox from '../../../../Utils/ConfirmationBox';
-import Element from './Element.js';
-import { addElement, copySection, deleteSection, updateItemInfo } from '../../../../App/DbSlice';
+import { toggleMinimizeAll, togglePreviewMode } from '../../../../../App/AppSlice';
+import { getItem, objectToArray } from '../../../../../App/functions';
+import ConfirmationBox from '../../../../../Utils/ConfirmationBox';
+import Element from '../Element.js';
+import { addElement, copySection, deleteSection, updateItemInfo } from '../../../../../App/DbSlice';
 
 function SectionEditOptions() {
     const courseData = useSelector((state) => state.dbslice.courseData);

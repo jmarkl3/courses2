@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import "./ElementDisplayBlock.css"
 import MulltipleChoiceDisplay from './MulltipleChoiceDisplay'
+import HTMLReactParser from 'html-react-parser'
 
 function ElementDisplayBlock({elementData}) {
   
@@ -15,8 +16,8 @@ function ElementDisplayBlock({elementData}) {
   const dispatcher = useDispatch()
 
   useEffect(() => {
-    console.log ("elementData")
-    console.log (elementData)
+    // console.log ("elementData")
+    // console.log (elementData)
   }, [])
 
   // After 500ms of inactivity after typing into the response box save the result
@@ -32,17 +33,23 @@ function ElementDisplayBlock({elementData}) {
 
   }
 
+  
   function displayContent(){
     
     if(elementData?.type === "Text"){
         return (
             <div className='elementViewDisplay'>
-                <div className='elementTextDisplay'>
+                {/* <div className='elementTextDisplay'>
                   {elementData?.content}
+                </div> */}
+                <div className='richText'>
+                {HTMLReactParser(elementData?.content)}
+
                 </div>
-                {/* <pre className='elementTextDisplay'>
-                   {HTMLReactParser(elementData?.content)}
-                </pre> */}
+                <div className='elementTextDisplay'>
+                </div>
+                   {/* {{elementData?.content} */}
+                   {/* {console.log(HTMLReactParser(elementData?.content))} */}
             </div>
         )
     }

@@ -4,6 +4,8 @@ import expandIcon from "../../../../../Images/expandIcon.png"
 import ConfirmationBox from '../../../../../Utils/ConfirmationBox'
 import { addElement, copyElement, deleteElement, updateItemInfo } from '../../../../../App/DbSlice'
 import MultipleChoiceEdit from './MultipleChoiceEdit'
+import { CKEditor } from 'ckeditor4-react'
+// import { CKEditor } from 'ckeditor5-react'
 
 function ElementEditBlock({elementData}) {
   const [expanded, setExpanded] = useState(true)
@@ -86,14 +88,26 @@ function ElementEditBlock({elementData}) {
       return
     dispacher(updateItemInfo({chapterID: selectedChapterID, sectionID: selectedSectionID, elementID: elementData.id, type: propertyName, value: propertyValue}))
   }
+  
+  const updateEditorContentTimer = useRef()
+  function elemetEditorContentChanged(event){
+    clearTimeout(updateEditorContentTimer.current)
+    updateEditorContentTimer.current = setTimeout(() => {
+      dispacher(updateItemInfo({chapterID: selectedChapterID, sectionID: selectedSectionID, elementID: elementData.id, type: "content", value: event.editor.getData()}))
+    }, 1000)
+  }
+
   function displayContent(){
     if (elementData?.type === "Text")
         return (
             <div className='elementTextDisplay'>
-              <textarea onChange={elemetContentChanged} ref={contentInputRef} defaultValue={elementData?.content}></textarea>
-                {/* <Tiptap elementData={elementData} elemetContentChanged={elemetContentChanged}></Tiptap>                     */}
+              <CKEditor
+                initData={elementData?.content}
+                onChange={elemetEditorContentChanged}                                 
+            />
+              {/* <textarea onChange={elemetContentChanged}  defaultValue={elementData?.content}></textarea> */}
+              {/* <Tiptap elementData={elementData} elemetContentChanged={elemetContentChanged}></Tiptap>                     */}
             </div>
-            // <textarea defaultValue={elementData?.content} ref={contentInputRef} onChange={elemetContentChanged} placeholder="Message to display"></textarea>
         )
     if (elementData?.type === "Title" || elementData?.type === "Title 2" || elementData?.type === "Title 3")
         return (
@@ -233,7 +247,6 @@ function ElementEditBlock({elementData}) {
               <option>Multiple Choice</option>
               <option>Text Input</option>
               <option>Input Field</option>
-              <option>Input Form</option>
           </select>
           <button onClick={confirmDelete}>Delete</button>
           <button onClick={copyElementFunction}>Copy</button>

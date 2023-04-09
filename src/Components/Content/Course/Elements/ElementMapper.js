@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { getItem, objectToArray } from '../../../../App/functions';
 import ConfirmationBox from '../../../../Utils/ConfirmationBox';
 import Element from './Element.js';
-import SectionEditOptions from './SectionEditOptions';
+import SectionEditOptions from './Edit/SectionEditOptions';
 
 function ElementMapper() {
     const courseData = useSelector((state) => state.dbslice.courseData);
