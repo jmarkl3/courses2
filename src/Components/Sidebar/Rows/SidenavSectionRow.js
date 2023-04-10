@@ -12,6 +12,7 @@ function SidenavSectionRow({itemData, chapterID, setSectionRenaming}) {
   const [elementRenaming, setElementRenaming] = useState()
   const selectedSectionID = useSelector((state) => state.dbslice.selectedSectionID);
   const dragItemType = useSelector((state) => state.dbslice.dragItemType);
+  const editMode = useSelector((state) => state.appslice.editMode);
   const dispatcher = useDispatch()
 
   // Determines if the items are shown or hidden
@@ -116,13 +117,15 @@ function SidenavSectionRow({itemData, chapterID, setSectionRenaming}) {
         className={`sidenavRowInner ${(selectedSectionID === itemData?.id) && "selectedRow"}`} 
         onClick={selectSectionFunction}
       >
-        <div 
-          className='rowExpandButton' 
-          onClick={toggleExpended}
-          title={expanded ? "Hide Elements" : "Show Elements"}
-        >
-          {expanded ? "▽" : "▷"}
-        </div>
+        {editMode && 
+          <div 
+            className='rowExpandButton' 
+            onClick={toggleExpended}
+            title={expanded ? "Hide Elements" : "Show Elements"}
+          >
+            {expanded ? "▽" : "▷"}
+          </div>
+        }
         {renaming ? 
           <div className='renamingField' onClick={dontClickThrough}>
             <input 
@@ -135,15 +138,19 @@ function SidenavSectionRow({itemData, chapterID, setSectionRenaming}) {
           :
           itemData?.name
         }
-        <HamburgerMenu>
-          <div className='hamburgerMenuOption' onClick={copySectionFunction}>Copy</div>
-          <div className='hamburgerMenuOption' onClick={editName}>Rename</div>
-          <div className='hamburgerMenuOption' onClick={()=>setConfirmDeleteMessage(`Delete section ${itemData.name}`)}>Delete</div>          
-          <div className='hamburgerMenuOption' onClick={addElementFunction}>Add Element</div>
-        </HamburgerMenu>
+        <>
+        {editMode && 
+          <HamburgerMenu>
+            <div className='hamburgerMenuOption' onClick={copySectionFunction}>Copy</div>
+            <div className='hamburgerMenuOption' onClick={editName}>Rename</div>
+            <div className='hamburgerMenuOption' onClick={()=>setConfirmDeleteMessage(`Delete section ${itemData.name}`)}>Delete</div>          
+            <div className='hamburgerMenuOption' onClick={addElementFunction}>Add Element</div>
+          </HamburgerMenu>
+        }
+        </>
       </div>
       <DragDropIndicatorBar itemID={itemData.id}></DragDropIndicatorBar>
-      {expanded && itemArray.map(section => (
+      {editMode && expanded && itemArray.map(section => (
         <SidenavElementRow 
           itemData={section} 
           key={section?.id} 

@@ -12,6 +12,8 @@ function SidenavChapterRow({itemData}) {
   const [renaming, setRenaming] = useState()
   const [sectionRenaming, setSectionRenaming] = useState()
   const selectedChapterID = useSelector((state) => state.dbslice.selectedChapterID);
+  const editMode = useSelector((state) => state.appslice.editMode);
+  const previewMode = useSelector((state) => state.appslice.previewMode);
   const dispatcher = useDispatch()
 
   // Determines if the items are shown or hidden
@@ -116,13 +118,15 @@ function SidenavChapterRow({itemData}) {
           :
           itemData?.name
         }
-        <HamburgerMenu>
-          <div className='hamburgerMenuOption' onClick={()=>dispatcher(copyChapter(itemData))}>Copy</div>
-          <div className='hamburgerMenuOption' onClick={editName}>Rename</div>
-          <div className='hamburgerMenuOption' onClick={()=>setConfirmDeleteMessage(`Delete chapter ${itemData.name}`)}>Delete</div>
-          <div className='hamburgerMenuOption' onClick={addChapterFunction}>Add Chapter</div>
-          <div className='hamburgerMenuOption' onClick={addSectionFunction}>Add Section</div>
-        </HamburgerMenu>
+        {editMode &&
+          <HamburgerMenu>
+            <div className='hamburgerMenuOption' onClick={()=>dispatcher(copyChapter(itemData))}>Copy</div>
+            <div className='hamburgerMenuOption' onClick={editName}>Rename</div>
+            <div className='hamburgerMenuOption' onClick={()=>setConfirmDeleteMessage(`Delete chapter ${itemData.name}`)}>Delete</div>
+            <div className='hamburgerMenuOption' onClick={addChapterFunction}>Add Chapter</div>
+            <div className='hamburgerMenuOption' onClick={addSectionFunction}>Add Section</div>
+          </HamburgerMenu>
+        }
 
       </div>
       <DragDropIndicatorBar itemID={itemData.id}></DragDropIndicatorBar>

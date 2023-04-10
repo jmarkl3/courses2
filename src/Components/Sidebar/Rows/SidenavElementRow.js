@@ -12,6 +12,7 @@ function SidenavElementRow({itemData, chapterID, sectionID, setElementRenaming, 
   const [renaming, setRenaming] = useState()
   const selectedElementID = useSelector((state) => state.dbslice.selectedElementID);
   const dragItemType = useSelector((state) => state.dbslice.dragItemType);
+  const editMode = useSelector((state) => state.appslice.editMode);
   const dispatcher = useDispatch()
 
   // Copy the element
@@ -103,11 +104,13 @@ function SidenavElementRow({itemData, chapterID, sectionID, setElementRenaming, 
           :
           itemData?.name
         }
-        <HamburgerMenu>
+        {editMode &&
+          <HamburgerMenu>
           <div className='hamburgerMenuOption' onClick={copyElementFunction}>Copy</div>
           <div className='hamburgerMenuOption' onClick={editName}>Rename</div>
           <div className='hamburgerMenuOption' onClick={()=>setConfirmDeleteMessage(`Delete element ${itemData?.name}`)}>Delete</div> 
-        </HamburgerMenu>
+          </HamburgerMenu>
+        }
       </div>
       <DragDropIndicatorBar itemID={itemData.id}></DragDropIndicatorBar>
       <ConfirmationBox
