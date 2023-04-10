@@ -4,7 +4,7 @@ import "./ElementDisplayBlock.css"
 import MulltipleChoiceDisplay from './Components/MulltipleChoiceDisplay'
 import HTMLReactParser from 'html-react-parser'
 import { database, saveUserResponse } from '../../../../../App/DbSlice'
-import { getUserData } from '../../../../../App/functions'
+import { getUserData, isEmptyString } from '../../../../../App/functions'
 import SaveIndicator from './Components/SaveIndicator'
 import { ref, set } from 'firebase/database'
 
@@ -56,6 +56,10 @@ function ElementDisplayBlock({elementData}) {
         response: response,
         elementData: elementData,
     }
+
+    // If there is no response then set the responseData to null (will remove that response from the database)
+    if(isEmptyString(response))
+        responseData = null    
 
     // Fetching from random API to see if there is an internet connection
     fetch("https://v2.jokeapi.dev/joke/Any ").then(res => {

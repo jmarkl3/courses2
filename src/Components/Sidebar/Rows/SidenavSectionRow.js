@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { addElement, copySection, deleteSection, selectChapter, selectFirst, selectSection, sidenavDragEnd, sidenavDragOver, sidenavDragStart, updateItemInfo } from '../../../App/DbSlice.js'
+import { addElement, copySection, deleteSection, selectChapter, selectFirst, selectSection, selectSectionIfComplete, selectSectionIfValid, sidenavDragEnd, sidenavDragOver, sidenavDragStart, updateItemInfo } from '../../../App/DbSlice.js'
 import { dontClickThrough, objectToArray } from '../../../App/functions.js'
 import ConfirmationBox from '../../../Utils/ConfirmationBox.js'
 import DragDropIndicatorBar from '../../../Utils/DragDropIndicatorBar.js'
@@ -14,6 +14,7 @@ function SidenavSectionRow({itemData, chapterID, setSectionRenaming}) {
   const selectedSectionID = useSelector((state) => state.dbslice.selectedSectionID);
   const dragItemType = useSelector((state) => state.dbslice.dragItemType);
   const editMode = useSelector((state) => state.appslice.editMode);
+  const adminMode = useSelector((state) => state.appslice.adminMode);
   const dispatcher = useDispatch()
 
   // Determines if the items are shown or hidden
@@ -102,7 +103,10 @@ function SidenavSectionRow({itemData, chapterID, setSectionRenaming}) {
   }
 
   function selectSectionFunction(){    
-    dispatcher(selectFirst({chapterID: chapterID, sectionID: itemData?.id}))
+    if(editMode || adminMode)
+      dispatcher(selectFirst({chapterID: chapterID, sectionID: itemData?.id}))
+    else
+      dispatcher(selectSectionIfValid({sectionID: itemData?.id}))    
 
   }
 
@@ -118,6 +122,7 @@ function SidenavSectionRow({itemData, chapterID, setSectionRenaming}) {
         className={`sidenavRowInner ${(selectedSectionID === itemData?.id) && "selectedRow"}`} 
         onClick={selectSectionFunction}
       >
+        
         {editMode && 
           <div 
             className='rowExpandButton' 
@@ -127,6 +132,7 @@ function SidenavSectionRow({itemData, chapterID, setSectionRenaming}) {
             {expanded ? "▽" : "▷"}
           </div>
         }
+        
         {renaming ? 
           <div className='renamingField' onClick={dontClickThrough}>
             <input 
@@ -139,18 +145,21 @@ function SidenavSectionRow({itemData, chapterID, setSectionRenaming}) {
           :
           itemData?.name
         }
+        
         <>
-        {editMode ?
-          <HamburgerMenu>
-            <div className='hamburgerMenuOption' onClick={copySectionFunction}>Copy</div>
-            <div className='hamburgerMenuOption' onClick={editName}>Rename</div>
-            <div className='hamburgerMenuOption' onClick={()=>setConfirmDeleteMessage(`Delete section ${itemData.name}`)}>Delete</div>          
-            <div className='hamburgerMenuOption' onClick={addElementFunction}>Add Element</div>
-          </HamburgerMenu>
-          :
-          <TimeDisplay sectionData={itemData} chapterID={chapterID}></TimeDisplay>
-        }
+          {editMode ?
+            <HamburgerMenu>
+              <div className='hamburgerMenuOption' onClick={copySectionFunction}>Copy</div>
+              <div className='hamburgerMenuOption' onClick={editName}>Rename</div>
+              <div className='hamburgerMenuOption' onClick={()=>setConfirmDeleteMessage(`Delete section ${itemData.name}`)}>Delete</div>          
+              <div className='hamburgerMenuOption' onClick={addElementFunction}>Add Element</div>
+            </HamburgerMenu>
+            :
+            <TimeDisplay sectionData={itemData} chapterID={chapterID}></TimeDisplay>
+            // <div></div>
+          }
         </>
+        
       </div>
       <DragDropIndicatorBar itemID={itemData.id}></DragDropIndicatorBar>
       {editMode && expanded && itemArray.map(section => (
@@ -167,7 +176,7 @@ function SidenavSectionRow({itemData, chapterID, setSectionRenaming}) {
         message={confirmDeleteMessage}
         cancel={() => {setConfirmDeleteMessage()}}
         confirm={() => {deleteSectionFunction()}}
-      ></ConfirmationBox>
+      ></ConfirmationBox> 
     </div>
   )
 }

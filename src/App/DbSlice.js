@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import {initializeApp} from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { get, getDatabase, push, ref, remove, set, update } from "firebase/database";
-import { gePreviousItem, getFirstItem, getItem, getLastItemID, getNextItem, insertItem, newIDsObject, nItemsInObject, objectToArray, removeItem, removeUndefined } from "./functions";
+import { gePreviousItem, getFirstItem, getItem, getLastItemID, getNextItem, getUserData, insertItem, newIDsObject, nItemsInObject, objectToArray, removeItem, removeUndefined } from "./functions";
 
 // #region firebase config
 
@@ -89,19 +89,19 @@ const dbslice = createSlice({
         setUserData(state, action){
             state.userData = action.payload;
         },
-        /**
-         * This saves the amount of time in seconds that a user has spend in the specified section
-         */
-        saveRemainingSectionTime(state, action){
-            if(!action.payload.sectionID || !action.payload.chapterID || !action.payload.currentTime){
+        // This saves the user's response to a section
+        // var locationString = "coursesApp/userData/"+state.userID+"/responses/"+state.selectedCourseID+"/"+action.payload.chapterID+"/"+action.payload.sectionID+"/"+action.payload.property
+        saveUserSectionData(state, action){
+            if(!action.payload.sectionID || !action.payload.chapterID || action.payload.value == undefined || !action.payload.property){
                 console.log("Error: saveRemainingSectionTime: missing data")
                 return
             }
             // This is the location that the remaining time will be saved
-            var locationString = "coursesApp/userData/"+state.userID+"/sectionTimes/"+state.selectedCourseID+"/"+action.payload.chapterID+"/"+action.payload.sectionID
+            var locationString = "coursesApp/userData/"+state.userID+"/responses/"+state.selectedCourseID+"/"+action.payload.chapterID+"/"+action.payload.sectionID+"/"+action.payload.property
             // Save the remaining time in the db
-            set(ref(database, locationString), action.payload.currentTime)
+            set(ref(database, locationString), action.payload.value)
         },
+        
 
         // #endregion user data
 
@@ -190,6 +190,36 @@ const dbslice = createSlice({
                 return
             state.selectedElementID = firstElement.id
             
+        },
+        selectSectionIfValid(state, action) {
+            state.selectedSectionID = action.payload.sectionID
+            // Look into the userData to see if the specified section has the complted property set to true
+            var sectionIsCompleted = getUserData(state.userData, "responses/"+state.selectedCourseID+"/"+state.selectedChapterID+"/"+action.payload.sectionID+"/completed")
+            console.log("sectionIsCompleted")
+            console.log(sectionIsCompleted)
+            return
+            // If it is select it
+            if(sectionIsCompleted){
+                state.selectedSectionID = action.payload.sectionID
+            }
+
+            // Check to see if the index is the one after the index of the last completed section
+            var chapter = getItem(state.courseData, state.selectedChapterID)
+            var sectionArray = objectToArray(chapter.items)
+            var previousCompleted = false            
+            sectionArray.forEach((section, index) => {
+                // If the previous section was completed and the section is found and select it
+                if(previousCompleted && section.id == action.payload.sectionID){
+                    state.selectedSectionID = action.payload.sectionID
+                }
+                // Set the flag based on the section is completed property
+                if(getUserData(state.userData, "responses/"+state.selectedCourseID+"/"+state.selectedChapterID+"/"+section.id+"/completed"))
+                    previousCompleted = true
+                else 
+                    previousCompleted = false
+                
+            })
+
         },
         selectNextSection(state, action) {
             var chapterID = state.selectedChapterID
@@ -740,7 +770,7 @@ export const dbsliceReducer = dbslice.reducer;
 // Loading actions
 export const {setCourseData, setCoursesData} = dbslice.actions;
 // Selection actions
-export const {selectCourse, selectChapter, selectSection, selectElement, selectNextSection, selectPreviousSection} = dbslice.actions;
+export const {selectCourse, selectChapter, selectSection, selectElement, selectNextSection, selectPreviousSection, selectSectionIfValid} = dbslice.actions;
 // Course actions
 export const {addCourse, deleteCourse, copyCourse, updateCourseInfo} = dbslice.actions;
 // Chapter actions
@@ -754,6 +784,6 @@ export const {sidenavDragStart, sidenavDragEnd, sidenavDragOver} = dbslice.actio
 // Helper actions
 export const {updateItemInfo, selectFirst} = dbslice.actions;
 // User Data actions
-export const {setUserID, setUserData, saveRemainingSectionTime} = dbslice.actions;
+export const {setUserID, setUserData, saveUserSectionData} = dbslice.actions;
 
 // #endregion exports

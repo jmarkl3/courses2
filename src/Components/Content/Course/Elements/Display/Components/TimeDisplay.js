@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import "./ElementDisplayComponents.css"
-import { saveRemainingSectionTime } from '../../../../../../App/DbSlice'
+import { saveRemainingSectionTime, saveRemainingSectionTime2, saveUserSectionData } from '../../../../../../App/DbSlice'
 import { getUserData } from '../../../../../../App/functions'
 
 function TimeDisplay({sectionData, chapterID, viewOnly, setRemainingTime}) {
     const [currentTime, setCurrentTime] = useState(0)
-    const currentTimetRef = useRef(0)
+    const currentTimeRef = useRef(0)
     const sectionActiveRef = useRef()
     const sectionRequiredTimeRef = useRef(0)
     const selectedSectionID = useSelector(state => state.dbslice.selectedSectionID)
@@ -18,7 +18,6 @@ function TimeDisplay({sectionData, chapterID, viewOnly, setRemainingTime}) {
 
     // Gets sectionData?.requiredTime, listens for visibility changes, and saves the time on component dismount
     useEffect(()=>{
-        
         leavePageListener()
 
         // A return in useEffects runs on dismount
@@ -27,7 +26,6 @@ function TimeDisplay({sectionData, chapterID, viewOnly, setRemainingTime}) {
     },[])
     // Gets sectionData?.requiredTime
     useEffect(()=>{
-
         // If the section has a required time, use that
         if(sectionData?.requiredTime)
             sectionRequiredTimeRef.current = sectionData?.requiredTime
@@ -47,18 +45,24 @@ function TimeDisplay({sectionData, chapterID, viewOnly, setRemainingTime}) {
             pauseTimer()        
 
     },[selectedSectionID, sectionData])
-    
+
     // When the user data changes (and on start) get the remaining time from userData
     useEffect(() => {
         // Get the time spent in this section from userData
-        var userCurrentTime = getUserData(userData, "sectionTimes/"+selectedCourseID+"/"+chapterID+"/"+sectionData?.id)
+        //var userCurrentTime = getUserData(userData, "sectionTimes/"+selectedCourseID+"/"+chapterID+"/"+sectionData?.id)
+        var userCurrentTime = getUserData(userData, "responses/"+selectedCourseID+"/"+chapterID+"/"+sectionData?.id+"/sectionTime")
         // If a time value was found set the state and ref to it
-        if(userCurrentTime){
-            currentTimetRef.current = userCurrentTime
-            setCurrentTime(currentTimetRef.current)
+        
+        console.log("responses/"+selectedCourseID+"/"+chapterID+"/"+sectionData?.id+"/sectionTime")
+        console.log("userCurrentTime " +sectionData?.name)
+        console.log(userCurrentTime)
+        if(userCurrentTime){            
+            currentTimeRef.current = userCurrentTime
         }
+        setCurrentTime(currentTimeRef.current)
+        console.log(currentTimeRef.current)
 
-    },[userData])
+    },[userData, chapterID, sectionData])
 
     /**
      * Adds a listener to the window to detect when the user changes tabs or closes the browser
@@ -115,14 +119,13 @@ function TimeDisplay({sectionData, chapterID, viewOnly, setRemainingTime}) {
         if(viewOnly)
             return
         // If the timer is active save the current remaining time in userData. Use the sectionData?.id and chapterID props because the selectedSectionID may not correspond ot this one                
-        dispacher(saveRemainingSectionTime({sectionID: sectionData?.id, chapterID: chapterID, currentTime: currentTimetRef.current}))
+        dispacher(saveUserSectionData({sectionID: sectionData?.id, chapterID: chapterID, value: currentTimeRef.current, property: "sectionTime"}))
         
-
         // Clear this so the timer doesn't keep incrementing
         clearTimeout(timerTimeoutRef.current)
 
-        currentTimetRef.current = 0
-        setCurrentTime(currentTimetRef.current)
+        currentTimeRef.current = 0
+        setCurrentTime(currentTimeRef.current)
     }
 
     /**
@@ -130,10 +133,10 @@ function TimeDisplay({sectionData, chapterID, viewOnly, setRemainingTime}) {
      */
     function incrementTime(){
         // Increment this in a ref because the timeout doesn't have access to the current state
-        currentTimetRef.current = currentTimetRef.current + 1
+        currentTimeRef.current = currentTimeRef.current + 1
         
         // Set the state to the new value so it displays
-        setCurrentTime(currentTimetRef.current)
+        setCurrentTime(currentTimeRef.current)
 
         // If the timer is no longer active, stop the timer
         if(!activeRef.current)
@@ -151,7 +154,15 @@ function TimeDisplay({sectionData, chapterID, viewOnly, setRemainingTime}) {
      */
     function countdownTimeString(){
         var requiredTime = sectionRequiredTimeRef.current
-        var timeLeft = requiredTime - currentTimetRef.current
+        var timeLeft = requiredTime - currentTimeRef.current
+
+        console.log(sectionRequiredTimeRef.current)
+        console.log(currentTimeRef.current)
+
+        // When the user completes the time requirement save it in userData 
+        // if(timeLeft == 0)
+        //     syncTime()
+        // Sets an external state value so it can be checked
         setRemainingTime(timeLeft)
 
         return timeString(timeLeft)

@@ -12,10 +12,18 @@ import { onAuthStateChanged } from 'firebase/auth';
 
 /*  
 
-  next section
-    button goes to next section
-    checks input status
-    checks timer status
+  check user status before allowing selction of section in sidebar 
+    can set completion status when user completes section
+    get index of furthest completed, get index of destination, compare
+    or could only let complete oned be clickable
+      get userData and look to see if the user has completed the section, check that in on click
+      maybe set a flag for the next one too
+    
+  message fade component
+    use it where the save indicator is
+    and the next section button message
+
+
 
   timed camera
 

@@ -1,16 +1,16 @@
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import "./ElementDisplayComponents.css"
-import { useDispatch } from 'react-redux'
-import { selectNextSection, selectPreviousSection } from '../../../../../../App/DbSlice'
+import { useDispatch, useSelector } from 'react-redux'
+import { saveUserSectionData, selectNextSection, selectPreviousSection } from '../../../../../../App/DbSlice'
 import TimeDisplay from './TimeDisplay'
 import SaveIndicator from './SaveIndicator'
+import { getUserData, objectToArray } from '../../../../../../App/functions'
 
 function SectionButtons({sectionData, chapterID}) {
     const [remainingTime, setRemainingTime] = useState(0)
     const [message, setMessage] = useState()
     const [messageRefreshCount, seMessageRefreshCount] = useState(0)
     const dispacher = useDispatch()
-    console.log(sectionData)
 
   /*
     
@@ -20,23 +20,50 @@ function SectionButtons({sectionData, chapterID}) {
       display timer if time not met
 
   */
-  
+    const userData = useSelector(state => state.dbslice.userData)
+    const responsePath = useSelector(state => state.dbslice.responsePath)    
+    /**
+     * Check to see if the user has answered all questions and if there is still remaining time, aff all requirements are met go to the next section
+     */
     function nextSection(){
+        // Check to see if the user has answered all questions
+        var userResponseData = getUserData(userData, responsePath)
+        if(!allInputsComplete(userResponseData, sectionData)){
+            setMessage("Please respond to all questions")
+            seMessageRefreshCount(messageRefreshCount + 1)
+            return
+        }
+        
         // Check to see if there is still remaining time
         if(remainingTime > 0){
             setMessage("There is still remaining time")
-            seMessageRefreshCount(messageRefreshCount+1)
+            seMessageRefreshCount(messageRefreshCount + 1)
             return
-        }
-        // Check to see if the user has answered all questions
-        if(remainingTime > 0){
-            setMessage("thre are still some questions to answer")
-            seMessageRefreshCount(messageRefreshCount+1)
-            return
-        }
+        }        
+
+        // Saving the completion status to show the user has completed the sectin
+        dispacher(saveUserSectionData({sectionID: sectionData?.id, chapterID: chapterID, value: true, property: "complete"}))
+        // Save the index to easily check the index of the last completed section
+        // dispacher(saveUserSectionData({sectionID: sectionData?.id, chapterID: chapterID, value: sectionData?.index, property: "index"}))
 
         // Go to the next section
         dispacher(selectNextSection())
+    }
+
+    /**
+     * Check to see if all of the elements that require input have a corresponding userData entry
+     */
+
+    function allInputsComplete(userResponseData, sectionData){
+        var itemsArray = objectToArray(sectionData.items)
+        var allComplete = true
+        itemsArray.forEach(item => {
+            if(item?.type === "Input Field" || item?.type === "Text Input" || item?.type === "Multiple Choice"){
+                if(!userResponseData[item.id])
+                    allComplete = false
+            }
+        })        
+        return allComplete
     }
 
   return (
@@ -45,7 +72,9 @@ function SectionButtons({sectionData, chapterID}) {
             <TimeDisplay sectionData={sectionData} chapterID={chapterID} viewOnly setRemainingTime={setRemainingTime}></TimeDisplay>
         </div>
         <button onClick={()=>dispacher(selectPreviousSection())}>Back</button>
-        <SaveIndicator saveIndicatorMessage={message} saveIndicatorMessageCount={messageRefreshCount}></SaveIndicator>
+        <div className='sectionButtonMessage'>
+            <SaveIndicator saveIndicatorMessage={message} saveIndicatorMessageCount={messageRefreshCount}></SaveIndicator>
+        </div>
         <button onClick={nextSection}>Next</button>
     </div>
   )

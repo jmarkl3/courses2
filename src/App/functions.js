@@ -248,6 +248,10 @@ export function newID(){
     return Math.random().toString(36).substr(2, 9)+""+Date.now().toString(36);
     // Date.now().toString(36) + Math.floor(Math.pow(10, 12) + Math.random() * 9*Math.pow(10, 12)).toString(36)
 }
+export function isEmptyString(string){
+    if(!string) return true
+    if(typeof string === "string" && string.trim() === "") return true
+}
 
 // #endregion general helper functions
 
