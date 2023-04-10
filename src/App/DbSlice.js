@@ -89,6 +89,19 @@ const dbslice = createSlice({
         setUserData(state, action){
             state.userData = action.payload;
         },
+        /**
+         * This saves the amount of time in seconds that a user has spend in the specified section
+         */
+        saveRemainingSectionTime(state, action){
+            if(!action.payload.sectionID || !action.payload.chapterID || !action.payload.currentTime){
+                console.log("Error: saveRemainingSectionTime: missing data")
+                return
+            }
+            // This is the location that the remaining time will be saved
+            var locationString = "coursesApp/userData/"+state.userID+"/sectionTimes/"+state.selectedCourseID+"/"+action.payload.chapterID+"/"+action.payload.sectionID
+            // Save the remaining time in the db
+            set(ref(database, locationString), action.payload.currentTime)
+        },
 
         // #endregion user data
 
@@ -695,6 +708,6 @@ export const {sidenavDragStart, sidenavDragEnd, sidenavDragOver} = dbslice.actio
 // Helper actions
 export const {updateItemInfo, selectFirst} = dbslice.actions;
 // User Data actions
-export const {setUserID, setUserData} = dbslice.actions;
+export const {setUserID, setUserData, saveRemainingSectionTime} = dbslice.actions;
 
 // #endregion exports

@@ -8,6 +8,10 @@
     display: inline-block;
     position: relative;
 }
+.selectedEditElement{
+    border: 1px solid aquamarine;
+    box-shadow: 0 0px 8px aquamarine;
+}
 .elementDisplay textarea{
     max-width: calc(100% - 20px);
     min-width: calc(100% - 20px);    

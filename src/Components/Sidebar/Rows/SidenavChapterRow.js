@@ -13,7 +13,6 @@ function SidenavChapterRow({itemData}) {
   const [sectionRenaming, setSectionRenaming] = useState()
   const selectedChapterID = useSelector((state) => state.dbslice.selectedChapterID);
   const editMode = useSelector((state) => state.appslice.editMode);
-  const previewMode = useSelector((state) => state.appslice.previewMode);
   const dispatcher = useDispatch()
 
   // Determines if the items are shown or hidden

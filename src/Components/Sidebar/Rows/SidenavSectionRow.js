@@ -6,6 +6,7 @@ import ConfirmationBox from '../../../Utils/ConfirmationBox.js'
 import DragDropIndicatorBar from '../../../Utils/DragDropIndicatorBar.js'
 import HamburgerMenu from '../../../Utils/HamburgerMenu.js'
 import SidenavElementRow from './SidenavElementRow.js'
+import TimeDisplay from '../../Content/Course/Elements/Display/Components/TimeDisplay.js'
 function SidenavSectionRow({itemData, chapterID, setSectionRenaming}) {
   const [confirmDeleteMessage, setConfirmDeleteMessage] = useState()
   const [renaming, setRenaming] = useState()
@@ -139,13 +140,15 @@ function SidenavSectionRow({itemData, chapterID, setSectionRenaming}) {
           itemData?.name
         }
         <>
-        {editMode && 
+        {editMode ?
           <HamburgerMenu>
             <div className='hamburgerMenuOption' onClick={copySectionFunction}>Copy</div>
             <div className='hamburgerMenuOption' onClick={editName}>Rename</div>
             <div className='hamburgerMenuOption' onClick={()=>setConfirmDeleteMessage(`Delete section ${itemData.name}`)}>Delete</div>          
             <div className='hamburgerMenuOption' onClick={addElementFunction}>Add Element</div>
           </HamburgerMenu>
+          :
+          <TimeDisplay sectionData={itemData} chapterID={chapterID}></TimeDisplay>
         }
         </>
       </div>

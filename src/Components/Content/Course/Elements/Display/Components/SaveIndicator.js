@@ -36,7 +36,7 @@ function SaveIndicator({saveIndicatorMessage, saveIndicatorMessageCount}) {
   return (
     <>
         {!hidden &&
-            <div className={`saveIndicator ${fading ? "saveIndicatorFade":""}`}>
+            <div className={`saveIndicator ${fading ? "saveIndicatorFade":""} ${(saveIndicatorMessage === "Saved") ? "":"saveIndicatorError"}`}>
                 {saveIndicatorMessage}
             </div>
         }

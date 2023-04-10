@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { toggleMinimizeAll, togglePreviewMode } from '../../../../../../App/AppSlice';
 import { getItem, objectToArray } from '../../../../../../App/functions';
 import ConfirmationBox from '../../../../../../Utils/ConfirmationBox';
-import Element from '../../Element.js';
 import { addElement, copySection, deleteSection, updateItemInfo } from '../../../../../../App/DbSlice';
 
 function SectionEditOptions() {
@@ -32,7 +31,8 @@ function SectionEditOptions() {
     }
     const sectionTimeInputRef = useRef()
     function sectionTimeChange(){
-        dispacher(updateItemInfo({chapterID: selectedChapterID, sectionID: selectedSectionID, type: "time", value: sectionTimeInputRef.current?.value}))
+        // console.log("sectionTimeChange", sectionTimeInputRef.current?.value)
+        dispacher(updateItemInfo({chapterID: selectedChapterID, sectionID: selectedSectionID, type: "requiredTime", value: sectionTimeInputRef.current?.value}))
 
     }
     const sectionTypeInputRef = useRef()
@@ -76,7 +76,7 @@ function SectionEditOptions() {
                 <input 
                     placeholder='Section Time' 
                     title='The minimum amount of time the user will need to be in the section before the can proceed'
-                    defaultValue={sectionData?.time}
+                    defaultValue={sectionData?.requiredTime}
                     ref={sectionTimeInputRef}
                     onChange={sectionTimeChange}
                 ></input>
