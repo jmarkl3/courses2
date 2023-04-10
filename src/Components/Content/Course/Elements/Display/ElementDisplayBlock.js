@@ -44,6 +44,7 @@ function ElementDisplayBlock({elementData}) {
   // So the comoonent will rerender if if the message is the same
   const [saveIndicatorMessageCount, setSaveIndicatorMessageCount] = useState(0)
   function saveUserResponseFunction(response){
+    console.log(response)
     //dispatcher(saveUserResponse({elementData: elementData, response: response}))
     var locationString = 'coursesApp/userData/'+userID+'/responses/'+
         selectedCourseID+'/'+
@@ -148,11 +149,13 @@ function ElementDisplayBlock({elementData}) {
                     <select 
                         ref={responseSelectRef}
                         onChange={()=>saveUserResponseFunction(responseSelectRef.current.value)}
+                        defaultValue={userResponse}
+
                     >
                         {/* {console.log("elementData?.content?.split(",")")}
                         {console.log(elementData?.content2?.split(","))} */}
                         {elementData?.content2?.split(",").map(optionValue => (
-                            <option>{optionValue}</option>
+                            <option selected={userResponse === optionValue}>{optionValue}</option>
                         ))}
                     </select>
                     :

@@ -12,25 +12,22 @@ import { onAuthStateChanged } from 'firebase/auth';
 
 /*  
     
-  user data    
-    saved confirmation    
-
-  next section
-    button goes to next section
-    checks input status
-    checks timer status
-
   section timer
     save in edit mode
     display in view mode
     updates in view mode
     saves into user data
 
+  next section
+    button goes to next section
+    checks input status
+    checks timer status
+
+  timed camera
+
   account page
     current classes
     themes
-
-  timed camera
 
   multi language support
 
