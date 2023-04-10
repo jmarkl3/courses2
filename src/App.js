@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import './App.css';
-import { auth, database, setCourseData, setCoursesData, setUserID } from './App/DbSlice';
+import { auth, database, setCourseData, setCoursesData, setUserData, setUserID } from './App/DbSlice';
 import DisplayPage from './Components/Content/DisplayPage';
 import Navbar from './Components/Navbar/Navbar';
 import { onValue } from 'firebase/database';
@@ -10,20 +10,15 @@ import "./Themes.css"
 import AuthMenu from './Components/Auth/AuthMenu';
 import { onAuthStateChanged } from 'firebase/auth';
 
-/*
-  
-  user data
-    auth css    
-    saves
-    displays
+/*  
+    
+  user data    
     saved confirmation    
 
-  account page
-    logout
-    current classes
-
-  themes on account page
-
+  next section
+    button goes to next section
+    checks input status
+    checks timer status
 
   section timer
     save in edit mode
@@ -31,10 +26,9 @@ import { onAuthStateChanged } from 'firebase/auth';
     updates in view mode
     saves into user data
 
-  next section
-    button goes to next section
-    checks input status
-    checks timer status
+  account page
+    current classes
+    themes
 
   timed camera
 
@@ -166,6 +160,7 @@ ________________________________________________________________________________
 
 function App() {  
   const selectedCourseID = useSelector(state => state.dbslice.selectedCourseID)
+  const userID = useSelector(state => state.dbslice.userID)
   const editMode = useSelector(state => state.appslice.editMode)
   const previewMode = useSelector(state => state.appslice.previewMode)
   const dispatcher = useDispatch()
@@ -175,6 +170,10 @@ function App() {
     authListener()
     loadCoursesData()
   }, [])
+
+  useEffect(() => {   
+    loadUserData()
+  }, [userID])
 
   // Load the data for the selected course
   useEffect(() => {   
@@ -209,9 +208,22 @@ function App() {
 
   function authListener(){
     onAuthStateChanged(auth, (user) => {
-      dispatcher(setUserID(user.uid))
+      dispatcher(setUserID(user?.uid))
 
     })
+  }
+
+  function loadUserData(){
+    if(!userID) return
+    onValue(ref(database, 'coursesApp/userData/'+userID), (snapshot) => {
+      const data = snapshot.val();   
+      setTimeout(() => {
+        dispatcher(setUserData(data))
+
+      }, 250)
+
+    })    
+
   }
 
   return (

@@ -11,7 +11,7 @@
 .elementViewDisplay iframe{
     padding: 20px 20px;
     width: calc(100% - 40px);
-    aspect-ratio:9/6;
+    aspect-ratio: 9 / 5;
 }
 .elementTextDisplay{
     white-space: pre-wrap ;
@@ -100,7 +100,7 @@
     transition: 3000ms;
     position: absolute;
     bottom: -20px;
-    right: 80px;
+    right: 0px;
     border-radius: 3px;
     padding: 2px 5px;
 }

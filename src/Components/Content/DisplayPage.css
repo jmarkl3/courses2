@@ -28,6 +28,7 @@
     border: 1px solid gray;
     padding: 40px;
     box-sizing: border-box;
+    position: relative;
 }
 .pageOuterNavOpen .pageInner{
     width: 90%;
@@ -85,4 +86,7 @@
     .displayPageInner{
         width:500px;
     }
+}
+.course{
+    position: relative;
 }

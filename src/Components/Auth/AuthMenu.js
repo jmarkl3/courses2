@@ -9,9 +9,10 @@ import { auth } from '../../App/DbSlice'
 
 function AuthMenu() {
   const showAuthMenu = useSelector(state => state.appslice.showAuthMenu)
+  const sideNavOpen = useSelector(state => state.appslice.sideNavOpen)
   const dispatcher = useDispatch()
 
-  const userId = useSelector(state => state.dbslice.userId)
+  const userID = useSelector(state => state.dbslice.userID)
   const [createNew, setCreateNew] = useState(true)
   const [errorMessage, setErrorMessage] = useState("")
   const emailInput = useRef()
@@ -67,63 +68,63 @@ function AuthMenu() {
     return (
         <>
             {showAuthMenu && 
-                <div className='authMenu'>
+                <div className={`authMenu ${sideNavOpen ? "sideNavAuthLeftAdjust":""}`}>
                     <div className='closeButton' onClick={()=>dispatcher(toggleShowAuthMenu())}>x</div>
                     <>
-        {(userId) ? 
-          <>
-            <div>Account Actions</div>
-            <button onClick={signOutUser}>Log Out</button>
-          </>
-          :
-          <>
-            <div 
-              className='authTitle'
-              title={"If the browser cache is cleared all local data will be lost.\nAn account allows data to be saved and used on multiple devices."}
-            >
-                {createNew ? "Create Account" : "Login"}
-              </div>         
-              <div>
-                <input placeholder='email'  ref={emailInput}></input>
-              </div>
-              <div>
-                <input placeholder='pass' type={"password"} ref={passInput}></input>
-              </div>
-              {createNew && <input placeholder='pass confirmation'></input>}
-              <div>
-                {
-                  createNew ?
-                  <button onClick={signUp}>Create Account</button>
-  
-                  :
-                  <button onClick={signIn}>Log In</button>
-                } 
-              </div>
-              <div className='loginBottomText'>
-                <div className='errorMessage'>
-                  {errorMessage}
-                </div>
-                {
-                    createNew ?
-                    <div>
-                        Already a member? 
-                        <a onClick={()=>creatingNew(false)}>
-                            Sign In
-                        </a>
-                    </div>
-                    :
-                    <div>
-                        New Here? 
-                        <a onClick={()=>creatingNew(true)}>
-                            Sign Up now
-                        </a>
-  
-                    </div>                
-                }
-              </div>
-          </>
-        }     
-      </>
+                        {(userID) ? 
+                        <>
+                            <div>Account Actions</div>
+                            <button onClick={signOutUser}>Log Out</button>
+                        </>
+                        :
+                        <>
+                            <div 
+                            className='authTitle'
+                            title={"If the browser cache is cleared all local data will be lost.\nAn account allows data to be saved and used on multiple devices."}
+                            >
+                                {createNew ? "Create Account" : "Login"}
+                            </div>         
+                            <div>
+                                <input placeholder='email'  ref={emailInput}></input>
+                            </div>
+                            <div>
+                                <input placeholder='pass' type={"password"} ref={passInput}></input>
+                            </div>
+                            {createNew && <input placeholder='pass confirmation'></input>}
+                            <div>
+                                {
+                                createNew ?
+                                <button onClick={signUp}>Create Account</button>
+                
+                                :
+                                <button onClick={signIn}>Log In</button>
+                                } 
+                            </div>
+                            <div className='loginBottomText'>
+                                <div className='errorMessage'>
+                                {errorMessage}
+                                </div>
+                                {
+                                    createNew ?
+                                    <div>
+                                        Already a member? 
+                                        <a onClick={()=>creatingNew(false)}>
+                                            Sign In
+                                        </a>
+                                    </div>
+                                    :
+                                    <div>
+                                        New Here? 
+                                        <a onClick={()=>creatingNew(true)}>
+                                            Sign Up now
+                                        </a>
+                
+                                    </div>                
+                                }
+                            </div>
+                        </>
+                        }     
+                    </>
                 </div>
             } 
         </>

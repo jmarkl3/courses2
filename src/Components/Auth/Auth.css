@@ -2,27 +2,17 @@
     position: fixed;
     top: calc(50% - 200px);
     left: calc(50% - 200px);
-    height: 400px;
     width: 400px;
-    background-color: gray;
-}
-.authMenu{ 
-    background-color: #101010;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    transition: 500ms;
     border-radius: 5px;
-    position: fixed;
-    top: calc(50vh - 200px);    
-    width: 450px;    
-    left: calc(50vw - 225px);
-    color: white;
-    box-sizing: border-box;
-    text-align: center;
-    padding-bottom: 10px;
-    box-shadow: 0 4px 8px black;
+    padding: 20px;
+    
 }
 .authMenu input{
     height: 32px;
     color: black;
-    background-image: linear-gradient(white, rgb(209, 209, 209));
     box-sizing: border-box;
     border-radius: 2px;
     margin: 4px;    
@@ -94,4 +84,7 @@
 .favColorInput input{
     width: calc(100% - 30px);    
     margin-left: 0;
+}
+.sideNavAuthLeftAdjust{
+    left: calc(50vw - 100px);
 }

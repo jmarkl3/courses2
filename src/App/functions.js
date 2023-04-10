@@ -197,3 +197,21 @@ export function newID(){
 
 // #endregion general helper functions
 
+// #region user data functions
+
+/**
+ * Returns the user data at the specified location from the database
+ * ex:  getUserData(userData, "responses/courseID/sectionID/elementID")
+ */
+export function getUserData(userData, path){
+    if(!userData || !path) return
+    var tempData = userData
+    var pathArray = path.split("/")
+    pathArray.forEach(item => {
+        if(tempData)
+            tempData = tempData[item]
+    })
+    return tempData
+}
+
+// #endregion user data functions

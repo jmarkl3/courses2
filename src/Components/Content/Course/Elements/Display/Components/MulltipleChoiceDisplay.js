@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { objectToArray } from '../../../../../App/functions'
+import { objectToArray } from '../../../../../../App/functions'
 // import { itemsArray, saveUserResponse } from '../../../../../App/DBSlice'
 
-function MulltipleChoiceDisplay({elementData, userResponse}) {
+function MulltipleChoiceDisplay({elementData, userResponse, saveUserResponseFunction}) {
     const [questionFeedback, setQustionFeedback] = useState()
     const [questionCorrect, setQuetionCorrect] = useState()
     const [selectedAnswerChoices, setselectedAnswerChoices] = useState()
@@ -13,44 +13,10 @@ function MulltipleChoiceDisplay({elementData, userResponse}) {
     useEffect(()=>{
         if(userResponse){
             //console.log("there is a user response")
-            setSelectedAnswer(getAnswerDataByID(userResponse?.content))
+            setSelectedAnswer(getAnswerDataByID(userResponse?.answerChoiceID))
         }
     },[userResponse])
 
-    /**
-     * Save the response in the db
-     */
-    function saveUserResponseFunction(answerID){      
-        // Create a response object
-        var responseObject = {
-            content: answerID
-        }
-        
-
-        // Save it in the db
-        //dispatcher(saveUserResponse({response: responseObject, elementID: elementData?.id}))
-        saveUserResponseLocal(responseObject)
-    }
-    function saveUserResponseLocal(responseObject){
-
-    }
-    function saveAnswerInDB(answerData){
-        ////console.log("savind answer response: "+answerData.id)
-        // Get the answerData and make sure there are no undefined values
-        var selectedAnswerID = answerData?.id
-        if(!selectedAnswerID)
-            selectedAnswerID = ""
-        var correct = answerData?.correct
-        if(!correct)
-            correct = true
-
-        const responseObject = {
-            content: selectedAnswerID,
-            correct: correct,
-        }
-
-        //dispatcher(saveUserResponse({response: responseObject, elementID: elementData?.id}))
-    }
     function getAnswerDataByID(answerID){
         var answerChoices = elementData.answerChoices
         if(!answerChoices){
@@ -77,10 +43,22 @@ function MulltipleChoiceDisplay({elementData, userResponse}) {
      */
     function selectedAnswer(answerData){
         setSelectedAnswer(answerData)        
-        saveUserResponseFunction(answerData.id)
+        saveUserResponseLocal(answerData)
 
     }
  
+    /**
+     * Makes a response object {correct: , answerChoiceID: } and calls the saveUserResponseFunction      
+     */
+    function saveUserResponseLocal(answerData){
+        var responseObject = {
+            correct: (answerData.correct == true || answerData.correct === "on") || false,
+            answerChoiceID: answerData.id,
+
+        }
+        saveUserResponseFunction(responseObject)
+    }
+
     /**
      * If the selected answer id matches it returns a class based on correct or incorrect
      */
@@ -112,7 +90,12 @@ function MulltipleChoiceDisplay({elementData, userResponse}) {
                 key={answerChoice.id} 
                 className={'answerChoiceDisplay '+selectedAnswerClass(answerChoice.id)} 
             >
-                <input type="radio" name={"question"+elementData.id} onChange={()=>selectedAnswer(answerChoice)} checked={answerIsSelected(answerChoice.id)}></input>
+                <input 
+                    type="radio" 
+                    name={"question"+elementData.id} 
+                    onChange={()=>selectedAnswer(answerChoice)} 
+                    checked={answerIsSelected(answerChoice.id)
+                }></input>
                 <div className='answerChoiceDisplayText'>
                     {answerChoice.content}
                 </div>

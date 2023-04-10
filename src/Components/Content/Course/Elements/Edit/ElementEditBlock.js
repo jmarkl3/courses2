@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import expandIcon from "../../../../../Images/expandIcon.png"
 import ConfirmationBox from '../../../../../Utils/ConfirmationBox'
 import { addElement, copyElement, deleteElement, updateItemInfo } from '../../../../../App/DbSlice'
-import MultipleChoiceEdit from './MultipleChoiceEdit'
+import MultipleChoiceEdit from './Components/MultipleChoiceEdit'
 import { CKEditor } from 'ckeditor4-react'
 // import { CKEditor } from 'ckeditor5-react'
 

@@ -13,6 +13,7 @@
   /* background-image: linear-gradient(rgba(128, 128, 128, 0), rgb(78, 78, 78)); */
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
   text-align: center;
+  transition: 500ms;
 }
 .sideNavLeftAdjust{
   left: calc(50vw + 0px);

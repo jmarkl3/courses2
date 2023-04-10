@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { insertItem, objectToArray } from '../../../../../App/functions'
+import { insertItem, objectToArray } from '../../../../../../App/functions'
 import { push, ref, set } from 'firebase/database'
 import { useDispatch, useSelector } from 'react-redux'
-import { database, updateItemInfo } from '../../../../../App/DbSlice'
+import { database, updateItemInfo } from '../../../../../../App/DbSlice'
 
 function MultipleChoiceEdit({elementData, contentInputRef, elemetContentChanged}) {
 

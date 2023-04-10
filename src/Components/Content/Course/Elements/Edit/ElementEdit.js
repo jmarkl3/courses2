@@ -9,7 +9,6 @@ function ElementEdit({elementData}) {
     const previewMode = useSelector((state) => state.appslice.previewMode);
     // If this is true the element displays as an edit block regardless of preview mode
     const [previewOverride, setPreviewOverride] = useState()
-    const sectionTypeRef = useRef()
 
     return (
         <>

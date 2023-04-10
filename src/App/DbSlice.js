@@ -76,14 +76,21 @@ const dbslice = createSlice({
         // The type of item being dragged determines the type of drop and how the bottom bars are displayed
         dragItemType: null,
         userId: null,
+        // This is used to get user resopnse data
+        responsePath: null,
+        saveStatus: null,
     },
     reducers: {
         
-        // #region auth
+        // #region user data
         setUserID(state, action){
-            state.userId = action.payload;
+            state.userID = action.payload;
+        },   
+        setUserData(state, action){
+            state.userData = action.payload;
         },
-        // #endregion auth
+
+        // #endregion user data
 
         // #region loading data
         // The loading data actions put data into the store when it is loaded from the database
@@ -107,15 +114,22 @@ const dbslice = createSlice({
         selectCourse(state, action) {
             // Set the selected course ID
             state.selectedCourseID = action.payload;
+
         },
         selectChapter(state, action) {
             state.selectedChapterID = action.payload;
+
         },
         selectSection(state, action) {
             state.selectedSectionID = action.payload;
+            state.responsePath = "responses/"+state.selectedCourseID+"/"+state.selectedChapterID+"/"+state.selectedSectionID
+
         },
         selectElement(state, action) {
             state.selectedElementID = action.payload;
+            // This is used to get user resopnse data
+            state.responsePath = "responses/"+state.selectedCourseID+"/"+state.selectedChapterID+"/"+state.selectedSectionID
+
         },
         selectFirst(state, action) {
             // If there is no course data, return
@@ -148,7 +162,10 @@ const dbslice = createSlice({
             if(!firstSection)
                 return
             state.selectedSectionID = firstSection.id
-            
+
+            // This is used to get user resopnse data
+            state.responsePath = "responses/"+state.selectedCourseID+"/"+firstChapter.id+"/"+firstSection.id
+
             // Get the first element in the chapter (or the specified one)
             var firstElement = null
             if(action?.payload?.sectionID && action?.payload?.chapterID && action?.payload?.elementID){
@@ -677,7 +694,7 @@ export const {addElement, deleteElement, copyElement} = dbslice.actions;
 export const {sidenavDragStart, sidenavDragEnd, sidenavDragOver} = dbslice.actions;
 // Helper actions
 export const {updateItemInfo, selectFirst} = dbslice.actions;
-// Auth actions
-export const {setUserID} = dbslice.actions;
+// User Data actions
+export const {setUserID, setUserData} = dbslice.actions;
 
 // #endregion exports

@@ -1,14 +1,16 @@
 .element{
     position: relative;   
-    display: inline-block; 
 }
 .topLeft{
     position: absolute;
     top: 0;
-    left: 0;
+    left: -90px;
     cursor: pointer;
     border: 1px solid rgba(175, 175, 175, 0.685);
     border-radius: 5px;
+}
+.topLeftPercent{
+    left: 5vw;
 }
 .bottomLeft{
     position: absolute;
