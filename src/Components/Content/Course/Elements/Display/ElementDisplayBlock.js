@@ -155,7 +155,12 @@ function ElementDisplayBlock({elementData}) {
                         {/* {console.log("elementData?.content?.split(",")")}
                         {console.log(elementData?.content2?.split(","))} */}
                         {elementData?.content2?.split(",").map(optionValue => (
-                            <option selected={userResponse === optionValue}>{optionValue}</option>
+                            <option 
+                                selected={userResponse === optionValue}
+                                key={optionValue.id}
+                            >
+                                {optionValue}
+                            </option>
                         ))}
                     </select>
                     :
@@ -193,7 +198,9 @@ function ElementDisplayBlock({elementData}) {
         {elementData?.type === "Input Field" ?
             <>
                 {displayContent()}
-                <SaveIndicator saveIndicatorMessage={saveIndicatorMessage} saveIndicatorMessageCount={saveIndicatorMessageCount}></SaveIndicator>
+                <div className='saveIndicator'>
+                    <SaveIndicator saveIndicatorMessage={saveIndicatorMessage} saveIndicatorMessageCount={saveIndicatorMessageCount}></SaveIndicator>
+                </div>
             </>
             :
             <div className='element'>

@@ -3,3 +3,26 @@
     right: 5px;
     top: 0px;
 }
+.sectionButtons{
+    position: absolute;    
+    bottom: -50px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+.sectionButtons button{
+    width: 100px;
+}
+.nextButtonTimer{
+    position: absolute;
+    top: -20px;
+    right: -5px;
+    width: 100px;
+    height: 20px
+}
+.nextButtonTimer .timeDisplay{
+    width: 100%;
+}
+.sectionButtonMessage{
+    
+}

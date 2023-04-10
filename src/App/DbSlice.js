@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import {initializeApp} from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { get, getDatabase, push, ref, remove, set, update } from "firebase/database";
-import { getFirstItem, getItem, getLastItemID, insertItem, newIDsObject, nItemsInObject, objectToArray, removeItem, removeUndefined } from "./functions";
+import { gePreviousItem, getFirstItem, getItem, getLastItemID, getNextItem, insertItem, newIDsObject, nItemsInObject, objectToArray, removeItem, removeUndefined } from "./functions";
 
 // #region firebase config
 
@@ -190,6 +190,52 @@ const dbslice = createSlice({
                 return
             state.selectedElementID = firstElement.id
             
+        },
+        selectNextSection(state, action) {
+            var chapterID = state.selectedChapterID
+            var sectionID = state.selectedSectionID
+
+            // Get the object with the sections in it
+            var chapterSections = getItem(state.courseData, chapterID).items
+            // Look for the section after the currently selected section
+            var nextSection = getNextItem(chapterSections, sectionID)
+
+            // If there is no next section, get the first section in the next chapter
+            if(!nextSection){
+                var nextChapter = getNextItem(state.courseData.items, chapterID)
+                // If there is no next chapter the course is complete
+                if(!nextChapter)
+                    return
+                // Look for the first section in the next chapter
+                nextSection = getFirstItem(nextChapter.items)
+            }
+
+            // Save the ID of the next section
+            state.selectedSectionID = nextSection.id
+
+        },
+        selectPreviousSection(state, action) {
+            var chapterID = state.selectedChapterID
+            var sectionID = state.selectedSectionID
+
+            // Get the object with the sections in it
+            var chapterSections = getItem(state.courseData, chapterID).items
+            // Look for the section before the currently selected section
+            var previousSection = gePreviousItem(chapterSections, sectionID)
+
+            // If there is no last section, get the first section in the next chapter
+            if(!previousSection){
+                var previousChapter = gePreviousItem(state.courseData.items, chapterID)
+                // If there is no previous chapter the user is at the first section of the first chapter
+                if(!previousChapter)
+                    return
+                // Look for the first section in the last chapter
+                previousSection = getFirstItem(previousChapter.items)
+            }
+
+            // Save the ID of the next section
+            state.selectedSectionID = previousSection.id
+
         },
 
         // #endregion selections
@@ -694,7 +740,7 @@ export const dbsliceReducer = dbslice.reducer;
 // Loading actions
 export const {setCourseData, setCoursesData} = dbslice.actions;
 // Selection actions
-export const {selectCourse, selectChapter, selectSection, selectElement} = dbslice.actions;
+export const {selectCourse, selectChapter, selectSection, selectElement, selectNextSection, selectPreviousSection} = dbslice.actions;
 // Course actions
 export const {addCourse, deleteCourse, copyCourse, updateCourseInfo} = dbslice.actions;
 // Chapter actions

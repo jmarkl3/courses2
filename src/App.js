@@ -11,12 +11,6 @@ import AuthMenu from './Components/Auth/AuthMenu';
 import { onAuthStateChanged } from 'firebase/auth';
 
 /*  
-    
-  section timer
-    save in edit mode
-    display in view mode
-    updates in view mode
-    saves into user data
 
   next section
     button goes to next section

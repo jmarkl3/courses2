@@ -58,14 +58,68 @@ export function getFirstItem(object){
     return tempArray[0]
 }
 
-export function getChapter(courseData, chapterID){
-    var chapter = courseData?.items[chapterID]    
-    return  {...chapter}
+/**
+ * Gets the next item in the object based on the ID
+ * @param {Object} object The object to look through
+ * @param {String} afterID The ID of the item before the item that will be returned
+ */ 
+export function getNextItem(object, afterID){
+    // The object to be returned if the afterID is found
+    var toReturn = null
+    // Flag set when afterID is found
+    var returnNext = false
+
+    // Look through each item in the object
+    Object.entries(object).forEach(([key, value]) => {
+        // If the id was found on the last itteration save this item
+        if(returnNext)
+        toReturn = value
+        // If the id was found set the flag to save the next item
+        if(key === afterID)
+            returnNext = true        
+        else
+            returnNext = false
+    })
+
+    // Return the item
+    return toReturn
+
 }
+/**
+ * Gets the last item in the object based on the ID
+ * @param {Object} object The object to look through
+ * @param {String} afterID The ID of the item after the item that will be returned
+ */ 
+export function gePreviousItem(object, afterID){
+    // The object to be returned if the afterID is found
+    var toReturn = null
+    // Save each item so if the afterID is found there is access to the previous item
+    var lastItem = null
+
+    // Look through each item in the object
+    Object.entries(object).forEach(([key, value]) => {
+        // If the id was found save the last item so it is returned
+        if(key === afterID)
+           toReturn = lastItem
+        // Save this item so there is access to it on the next itteration
+        lastItem = value
+        
+    })
+
+    // Return the item
+    return toReturn
+
+}
+
 export function getLastItemID(object){
     var tempArray = objectToArray(object)
     if(!tempArray || !tempArray.length) return null
     return tempArray[tempArray.length - 1].id
+}
+
+export function getChapter(courseData, chapterID){
+    var chapter = courseData?.items[chapterID]    
+    return  {...chapter}
 }
 
 export function nItemsInObject(object){
