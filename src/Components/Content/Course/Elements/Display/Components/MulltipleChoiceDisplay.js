@@ -12,7 +12,6 @@ function MulltipleChoiceDisplay({elementData, userResponse, saveUserResponseFunc
 
     useEffect(()=>{
         if(userResponse){
-            //console.log("there is a user response")
             setSelectedAnswer(getAnswerDataByID(userResponse?.answerChoiceID))
         }
     },[userResponse])

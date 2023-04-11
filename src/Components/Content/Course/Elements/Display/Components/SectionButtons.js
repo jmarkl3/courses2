@@ -12,14 +12,6 @@ function SectionButtons({sectionData, chapterID}) {
     const [messageRefreshCount, seMessageRefreshCount] = useState(0)
     const dispacher = useDispatch()
 
-  /*
-    
-    check to see if all user inputs have been submitted
-    check if timre requirement has bee met
-    display messages if not
-      display timer if time not met
-
-  */
     const userData = useSelector(state => state.dbslice.userData)
     const responsePath = useSelector(state => state.dbslice.responsePath)    
     /**
@@ -69,7 +61,7 @@ function SectionButtons({sectionData, chapterID}) {
   return (
     <div className='sectionButtons'>
         <div className='nextButtonTimer'>
-            <TimeDisplay sectionData={sectionData} chapterID={chapterID} viewOnly setRemainingTime={setRemainingTime}></TimeDisplay>
+            <TimeDisplay sectionData={sectionData} chapterID={chapterID} setRemainingTime={setRemainingTime}></TimeDisplay>
         </div>
         <button onClick={()=>dispacher(selectPreviousSection())}>Back</button>
         <div className='sectionButtonMessage'>

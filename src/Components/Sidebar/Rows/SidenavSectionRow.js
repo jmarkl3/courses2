@@ -85,7 +85,6 @@ function SidenavSectionRow({itemData, chapterID, setSectionRenaming}) {
   }
   const nameInputRef = useRef()
   function renameFunction(){    
-    console.log("updateName", nameInputRef.current.value)
     dispatcher(updateItemInfo({
       type:"name", 
       value: nameInputRef.current.value, 
@@ -156,7 +155,6 @@ function SidenavSectionRow({itemData, chapterID, setSectionRenaming}) {
             </HamburgerMenu>
             :
             <TimeDisplay sectionData={itemData} chapterID={chapterID}></TimeDisplay>
-            // <div></div>
           }
         </>
         

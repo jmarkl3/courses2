@@ -43,9 +43,12 @@ function SideNav() {
         {!itemArray || itemArray.length === 0 && 
             <button onClick={addChapterFunction}>Add Chapter</button>
         }        
-        {sideNavOpen && itemArray.map(chapter => (
-            <SidenavChapterRow itemData={chapter} key={chapter.id}></SidenavChapterRow>
-        ))}
+        <div className={sideNavOpen ? "":" sideNaveClosedItems"}>
+            {itemArray.map(chapter => (
+                <SidenavChapterRow itemData={chapter} key={chapter.id}></SidenavChapterRow>
+            ))}
+
+        </div>
     </div>
   )
 }

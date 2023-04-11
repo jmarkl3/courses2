@@ -7,44 +7,44 @@ import { database, saveUserResponse } from '../../../../../App/DbSlice'
 import { getUserData, isEmptyString } from '../../../../../App/functions'
 import SaveIndicator from './Components/SaveIndicator'
 import { ref, set } from 'firebase/database'
+import FadeMessage from './Components/FadeMessage'
 
 function ElementDisplayBlock({elementData}) {
   
   const userData = useSelector(state => state.dbslice.userData)
-  const responsePath = useSelector(state => state.dbslice.responsePath)
   const [userResponse, setUserResponse] = useState()
+  const selectedCourseID = useSelector(state => state.dbslice.selectedCourseID)
+  const selectedChapterID = useSelector(state => state.dbslice.selectedChapterID)
+  const selectedSectionID = useSelector(state => state.dbslice.selectedSectionID)
 
   useEffect(() => {
 
-    var userResponseData = getUserData(userData, responsePath+"/"+elementData?.id)
+    var userResponseData = getUserData(userData, "responses/"+selectedCourseID+"/"+selectedChapterID+"/"+selectedSectionID+"/"+elementData?.id)
+
     if(!userResponseData)
         return
 
     setUserResponse(userResponseData.response)
 
-  }, [userData])
+  }, [userData, selectedSectionID])
 
   // After 500ms of inactivity after typing into the response box save the result
   const responseSaveTimeoutRef = useRef()
   const responseInputRef = useRef()
-  function responseNeedsSave(){
-        console.log("responseNeedsSave")
-      clearTimeout(responseSaveTimeoutRef.current)
-      responseSaveTimeoutRef.current = setTimeout(()=>{
-          saveUserResponseFunction(responseInputRef.current.value)
-      },500)
+  function responseNeedsSave(){        
+        clearTimeout(responseSaveTimeoutRef.current)
+        responseSaveTimeoutRef.current = setTimeout(()=>{
+            saveUserResponseFunction(responseInputRef.current.value)
+        },500)
+
   }
 
   const responseSelectRef = useRef()
   const userID = useSelector(state => state.dbslice.userID)
-  const selectedCourseID = useSelector(state => state.dbslice.selectedCourseID)
-  const selectedChapterID = useSelector(state => state.dbslice.selectedChapterID)
-  const selectedSectionID = useSelector(state => state.dbslice.selectedSectionID)
   const [saveIndicatorMessage, setSaveIndicatorMessage] = useState()
   // So the comoonent will rerender if if the message is the same
   const [saveIndicatorMessageCount, setSaveIndicatorMessageCount] = useState(0)
   function saveUserResponseFunction(response){
-    console.log(response)
     //dispatcher(saveUserResponse({elementData: elementData, response: response}))
     var locationString = 'coursesApp/userData/'+userID+'/responses/'+
         selectedCourseID+'/'+
@@ -56,6 +56,8 @@ function ElementDisplayBlock({elementData}) {
         response: response,
         elementData: elementData,
     }
+
+    console.log(responseData)
 
     // If there is no response then set the responseData to null (will remove that response from the database)
     if(isEmptyString(response))
@@ -94,17 +96,12 @@ function ElementDisplayBlock({elementData}) {
     if(elementData?.type === "Text"){
         return (
             <div className='elementViewDisplay'>
-                {/* <div className='elementTextDisplay'>
-                  {elementData?.content}
-                </div> */}
                 <div className='richText'>
                 {HTMLReactParser(elementData?.content)}
 
                 </div>
                 <div className='elementTextDisplay'>
                 </div>
-                   {/* {{elementData?.content} */}
-                   {/* {console.log(HTMLReactParser(elementData?.content))} */}
             </div>
         )
     }
@@ -156,13 +153,12 @@ function ElementDisplayBlock({elementData}) {
                         defaultValue={userResponse}
 
                     >
-                        {/* {console.log("elementData?.content?.split(",")")}
-                        {console.log(elementData?.content2?.split(","))} */}
                         {elementData?.content2?.split(",").map(optionValue => (
                             <option 
-                                selected={userResponse === optionValue}
+                                selected={(userResponse && (typeof userResponse === "string") && optionValue && (typeof optionValue === "string")) && (userResponse?.trim() === optionValue?.trim())}
                                 key={optionValue.id}
                             >
+                                {console.log(userResponse + "===" + optionValue+" "+(userResponse?.trim() === optionValue?.trim()))}
                                 {optionValue}
                             </option>
                         ))}
@@ -202,14 +198,12 @@ function ElementDisplayBlock({elementData}) {
         {elementData?.type === "Input Field" ?
             <>
                 {displayContent()}
-                <div className='saveIndicator'>
-                    <SaveIndicator saveIndicatorMessage={saveIndicatorMessage} saveIndicatorMessageCount={saveIndicatorMessageCount}></SaveIndicator>
-                </div>
+                <FadeMessage message={saveIndicatorMessage} refreshCount={saveIndicatorMessageCount}></FadeMessage>
             </>
             :
             <div className='element'>
                 {displayContent()}
-                <SaveIndicator saveIndicatorMessage={saveIndicatorMessage} saveIndicatorMessageCount={saveIndicatorMessageCount}></SaveIndicator>
+                <FadeMessage message={saveIndicatorMessage} refreshCount={saveIndicatorMessageCount}></FadeMessage>
             </div>
         }
     </>

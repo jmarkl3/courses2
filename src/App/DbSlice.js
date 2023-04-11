@@ -79,6 +79,7 @@ const dbslice = createSlice({
         // This is used to get user resopnse data
         responsePath: null,
         saveStatus: null,
+        timerSaveCounter: 0,
     },
     reducers: {
         
@@ -192,32 +193,30 @@ const dbslice = createSlice({
             
         },
         selectSectionIfValid(state, action) {
-            state.selectedSectionID = action.payload.sectionID
             // Look into the userData to see if the specified section has the complted property set to true
-            var sectionIsCompleted = getUserData(state.userData, "responses/"+state.selectedCourseID+"/"+state.selectedChapterID+"/"+action.payload.sectionID+"/completed")
-            console.log("sectionIsCompleted")
-            console.log(sectionIsCompleted)
-            return
+            var sectionIsCompleted = getUserData(state.userData, "responses/"+state.selectedCourseID+"/"+state.selectedChapterID+"/"+action.payload.sectionID+"/complete")
+
             // If it is select it
             if(sectionIsCompleted){
                 state.selectedSectionID = action.payload.sectionID
             }
-
-            // Check to see if the index is the one after the index of the last completed section
+  
+            // Get the array of sections
             var chapter = getItem(state.courseData, state.selectedChapterID)
             var sectionArray = objectToArray(chapter.items)
-            var previousCompleted = false            
+
+            // Check to see if the index is the one after the index of the last completed section
+            var previousComplete = true            
             sectionArray.forEach((section, index) => {
-                // If the previous section was completed and the section is found and select it
-                if(previousCompleted && section.id == action.payload.sectionID){
-                    state.selectedSectionID = action.payload.sectionID
+                // If the previous section was completed and the section is found select it
+                if(section.id == action.payload.sectionID && previousComplete){     
+                        state.selectedSectionID = action.payload.sectionID
                 }
                 // Set the flag based on the section is completed property
-                if(getUserData(state.userData, "responses/"+state.selectedCourseID+"/"+state.selectedChapterID+"/"+section.id+"/completed"))
-                    previousCompleted = true
+                if(getUserData(state.userData, "responses/"+state.selectedCourseID+"/"+state.selectedChapterID+"/"+section.id+"/complete"))
+                    previousComplete = true
                 else 
-                    previousCompleted = false
-                
+                    previousComplete = false                
             })
 
         },
@@ -758,7 +757,9 @@ const dbslice = createSlice({
 
             }
         },
-
+        incrementTimerSaveCounter(state, action){
+            state.timerSaveCounter++
+        },
 
         // #endregion helper actions
     }
@@ -782,7 +783,7 @@ export const {addElement, deleteElement, copyElement} = dbslice.actions;
 // Sidenav drag and drop actions
 export const {sidenavDragStart, sidenavDragEnd, sidenavDragOver} = dbslice.actions;
 // Helper actions
-export const {updateItemInfo, selectFirst} = dbslice.actions;
+export const {updateItemInfo, selectFirst, incrementTimerSaveCounter} = dbslice.actions;
 // User Data actions
 export const {setUserID, setUserData, saveUserSectionData} = dbslice.actions;
 

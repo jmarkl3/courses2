@@ -39,7 +39,6 @@ const appSlice = createSlice({
             state.previewMode = !state.previewMode;
         },
         toggleShowAuthMenu(state, action) {
-            console.log("toggleShowAuthMenu")
             state.showAuthMenu = !state.showAuthMenu;
         }
 

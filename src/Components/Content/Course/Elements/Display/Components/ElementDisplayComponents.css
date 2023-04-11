@@ -26,3 +26,18 @@
 .sectionButtonMessage{
     
 }
+.fadeMessage{
+    opacity: 1;
+    color: white;
+    background-color: green;      
+    transition: 3000ms;
+    position: absolute;
+    bottom: -20px;
+    right:0px;
+    border-radius: 3px;
+    padding: 2px 5px;
+}
+.fadeMessageFade{
+    opacity: 0;
+    background-color: rgba(240, 248, 255, 0);
+}

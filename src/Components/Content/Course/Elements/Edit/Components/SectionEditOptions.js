@@ -31,7 +31,6 @@ function SectionEditOptions() {
     }
     const sectionTimeInputRef = useRef()
     function sectionTimeChange(){
-        // console.log("sectionTimeChange", sectionTimeInputRef.current?.value)
         dispacher(updateItemInfo({chapterID: selectedChapterID, sectionID: selectedSectionID, type: "requiredTime", value: sectionTimeInputRef.current?.value}))
 
     }

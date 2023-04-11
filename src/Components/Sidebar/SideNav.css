@@ -86,3 +86,7 @@
 .renamingField div:hover{
     background-color: rgba(172, 230, 253, 0.7);
 }
+.sideNaveClosedItems{
+    margin-right: 100px;
+    transition: 500ms;
+}

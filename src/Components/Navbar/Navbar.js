@@ -2,15 +2,19 @@ import React from 'react'
 import "./Navbar.css"
 import starIcon from "../../Images/starIconW.png"
 import { useDispatch } from 'react-redux'
-import { selectCourse } from '../../App/DbSlice'
+import { incrementTimerSaveCounter, selectCourse } from '../../App/DbSlice'
 import { setSideNavOpen, toggleShowAuthMenu } from '../../App/AppSlice'
 
 function Navbar() {
     const dispacher = useDispatch()
 
     function goToCourses(){
-        dispacher(selectCourse(null))
-        dispacher(setSideNavOpen(false))
+        dispacher(incrementTimerSaveCounter())
+        setTimeout(() => {
+            dispacher(selectCourse(null))
+            dispacher(setSideNavOpen(false))
+
+        }, 100)
     }
 
     return (

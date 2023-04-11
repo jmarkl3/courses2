@@ -53,7 +53,6 @@ function SidenavElementRow({itemData, chapterID, sectionID, setElementRenaming, 
   }
   const nameInputRef = useRef()
   function renameFunction(){    
-    console.log("updateName", nameInputRef.current.value)
     dispatcher(updateItemInfo({
       type:"name", 
       value: nameInputRef.current.value, 

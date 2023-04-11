@@ -23,9 +23,7 @@ function CourseTile({course}) {
 
     function updateCourse(){
         var newName = courseNameInputRef.current.value
-        console.log(newName)
         var newDescription = courseDescriptionInputRef.current.value
-        console.log(newDescription)
         dispatcher(updateCourseInfo({courseID: course.id, newName: newName, newDescription: newDescription}))
         setEditing(false)
     }

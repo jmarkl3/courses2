@@ -11,6 +11,7 @@ function TimeDisplay({sectionData, chapterID, viewOnly, setRemainingTime}) {
     const sectionRequiredTimeRef = useRef(0)
     const selectedSectionID = useSelector(state => state.dbslice.selectedSectionID)
     const selectedCourseID = useSelector(state => state.dbslice.selectedCourseID)
+    const timerSaveCounter = useSelector(state => state.dbslice.timerSaveCounter)
     const userData = useSelector(state => state.dbslice.userData)
     const timerTimeoutRef = useRef()
     const activeRef = useRef(false)
@@ -39,7 +40,10 @@ function TimeDisplay({sectionData, chapterID, viewOnly, setRemainingTime}) {
     
         // If the section is selected start the timer 
         if(sectionActiveRef.current)
-            resumeTimer()
+        setTimeout(() => {
+            resumeTimer()            
+        }, 500);
+
         // Else pause the timer
         else
             pauseTimer()        
@@ -49,20 +53,18 @@ function TimeDisplay({sectionData, chapterID, viewOnly, setRemainingTime}) {
     // When the user data changes (and on start) get the remaining time from userData
     useEffect(() => {
         // Get the time spent in this section from userData
-        //var userCurrentTime = getUserData(userData, "sectionTimes/"+selectedCourseID+"/"+chapterID+"/"+sectionData?.id)
         var userCurrentTime = getUserData(userData, "responses/"+selectedCourseID+"/"+chapterID+"/"+sectionData?.id+"/sectionTime")
         // If a time value was found set the state and ref to it
-        
-        console.log("responses/"+selectedCourseID+"/"+chapterID+"/"+sectionData?.id+"/sectionTime")
-        console.log("userCurrentTime " +sectionData?.name)
-        console.log(userCurrentTime)
         if(userCurrentTime){            
             currentTimeRef.current = userCurrentTime
         }
         setCurrentTime(currentTimeRef.current)
-        console.log(currentTimeRef.current)
 
-    },[userData, chapterID, sectionData])
+    },[userData])
+
+    useEffect(() => {
+        syncTime()
+    },[timerSaveCounter])
 
     /**
      * Adds a listener to the window to detect when the user changes tabs or closes the browser
@@ -88,7 +90,7 @@ function TimeDisplay({sectionData, chapterID, viewOnly, setRemainingTime}) {
      */
     function pauseTimer(){
         // If the timer is active and is now becoming inactive, save the current remaining time in userData
-        if(activeRef.current)
+        // if(activeRef.current)
             syncTime()
 
         // Set this flag so the useEffect knows when to save the time in user data
@@ -118,14 +120,13 @@ function TimeDisplay({sectionData, chapterID, viewOnly, setRemainingTime}) {
         // This is a flag that prevents multiple saves for the same section time
         if(viewOnly)
             return
-        // If the timer is active save the current remaining time in userData. Use the sectionData?.id and chapterID props because the selectedSectionID may not correspond ot this one                
-        dispacher(saveUserSectionData({sectionID: sectionData?.id, chapterID: chapterID, value: currentTimeRef.current, property: "sectionTime"}))
         
         // Clear this so the timer doesn't keep incrementing
         clearTimeout(timerTimeoutRef.current)
 
-        currentTimeRef.current = 0
-        setCurrentTime(currentTimeRef.current)
+        // If the timer is active save the current remaining time in userData. Use the sectionData?.id and chapterID props because the selectedSectionID may not correspond ot this one                
+        dispacher(saveUserSectionData({sectionID: sectionData?.id, chapterID: chapterID, value: currentTimeRef.current, property: "sectionTime"}))
+        
     }
 
     /**
@@ -156,12 +157,10 @@ function TimeDisplay({sectionData, chapterID, viewOnly, setRemainingTime}) {
         var requiredTime = sectionRequiredTimeRef.current
         var timeLeft = requiredTime - currentTimeRef.current
 
-        console.log(sectionRequiredTimeRef.current)
-        console.log(currentTimeRef.current)
-
         // When the user completes the time requirement save it in userData 
         // if(timeLeft == 0)
         //     syncTime()
+        
         // Sets an external state value so it can be checked
         setRemainingTime(timeLeft)
 
