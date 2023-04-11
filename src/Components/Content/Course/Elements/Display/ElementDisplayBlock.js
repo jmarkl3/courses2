@@ -57,8 +57,6 @@ function ElementDisplayBlock({elementData}) {
         elementData: elementData,
     }
 
-    console.log(responseData)
-
     // If there is no response then set the responseData to null (will remove that response from the database)
     if(isEmptyString(response))
         responseData = null    
@@ -158,7 +156,6 @@ function ElementDisplayBlock({elementData}) {
                                 selected={(userResponse && (typeof userResponse === "string") && optionValue && (typeof optionValue === "string")) && (userResponse?.trim() === optionValue?.trim())}
                                 key={optionValue.id}
                             >
-                                {console.log(userResponse + "===" + optionValue+" "+(userResponse?.trim() === optionValue?.trim()))}
                                 {optionValue}
                             </option>
                         ))}
@@ -198,12 +195,24 @@ function ElementDisplayBlock({elementData}) {
         {elementData?.type === "Input Field" ?
             <>
                 {displayContent()}
-                <FadeMessage message={saveIndicatorMessage} refreshCount={saveIndicatorMessageCount}></FadeMessage>
+                <div className='bottomLeftFadeMessage'> 
+                    <FadeMessage 
+                        message={saveIndicatorMessage} 
+                        refreshCount={saveIndicatorMessageCount}
+                        backgroundColor={saveIndicatorMessage === "Saved" ? "green" : "red"}
+                    ></FadeMessage>
+                </div>
             </>
             :
             <div className='element'>
                 {displayContent()}
-                <FadeMessage message={saveIndicatorMessage} refreshCount={saveIndicatorMessageCount}></FadeMessage>
+                <div className='bottomLeftFadeMessage'> 
+                    <FadeMessage 
+                        message={saveIndicatorMessage} 
+                        refreshCount={saveIndicatorMessageCount}
+                        backgroundColor={saveIndicatorMessage === "Saved" ? "green" : "red"}
+                    ></FadeMessage>
+                </div>
             </div>
         }
     </>

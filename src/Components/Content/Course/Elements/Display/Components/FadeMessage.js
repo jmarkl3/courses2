@@ -36,7 +36,7 @@ function FadeMessage({message, refreshCount, backgroundColor}) {
   return (
     <>
         {!hidden &&
-            <div className={`fadeMessage ${fading ? "fadeMessageFade":""}`}>
+            <div className={`fadeMessage ${fading ? "fadeMessageFade":""}`} style={{backgroundColor: backgroundColor}}>
                 {message}
             </div>
         }

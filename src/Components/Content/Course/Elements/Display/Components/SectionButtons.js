@@ -5,21 +5,25 @@ import { saveUserSectionData, selectNextSection, selectPreviousSection } from '.
 import TimeDisplay from './TimeDisplay'
 import SaveIndicator from './SaveIndicator'
 import { getUserData, objectToArray } from '../../../../../../App/functions'
+import FadeMessage from './FadeMessage'
 
 function SectionButtons({sectionData, chapterID}) {
     const [remainingTime, setRemainingTime] = useState(0)
     const [message, setMessage] = useState()
     const [messageRefreshCount, seMessageRefreshCount] = useState(0)
+    const selectedCourseID = useSelector(state => state.dbslice.selectedCourseID)
+    const selectedChapterID = useSelector(state => state.dbslice.selectedChapterID)
+    const selectedSectionID = useSelector(state => state.dbslice.selectedSectionID)
     const dispacher = useDispatch()
 
     const userData = useSelector(state => state.dbslice.userData)
-    const responsePath = useSelector(state => state.dbslice.responsePath)    
+
     /**
      * Check to see if the user has answered all questions and if there is still remaining time, aff all requirements are met go to the next section
      */
     function nextSection(){
-        // Check to see if the user has answered all questions
-        var userResponseData = getUserData(userData, responsePath)
+        // Check to see if the user has answered all questions        
+        var userResponseData = getUserData(userData, "responses/"+selectedCourseID+"/"+selectedChapterID+"/"+selectedSectionID)
         if(!allInputsComplete(userResponseData, sectionData)){
             setMessage("Please respond to all questions")
             seMessageRefreshCount(messageRefreshCount + 1)
@@ -51,8 +55,11 @@ function SectionButtons({sectionData, chapterID}) {
         var allComplete = true
         itemsArray.forEach(item => {
             if(item?.type === "Input Field" || item?.type === "Text Input" || item?.type === "Multiple Choice"){
-                if(!userResponseData[item.id])
+                if(!userResponseData[item.id]){
+                    console.log("item not complete")
+                    console.log(item)
                     allComplete = false
+                }
             }
         })        
         return allComplete
@@ -64,8 +71,8 @@ function SectionButtons({sectionData, chapterID}) {
             <TimeDisplay sectionData={sectionData} chapterID={chapterID} setRemainingTime={setRemainingTime}></TimeDisplay>
         </div>
         <button onClick={()=>dispacher(selectPreviousSection())}>Back</button>
-        <div className='sectionButtonMessage'>
-            <SaveIndicator saveIndicatorMessage={message} saveIndicatorMessageCount={messageRefreshCount}></SaveIndicator>
+        <div className='sectionButtonMessage'>            
+            <FadeMessage message={message} refreshCount={messageRefreshCount} backgroundColor={"rgb(197, 119, 119)"}></FadeMessage>
         </div>
         <button onClick={nextSection}>Next</button>
     </div>
