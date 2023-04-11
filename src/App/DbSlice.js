@@ -254,6 +254,8 @@ const dbslice = createSlice({
 
             // If there is no last section, get the first section in the next chapter
             if(!previousSection){
+                console.log("!previousSection")
+                return
                 var previousChapter = gePreviousItem(state.courseData.items, chapterID)
                 // If there is no previous chapter the user is at the first section of the first chapter
                 if(!previousChapter)

@@ -12,9 +12,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 
 /*  
     
-  message fade component
-    use it where the save indicator is
-    and the next section button message
+  section back button 
 
   timed camera
 

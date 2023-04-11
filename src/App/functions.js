@@ -69,13 +69,16 @@ export function getNextItem(object, afterID){
     // Flag set when afterID is found
     var returnNext = false
 
+    var tempArray = objectToArray(object)
+    if(!tempArray || !tempArray.length) return
+
     // Look through each item in the object
-    Object.entries(object).forEach(([key, value]) => {
+    tempArray.forEach((item) => {
         // If the id was found on the last itteration save this item
         if(returnNext)
-        toReturn = value
+            toReturn = item
         // If the id was found set the flag to save the next item
-        if(key === afterID)
+        if(item.id === afterID)
             returnNext = true        
         else
             returnNext = false
@@ -96,13 +99,18 @@ export function gePreviousItem(object, afterID){
     // Save each item so if the afterID is found there is access to the previous item
     var lastItem = null
 
+    var tempArray = objectToArray(object)
+    console.log("tempArray")
+    console.log(tempArray)
+    if(!tempArray || !tempArray.length) return
+
     // Look through each item in the object
-    Object.entries(object).forEach(([key, value]) => {
+    tempArray.forEach((item) => {
         // If the id was found save the last item so it is returned
-        if(key === afterID)
+        if(item.id === afterID)
            toReturn = lastItem
         // Save this item so there is access to it on the next itteration
-        lastItem = value
+        lastItem = item
         
     })
 
