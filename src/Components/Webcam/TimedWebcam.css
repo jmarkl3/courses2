@@ -1,0 +1,27 @@
+.webcam{
+    position: fixed;
+    bottom: 70px;
+    left: 50px;
+    z-index: 200;
+    height: 200px;
+    width: 300px;
+    opacity: 0;
+    transition: 4000ms;
+    background-color: black;
+}
+.webcam img{
+    width: 100%;
+    height: 100%;
+    object-fit: contain;   
+}
+.webcamMessage{
+    position: absolute;
+    color: white;
+    z-index: 2;
+    bottom: 10px;
+    width: 300px;
+    text-align: center;
+}
+.fadeIn{
+    opacity: 1;
+}

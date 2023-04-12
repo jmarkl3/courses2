@@ -5,6 +5,7 @@ import ConfirmationBox from '../../../../Utils/ConfirmationBox';
 import Element from './Element.js';
 import SectionEditOptions from './Edit/Components/SectionEditOptions';
 import SectionButtons from './Display/Components/SectionButtons';
+import TimedWebcam from '../../../Webcam/TimedWebcam';
 
 function ElementMapper() {
     const courseData = useSelector((state) => state.dbslice.courseData);
@@ -33,6 +34,7 @@ function ElementMapper() {
             {!editMode &&
                 <SectionButtons sectionData={getItem(courseData, selectedChapterID, selectedSectionID)} chapterID={selectedChapterID}></SectionButtons>
             }
+            <TimedWebcam></TimedWebcam>
         </>
     )
 }

@@ -12,8 +12,6 @@ import { onAuthStateChanged } from 'firebase/auth';
 
 /*  
     
-  section back button 
-
   timed camera
 
   account page
@@ -22,7 +20,12 @@ import { onAuthStateChanged } from 'firebase/auth';
 
   multi language support
 
+  user search
   user reports
+
+  landing page
+
+  sign up page
 
 */
 /*
