@@ -78,6 +78,7 @@ function SectionEditOptions() {
                     defaultValue={sectionData?.requiredTime}
                     ref={sectionTimeInputRef}
                     onChange={sectionTimeChange}
+                    key={selectedSectionID}
                 ></input>
             </div>
 

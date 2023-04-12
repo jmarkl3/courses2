@@ -12,10 +12,12 @@ import { onAuthStateChanged } from 'firebase/auth';
 
 /*  
     
-  timed camera
+  landing page
+  sign up page
+    user signs up for course
 
   account page
-    current classes
+    current classes with completion data
     themes
 
   multi language support
@@ -23,9 +25,7 @@ import { onAuthStateChanged } from 'firebase/auth';
   user search
   user reports
 
-  landing page
 
-  sign up page
 
 */
 /*

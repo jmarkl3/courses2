@@ -32,9 +32,9 @@ function ElementMapper() {
                 <Element elementData={element} key={element.id}></Element>                
             ))}
             {!editMode &&
-                <SectionButtons sectionData={getItem(courseData, selectedChapterID, selectedSectionID)} chapterID={selectedChapterID}></SectionButtons>
+                <SectionButtons sectionData={sectionData} chapterID={selectedChapterID}></SectionButtons>
             }
-            <TimedWebcam></TimedWebcam>
+            <TimedWebcam sectionData={sectionData}></TimedWebcam>
         </>
     )
 }
