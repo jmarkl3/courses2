@@ -76,7 +76,7 @@ function Cart({close, sampleCourses}) {
             }
             <div className={'cartMenuItems ' + (checkingOut ? " cartMenuItemsCheckingOut":"")} >
                 {selectedCourses.map((courseData, index)=>(
-                    <CartCourse courseData={courseData} selected></CartCourse>
+                    <CartCourse courseData={courseData} selected allowRemove={!checkingOut}></CartCourse>
                 ))} 
                 {selectedCourses.length === 0 && 
                     <div className='cartMenuItemsMessage'>                    
