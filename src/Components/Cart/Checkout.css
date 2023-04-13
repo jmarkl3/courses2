@@ -1,0 +1,27 @@
+.checkout{
+    margin: 10px;
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 4px #ccc;        
+}
+.checkoutInput{
+    width: calc(50% - 20px);
+    text-align: center;
+    display: inline-block;
+    margin: 10px;
+}
+.checkoutInputThird{
+    width: calc((100% / 3) - 20px);
+    text-align: center;
+    display: inline-block;
+    margin: 10px;
+}
+.checkoutInputW100{
+    width: calc(100% - 20px);;
+}
+.checkoutSubmit{
+    width: 100%;
+    padding-top: 10px;
+    text-align: center;
+}

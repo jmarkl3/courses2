@@ -1,9 +1,9 @@
 .cartMenu{
     position: fixed;
-    top: 10vh;
+    top: 8vh;
     left: 10vw;
     width: 80vw;
-    height: 80vh;
+    height: 680px;
     background-color: white;
     box-shadow: 0 4px 8px black;
     border-radius: 5px;
@@ -14,15 +14,22 @@
     width: 100%;
     text-align: center;
     font-size: 1.5em;
+    margin-bottom: 5px;
 }
 .cartSection{
     padding: 20px 40px;
     box-sizing: border-box;
-    height: 50%;    
+    height: 50% ;    
     position: relative;
 }
+.cartSectionCheckingOut{
+    height: 190px;
+    padding-bottom: 0;
+}
+.cartSectionCheckingOut .cartMenuItems{
+    height: calc(100% - 40px);
+}
 .yourCart{
-    height: 50%;
     border-bottom: 1px solid #f2f2f2;    
 }
 .cartMenuItems{
@@ -34,16 +41,40 @@
     padding: 5px;
     box-sizing: border-box;
 }
+.cartMenuItemsAvailable{
+    height: calc(100% - 20px);
+
+}
+.cartMenuItemsMessage{
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 .yourCartButtons{
     position: absolute;
-    bottom: 8px;
+    bottom: 5px;
     width: calc(100% - 80px);    
     text-align: center;
 }
+.yourCartButtons2{
+    /* position: absolute; */
+    width: 100%;
+    bottom: 5px;    
+    text-align: center;
+    margin-bottom: 5px;
+}
 .checkoutButton{
     background-color: rgb(196, 213, 240);
-    background-image: linear-gradient(rgba(255, 0, 0, 0), rgba(0, 0, 255, 0.0));
-    box-shadow: 0 0 5px rgb(198, 217, 243);
+    background-image: linear-gradient(rgba(255, 255, 255, 0.418), rgba(255, 255, 255, 0));
+
+}
+.checkoutButton:hover{
+    background-color: rgb(227, 235, 248);
+}
+.checkoutButtonSize{
     height: 40px;
     font-size: 20px;   
     line-height: 30px; 
@@ -59,10 +90,12 @@
     filter: blur(0.3px);
     color: rgba(0, 0, 0, 0.95);
 }
-.checkoutButton:hover{
-    background-color: rgb(213, 224, 243);
-    box-shadow: 0 0 8px rgb(190, 205, 226);
-
+.smallButtonText{
+    font-size: 12px;
+}
+.checkoutContiner{
+    overflow-y: auto;
+    height: calc(50% + 150px);
 }
 @media screen and (max-width: 800px){
     .cartMenu{

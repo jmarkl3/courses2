@@ -10,11 +10,13 @@ import AuthMenu from './Components/Auth/AuthMenu';
   this is a good one:
   https://parentingafterdivorce.org/
   :
+  other examples
   https://www.onlineparentingprograms.com/support/how-it-works.html
   https://co.onlineparentingprograms.com/district-18-coparenting-programs.html
   https://healthychildrenofdivorce.com/
   https://www.courtparentclass.com/
   https://www.factcolorado.com/
+
   sign up page
     user signs up for course
 

@@ -17,6 +17,14 @@ import Cart from '../Cart/Cart'
       when user clicks areas in the nav it scrolls to the information areas
     course more info menu displays when the user clicks the button on the cart item
 
+    checkout button
+      slide over to the page that has the checkout
+        or maybe the bottom part where the available courses are is the checkout
+      shows selected coursess with option to view course info
+      checkout inputs
+      submit button      
+      back button    
+
     information sections
       the company
       selling points

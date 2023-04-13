@@ -4,7 +4,7 @@ import { priceString } from '../../App/functions'
 import { useDispatch } from 'react-redux'
 import { removeCartCourse, selectCartCourse, setDraggingCourse} from '../../App/AppSlice'
 
-function CartCourse({courseData, selected}) {
+function CartCourse({courseData, selected, allowRemove}) {
     const dispacher = useDispatch()
 
   return (
@@ -34,7 +34,7 @@ function CartCourse({courseData, selected}) {
                 <button>More Info</button>
             </>:
             <>
-                <button onClick={()=>dispacher(removeCartCourse(courseData.id))}>Remove</button>
+                {allowRemove && <button onClick={()=>dispacher(removeCartCourse(courseData.id))}>Remove</button>}
                 <button>More Info</button>
             </>
         }

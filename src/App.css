@@ -77,8 +77,8 @@ button:last-child{
   margin-right: 0px;
 }
 button:hover{
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
-  /* transform: scale(1.01); */
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
+  transform: scale(0.995);
 }
 .hidden{
   display: none;
@@ -98,4 +98,7 @@ button:hover{
 .hoverOpacity2:hover{
   opacity: 1;
 
+}
+.w100{
+  width: 100%;
 }

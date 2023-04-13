@@ -26,6 +26,7 @@
     overflow: hidden;
     margin-left: 10px;
     vertical-align: top;
+    max-height: 80px;
 }
 .cartCourseName{
     font-size: 20px;
@@ -49,4 +50,19 @@
     position: absolute;
     top: 5px;
     right: 5px;
+}
+@media screen and (max-width: 950px){
+    .cartCourseButtons{        
+        display: block;
+        position: relative;
+        width: 100%;
+    }
+    .cartCourse {
+        height: 120px
+    }
+    .cartCourseText{
+        width: calc(100% - 90px);        
+
+    }
+    
 }
