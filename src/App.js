@@ -2,11 +2,14 @@ import './App.css';
 import "./Styles/Themes.css"
 import LandingPage from './Components/Pages/LandingPage';
 import Course from './Components/Pages/Course';
+import AuthMenu from './Components/Auth/AuthMenu';
 
 /*  
     
   landing page
+  this is a good one:
   https://parentingafterdivorce.org/
+  :
   https://www.onlineparentingprograms.com/support/how-it-works.html
   https://co.onlineparentingprograms.com/district-18-coparenting-programs.html
   https://healthychildrenofdivorce.com/
@@ -24,6 +27,8 @@ import Course from './Components/Pages/Course';
   user search
   user reports
 
+  auth
+    forgot password button
 
 
 */
@@ -155,6 +160,7 @@ function App() {
     <>
       {/* <Course></Course> */}
       <LandingPage></LandingPage>
+      <AuthMenu></AuthMenu>
     </>
   );
 }

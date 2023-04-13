@@ -1,0 +1,52 @@
+.cartCourse{
+    border-radius: 5px;
+    border: 1px solid #f2f2f2;
+    margin: 5px;
+    padding: 5px;
+    height: 80px;
+    position: relative;
+    box-shadow: 0px 2px 8px #f2f2f2;    
+}
+.availableCourse{
+    cursor: move;
+}
+.cartCourseImage{
+    height: 80px;
+    width: 80px;
+    display: inline-block;
+}
+.cartCourseImage img{
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
+.cartCourseText{
+    display: inline-block;
+    width: calc(100% - 420px);
+    overflow: hidden;
+    margin-left: 10px;
+    vertical-align: top;
+}
+.cartCourseName{
+    font-size: 20px;
+}
+.cartCourseDescription{
+
+}
+.cartCourseButtons{
+    display: inline-block;
+    width: 320px;
+    position: absolute;
+    right: 5px;
+    bottom: 5px;        
+}
+.cartCourseButtons button{
+    width: calc(50% - 10px);
+    margin: 5px;
+    float: right;
+}
+.priceBox{
+    position: absolute;
+    top: 5px;
+    right: 5px;
+}

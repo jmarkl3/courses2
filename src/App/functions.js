@@ -260,6 +260,17 @@ export function isEmptyString(string){
     if(!string) return true
     if(typeof string === "string" && string.trim() === "") return true
 }
+export function priceString(price){
+    if(!price) return "$0.00"
+    // If it is an even whole number add a .00
+    if(price % 1 == 0)
+        return "$"+price+".00"
+    // If it has only one decimal digit add a second
+    if((price / 0.1) % 1 == 0)
+        return "$"+price+"0"
+    // Otherwise just return the price
+    return "$"+price
+}
 
 // #endregion general helper functions
 

@@ -78,13 +78,12 @@
   cursor: pointer;
   user-select: none;
   border-radius: 3px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  text-align: center;
+  line-height: 18px;
   transition: 500ms;
+  z-index: 10;
 }
 .closeButton:hover{
-  background-color: rgb(255, 255, 255);
-  color: #eb8b8b;
-  box-shadow: 0 0 10px #eb8b8b;
+  background-color: #e0a7a7;
+  box-shadow: 0 0 6px #e09d9d;
 }
