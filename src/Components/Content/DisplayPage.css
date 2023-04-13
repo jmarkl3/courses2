@@ -34,7 +34,9 @@
 .pageOuterNavOpen .pageInner{
     width: 90%;
 }
-
+.landingPage .pageOuter{
+    padding-top: 200px;   
+}
 .displayPageOuter{
     width: 100%;
     min-height: calc(100vh - 180px);

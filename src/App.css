@@ -18,6 +18,9 @@ img{
   width: 100%;  
   position: fixed;  
 }
+.landingPage .topImage{
+  height: 400px;
+}
 input{
   padding: 5px 10px;
   border: none;

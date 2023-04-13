@@ -1,0 +1,73 @@
+.banner{
+    height: calc(100vh - 20px);    
+    height: 100vh;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1;
+}
+.banner img{
+    width: 100%;    
+    object-fit: cover;
+}
+.landingPageOver{
+    height: 100vh;
+    width: 100%;
+}
+.landingContent{
+    min-height: 500px;
+    background-color: white;
+}
+.landingPageTitleContainerOuter{
+    background-color: rgba(0, 0, 0, 0.3);
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    padding: 5px;
+    padding-bottom: 95px;
+    box-sizing: border-box;
+}
+.landingPageTitleContainer{
+    color: white;
+    width: 80%;
+    margin: 0 10%;
+    text-align: center;    
+}
+.landingTitle{
+    box-sizing: border-box;
+    font-size: 2.8em;
+    margin-bottom: 10px;
+}
+.landingTitleText{
+    font-size: 18px;
+    line-height: 26px;
+}
+.landingNav{
+    height: 60px;
+    width: 100%;
+    background-color: white;
+    position: absolute;
+    bottom: 0;
+    border-bottom: 1px solid #f2f2f2;
+}
+.landingNavButton{
+    width: calc(100% / 6);    
+    display: inline-block;
+    line-height: 60px;
+    text-align: center;
+    box-sizing: border-box;
+    user-select: none;
+    cursor: pointer;
+    transition: 500ms;    
+}
+.landingNavButton:hover{
+    background-color: #f2f2f2;
+    margin-bottom: 10px;
+}
+@media screen and (min-width: 1200px){
+    .landingPageTitleContainer{
+        width: 1000px;
+        margin: 0 calc(50% - 500px);
+    }
+}

@@ -1,18 +1,17 @@
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import './App.css';
-import { auth, database, setCourseData, setCoursesData, setUserData, setUserID } from './App/DbSlice';
-import DisplayPage from './Components/Content/DisplayPage';
-import Navbar from './Components/Navbar/Navbar';
-import { onValue } from 'firebase/database';
-import { ref } from 'firebase/database';
-import "./Themes.css"
-import AuthMenu from './Components/Auth/AuthMenu';
-import { onAuthStateChanged } from 'firebase/auth';
+import "./Styles/Themes.css"
+import LandingPage from './Components/Pages/LandingPage';
+import Course from './Components/Pages/Course';
 
 /*  
     
   landing page
+  https://parentingafterdivorce.org/
+  https://www.onlineparentingprograms.com/support/how-it-works.html
+  https://co.onlineparentingprograms.com/district-18-coparenting-programs.html
+  https://healthychildrenofdivorce.com/
+  https://www.courtparentclass.com/
+  https://www.factcolorado.com/
   sign up page
     user signs up for course
 
@@ -150,81 +149,13 @@ ________________________________________________________________________________
 */
 
 function App() {  
-  const selectedCourseID = useSelector(state => state.dbslice.selectedCourseID)
-  const userID = useSelector(state => state.dbslice.userID)
-  const editMode = useSelector(state => state.appslice.editMode)
-  const previewMode = useSelector(state => state.appslice.previewMode)
-  const dispatcher = useDispatch()
-
-  // Load the meta data so all of the course tiles can be displayed
-  useEffect(() => {   
-    authListener()
-    loadCoursesData()
-  }, [])
-
-  useEffect(() => {   
-    loadUserData()
-  }, [userID])
-
-  // Load the data for the selected course
-  useEffect(() => {   
-    loadCourseData(selectedCourseID)
-  }, [selectedCourseID])
-
-  // Loads the meta data so all of the course tiles can be displayed
-  function loadCoursesData(){
-    onValue(ref(database, 'coursesApp/coursesMetaData'), (snapshot) => {
-      const data = snapshot.val();      
-      setTimeout(() => {
-        dispatcher(setCoursesData(data))
-
-      }, 250)
-
-    })    
-
-  }
-
-  // Loads data for the selected course
-  function loadCourseData(courseID){
-    onValue(ref(database, 'coursesApp/coursesData/'+courseID), (snapshot) => {
-      const data = snapshot.val();   
-      setTimeout(() => {
-        dispatcher(setCourseData(data))
-
-      }, 250)
-
-    })    
-
-  }
-
-  function authListener(){
-    onAuthStateChanged(auth, (user) => {
-      dispatcher(setUserID(user?.uid))
-
-    })
-  }
-
-  function loadUserData(){
-    if(!userID) return
-    onValue(ref(database, 'coursesApp/userData/'+userID), (snapshot) => {
-      const data = snapshot.val();   
-      setTimeout(() => {
-        dispatcher(setUserData(data))
-
-      }, 250)
-
-    })    
-
-  }
+ 
 
   return (
-    <div className="App">
-      <Navbar></Navbar>
-      <div className={(editMode && !previewMode) ? "darkTheme":""}>
-        <DisplayPage></DisplayPage>
-      </div>
-      <AuthMenu></AuthMenu>
-    </div>
+    <>
+      {/* <Course></Course> */}
+      <LandingPage></LandingPage>
+    </>
   );
 }
 

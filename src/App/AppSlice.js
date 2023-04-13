@@ -14,6 +14,8 @@ const appSlice = createSlice({
         // When this changes the element edit component will minimize or expand based on the value
         minimizeAll: false,
         showAuthMenu: false,
+        theme: "lightTheme",
+        language: "English",
     },
     reducers: {
         // Determines if the sidenav will show along with other corresponding css classes
@@ -40,10 +42,18 @@ const appSlice = createSlice({
         },
         toggleShowAuthMenu(state, action) {
             state.showAuthMenu = !state.showAuthMenu;
-        }
-
+        },
+        setTheme(state, action) {
+            state.theme = action.payload;
+        },
+        toggleLanguage(state, action) {
+            if(state.language === "English")
+                state.language = "Español";
+            else
+                state.language = "English";            
+        },
 
     }
 })
 export const appSliceReducer = appSlice.reducer;
-export const {setSideNavOpen, setPreviewMode, setAdminMode, setEditMode, toggleMinimizeAll, togglePreviewMode, toggleShowAuthMenu} = appSlice.actions;
+export const {setSideNavOpen, setPreviewMode, setAdminMode, setEditMode, toggleMinimizeAll, togglePreviewMode, toggleShowAuthMenu, setTheme, toggleLanguage} = appSlice.actions;

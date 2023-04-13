@@ -82,8 +82,8 @@ function TimedWebcam({sectionData}) {
     }
 
     function timeActions2(seconds, imageTime){
-        // This it the time that the image should be taken
-        var secondsTillImage = imageTime - seconds
+        // This it the time that the image should be taken. Add the time offset to the image time so the user is given extra time if they click the retake image button
+        var secondsTillImage = (imageTime + timeOffset.current) - seconds
 
         // If the webcam is off and the image will be taken within 20 seconds, show the webcam
         if(!showWebcamRef.current && secondsTillImage <= 20 && secondsTillImage > 0){
@@ -149,6 +149,8 @@ function TimedWebcam({sectionData}) {
         }
         else{
             saveImage()
+            // Add 10 extra seconds to the timer 
+            timeOffset.current = timeRef.current + 10
         }
     }
     /**

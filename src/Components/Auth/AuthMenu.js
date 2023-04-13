@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import "./Auth.css"
 import { useDispatch, useSelector } from 'react-redux'
-import { toggleShowAuthMenu } from '../../App/AppSlice'
+import { setTheme, toggleShowAuthMenu } from '../../App/AppSlice'
 
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth'
 import { auth } from '../../App/DbSlice'
@@ -75,6 +75,8 @@ function AuthMenu() {
                         <>
                             <div>Account Actions</div>
                             <button onClick={signOutUser}>Log Out</button>
+                            <button onClick={()=>dispatcher(setTheme("darkTheme"))}>Dark Theme</button>
+                            <button onClick={()=>dispatcher(setTheme("lightTheme"))}>Light Theme</button>
                         </>
                         :
                         <>

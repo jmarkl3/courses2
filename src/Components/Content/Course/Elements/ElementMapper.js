@@ -34,7 +34,7 @@ function ElementMapper() {
             {!editMode &&
                 <SectionButtons sectionData={sectionData} chapterID={selectedChapterID}></SectionButtons>
             }
-            <TimedWebcam sectionData={sectionData}></TimedWebcam>
+            {/* <TimedWebcam sectionData={sectionData}></TimedWebcam> */}
         </>
     )
 }

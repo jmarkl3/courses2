@@ -5,6 +5,7 @@ import topImage from "../../Images/topImage.jpg"
 import Course from './Course/Course'
 import Courses from './Courses/Courses'
 import { useSelector } from 'react-redux'
+import LandingPage from '../Pages/LandingPage'
 
 function DisplayPage() {
     const sideNavOpen = useSelector(state => state.appslice.sideNavOpen)
