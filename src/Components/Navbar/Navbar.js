@@ -11,16 +11,7 @@ function Navbar() {
     const language = useSelector(state => state.appslice.language)
     const navigate = useNavigate();
 
-    function goToCourses(){
-        dispacher(incrementTimerSaveCounter())
-        setTimeout(() => {
-            dispacher(selectCourse(null))
-            dispacher(setSideNavOpen(false))
-
-        }, 100)
-    }
-
-    return (
+  return (
     <div className='navbar'>
         <div className='navBarInner'>
             <div className='top left'>

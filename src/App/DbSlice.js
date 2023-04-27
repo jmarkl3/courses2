@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import {initializeApp} from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { get, getDatabase, push, ref, remove, set, update } from "firebase/database";
+import { get, getDatabase, push, ref, remove, runTransaction, set, update } from "firebase/database";
 import { gePreviousItem, getFirstItem, getItem, getLastItemID, getNextItem, getUserData, insertItem, newIDsObject, nItemsInObject, objectToArray, removeItem, removeUndefined } from "./functions";
 
 // #region firebase config
@@ -129,16 +129,60 @@ const dbslice = createSlice({
         },
         // action.payload = {property: "isAdmin", value: true}
         saveUserAccountData(state, action){
-            if(action.payload.value == undefined || !action.payload.property){
+            if(action.payload.value == undefined){
                 console.log("Error: saveRemainingSectionTime: missing data")
                 return
             }
             // This is the location that the remaining time will be saved
-            var locationString = "coursesApp/userData/"+state.userID+"/accountData/"+action.payload.property
-            // Save the remaining time in the db
-            set(ref(database, locationString), action.payload.value)
+            var locationString = "coursesApp/userData/"+( action.payload.userID || state.userID)+"/accountData"
+            // If a property is specified put the data there
+            if(action.payload.property)
+                locationString += "/"+action.payload.property
+            // Save the remaining time in the db (shouldnt overwrite other data)
+            update(ref(database, locationString), action.payload.value)
         },
-        
+        enrollUserInCourses(state, action){
+            if(!action.payload || !action.payload.userID || !Array.isArray(action.payload.courseIDArray)) {
+                console.log("Error: enrollUserInCourses: missing data")
+                return
+            }
+
+            // Update the user ID if needed
+            if(state.userID != action.payload.userID)
+                state.userID = action.payload.userID
+
+            // return
+
+            // Update the array of enrolled courses
+            runTransaction(
+                // Where they will be stored
+                ref(database, "coursesApp/userData/"+action.payload.userID+"/enrolledCourses"), 
+                // Access the enrolled courses array from the db
+                (enrolledCourses) => {
+                    // If this is the first time the user has enrolled in a course create the array in the db
+                    if(!enrolledCourses)
+                        enrolledCourses = []
+                    
+                    // Filter out any duplicates by turning it into a set then back into an array
+                    let coursesToAdd = [...new Set(action.payload.courseIDArray)];
+
+                    // Filter out the ones the user is already enrolled in 
+                    coursesToAdd = coursesToAdd.filter(courseID => !enrolledCourses.includes(courseID))
+                    
+                    console.log("enrolling user " + action.payload.userID + "in courses: ")
+                    console.log(action.payload.courseIDArray)
+
+                    // Add the new ones
+                    enrolledCourses = enrolledCourses.concat(coursesToAdd)
+
+                    console.log("they are now enrolled in ")
+                    console.log(enrolledCourses)
+
+                    // Return the new array to update the db
+                    return enrolledCourses
+                }
+            )
+        },
 
         // #endregion user data
 
@@ -807,7 +851,7 @@ export const dbsliceReducer = dbslice.reducer;
 // Loading actions
 export const {setCourseData, setCoursesData} = dbslice.actions;
 // User Data actions
-export const {setUserID, setUserData, saveUserSectionData, saveUserAccountData} = dbslice.actions;
+export const {enrollUserInCourses, setUserID, setUserData, saveUserSectionData, saveUserAccountData} = dbslice.actions;
 // Selection actions
 export const {selectCourse, selectChapter, selectSection, selectElement, selectNextSection, selectPreviousSection, selectSectionIfValid} = dbslice.actions;
 // Course actions

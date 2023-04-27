@@ -1,11 +1,11 @@
 import React, { useRef, useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { copyCourse, deleteCourse, selectCourse, updateCourseInfo } from '../../../App/DbSlice'
+import { copyCourse, deleteCourse, selectCourse, updateCourseInfo } from '../../App/DbSlice'
 import "./CourseTile.css"
-import "../../../Styles/Slider.css"
-import ConfirmationBox from '../../../Utils/ConfirmationBox'
-import HamburgerMenu from '../../../Utils/HamburgerMenu'
-import { setAdminMode, setEditMode } from '../../../App/AppSlice'
+// import "../../../Styles/Slider.css"
+import ConfirmationBox from '../../Utils/ConfirmationBox'
+import HamburgerMenu from '../../Utils/HamburgerMenu'
+import { setAdminMode, setEditMode } from '../../App/AppSlice'
 
 
 function CourseTile({course}) {

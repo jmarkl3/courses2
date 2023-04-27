@@ -1,7 +1,6 @@
 import './App.css';
 import "./Styles/Themes.css"
 import LandingPage from './Components/Pages/LandingPage';
-import CoursePage from './Components/Pages/CoursePage';
 import AuthMenu from './Components/Auth/AuthMenu';
 import { useDispatch, useSelector } from 'react-redux';
 import CheckOutPage from './Components/Checkout/CheckOutPage';
@@ -9,15 +8,30 @@ import { HashRouter, Router, Link, Route, Routes, useParams } from 'react-router
 import { useEffect } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth, database, selectCourse, setCourseData, setCoursesData, setUserData, setUserID } from './App/DbSlice';
-import DisplayPage from './Components/Content/DisplayPage';
 import Dashboard from './Components/Content/Dashboards/Dashboard';
 import { onValue, ref } from 'firebase/database';
-import { setEditMode } from './App/AppSlice';
+import { setLoading } from './App/AppSlice';
 import Course from './Components/Content/Course/Course';
 import About from './Components/Pages/About';
 
 /*  
     
+  dashboards
+  show user course progress in cart course component (make a new component for that)
+  user information
+  styling like the example site
+
+  the price string needs to be converted to a number
+
+  cart course more info button
+
+  Style changes
+  checkoutInputThird and Half style changes on screen resize 
+  show password checkbox on right
+  flexbox for checkout options space between
+  admin cart course price can move to the left so the hamburger menu can be on the right
+  mobile view
+
   when there is an admin user signed in they can go to the edit courses page
   this will show all of the courses that they have created
   when there is a non admin user signed in they can go 
@@ -206,39 +220,31 @@ function App() {
     }, [selectedCourseID])
   
 
-  // Listen for auth state changes and puts userID in state
-  function authListener(){
-    onAuthStateChanged(auth, (user) => {
-      dispatcher(setUserID(user?.uid))
+    // Listen for auth state changes and puts userID in state
+    function authListener(){
+      onAuthStateChanged(auth, (user) => {
+        dispatcher(setUserID(user?.uid))
 
-    })
-  }
+      })
+    }
 
-  // Loads the meta data so all of the course tiles can be displayed
-  function loadCoursesData(){
-    onValue(ref(database, 'coursesApp/coursesMetaData'), (snapshot) => {
-      const data = snapshot.val();      
-      setTimeout(() => {
-        dispatcher(setCoursesData(data))
-      }, 250)
-    })    
-  }
-
-    // useEffect(() => {       
-    //   if(courseID){
-    //     dispatcher(selectCourse(courseID))
-    //     dispatcher(setEditMode(false))
-    //   }
-        
-    // }, [])
-  
-
-  
+    // Loads the meta data so all of the course tiles can be displayed
+    function loadCoursesData(){
+      onValue(ref(database, 'coursesApp/coursesMetaData'), (snapshot) => {
+        const data = snapshot.val();      
+        setTimeout(() => {
+          dispatcher(setCoursesData(data))
+        }, 250)
+      })    
+    }
+ 
     // Loads the user data in to state
     function loadUserData(){
       if(!userID) return
       onValue(ref(database, 'coursesApp/userData/'+userID), (snapshot) => {
         const data = snapshot.val();   
+        console.log("user data")
+        console.log(data)
         setTimeout(() => {
           dispatcher(setUserData(data))
         }, 250)
@@ -252,6 +258,8 @@ function App() {
         const data = snapshot.val();   
         setTimeout(() => {
           dispatcher(setCourseData(data))
+          dispatcher(setLoading(false))
+
         }, 250)
       })    
     }

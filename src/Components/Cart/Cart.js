@@ -4,7 +4,7 @@ import CartCourse from './CartCourse'
 import { priceString } from '../../App/functions'
 import { useDispatch, useSelector } from 'react-redux'
 import { selectCartCourse, setPage } from '../../App/AppSlice'
-import Checkout from '../Checkout/Checkout'
+import Checkout from '../Unused/Checkout'
 import { useNavigate } from 'react-router-dom'
 
 function Cart({close, inCheckout}) {

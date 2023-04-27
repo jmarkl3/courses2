@@ -15,7 +15,7 @@ const appSlice = createSlice({
         // Admin mode is when the user is viewing a course without timers
         adminMode: false,
         // When this is true the user is editing a course
-        editMode: true,
+        editMode: false,
         // When this changes the element edit component will minimize or expand based on the value
         minimizeAll: false,
         showAuthMenu: false,
@@ -68,6 +68,7 @@ const appSlice = createSlice({
             },
         ],
         page: "landing",
+        loading: false,
     },
     reducers: {
         // ================================================================================
@@ -123,6 +124,9 @@ const appSlice = createSlice({
         setPage(state, action) {
             state.page = action.payload;
         },
+        setLoading(state, action) {
+            state.loading = action.payload;
+        },
        
         // #endregion General App Controls
 
@@ -177,7 +181,7 @@ export const {setSideNavOpen, setAdminMode} = appSlice.actions;
 // Edit Course
 export const {setEditMode, toggleMinimizeAll, togglePreviewMode} = appSlice.actions;
 // Geranl App State
-export const {toggleShowAuthMenu, setTheme, toggleLanguage, toggleTheme, setPage} = appSlice.actions;
+export const {setLoading, toggleShowAuthMenu, setTheme, toggleLanguage, toggleTheme, setPage} = appSlice.actions;
 // Cart
 export const {selectCartCourse, removeCartCourse, setDraggingCourse} = appSlice.actions;
 // #endregion Exports

@@ -1,11 +1,19 @@
-import React, { useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import "./CartCourse.css"
 import { priceString } from '../../App/functions'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { removeCartCourse, selectCartCourse, setDraggingCourse} from '../../App/AppSlice'
+import { useNavigate } from 'react-router-dom'
 
 function CartCourse({courseData, selected, allowRemove, draggable, showCart, readOnly}) {
-    const dispacher = useDispatch()
+    const userData = useSelector(state => state.dbslice.userData)
+    const isEnrolledInCourse = userData?.enrolledCourses?.includes(courseData.id)
+    const dispacher = useDispatch()    
+    const navigate = useNavigate()
+
+    console.log(userData?.enrolledCourses)
+    console.log(userData?.enrolledCourses?.includes(courseData.id))
+    console.log(isEnrolledInCourse)
 
     function selectCourse(){
         showCart()
@@ -33,18 +41,28 @@ function CartCourse({courseData, selected, allowRemove, draggable, showCart, rea
             </div>
         </div>
         <div className='cartCourseButtons'>
-        {!selected ?
+        {isEnrolledInCourse?
             <>
-                <button onClick={selectCourse}>Add To Cart</button>
-                <button>More Info</button>
-            </>:
-            <>
-                {!readOnly &&
-                    <button onClick={()=>dispacher(removeCartCourse(courseData.id))}>Remove</button>
-                }
+                <button onClick={()=>navigate("/Course/"+courseData.id)}>Go To Course</button>
                 <button>More Info</button>
             </>
-        }
+            :
+            <>
+                {selected ?
+                    <>
+                        {!readOnly &&
+                            <button onClick={()=>dispacher(removeCartCourse(courseData.id))}>Remove</button>
+                        }
+                        <button>More Info</button>
+                    </>
+                    :
+                    <>
+                        <button onClick={selectCourse}>Add To Cart</button>
+                        <button>More Info</button>
+                    </>
+                }
+            </>
+        }        
         </div>
     </div>
   )

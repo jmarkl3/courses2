@@ -25,10 +25,9 @@ function Course() {
   useEffect(() => {   
     authListener()
     loadCoursesData()
-    console.log(courseID)
     if(courseID){
       dispatcher(selectCourse(courseID))
-      dispatcher(setEditMode(false))
+      
     }
       
   }, [])

@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { addCourse } from '../../../App/DbSlice'
 import { objectToArray } from '../../../App/functions'
 import "./Courses.css"
-import CourseTile from './CourseTile'
+import CourseTile from '../../Unused/CourseTile'
 import AdminCourseTile from './AdminCourseTile'
 
 // Mapping the coursesData to CourseTile components

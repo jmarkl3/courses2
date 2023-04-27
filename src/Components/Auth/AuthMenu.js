@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setTheme, toggleShowAuthMenu, toggleTheme } from '../../App/AppSlice'
 
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth'
-import { auth, saveUserAccountData } from '../../App/DbSlice'
+import { auth, enrollUserInCourses, saveUserAccountData, setUserID } from '../../App/DbSlice'
 import { useNavigate } from 'react-router-dom'
 
 
@@ -34,6 +34,12 @@ function AuthMenu() {
     var pass = passInput.current.value
     
     createUserWithEmailAndPassword(auth, email, pass).then( user =>{
+      // Save their user ID in state
+      dispatcher(setUserID(user.user.uid))
+      
+      // Put some stuff in their user data so it loads
+      dispatcher(enrollUserInCourses({userID: user.user.uid, courseIDArray: []}))
+
       }).catch(err=>{
         displayErrorMessage(err.message)
       })
@@ -73,7 +79,7 @@ function AuthMenu() {
                 <div className={`authMenu ${sideNavOpen ? "sideNavAuthLeftAdjust":""}`}>
                     <div className='closeButton' onClick={()=>dispatcher(toggleShowAuthMenu())}>x</div>
                     <>
-                        {(userID) ? 
+                        {userID ? 
                         <>
                             <div>Account Actions</div>
                             <button onClick={signOutUser}>Log Out</button>
