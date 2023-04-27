@@ -59,9 +59,10 @@ const dbslice = createSlice({
     name: "dbslice",
     initialState: {
         // The courses data from the database with title, description, etc.
-        coursesData: null,
+        coursesData: {},
         // The course data from the database with the lessons, etc.
         courseData: null,
+        coursesArray: [],
         // The user data from the database
         userData: null,
         // The selected IDs
@@ -82,7 +83,31 @@ const dbslice = createSlice({
         timerSaveCounter: 0,
     },
     reducers: {
-        
+        // #region loading data
+        // The loading data actions put data into the store when it is loaded from the database
+
+        setCourseData (state, action) {        
+            state.courseData = action.payload;
+        },
+        // Set the courses data (metadata for all courses including title, description, etc.)
+        setCoursesData (state, action) {        
+            state.coursesData = action.payload;
+            if(typeof action.payload === "object"){
+                var tempArray = []
+                Object.entries(action.payload).forEach(([key, value]) => {
+                    var dataObject = {...value}
+                    dataObject.id = key
+                    tempArray.push(dataObject)
+                })
+                state.coursesArray = tempArray
+            }
+        },
+        setUserData(state, action){
+            state.userData = action.payload;
+        },
+
+        // #endregion  loading data
+
         // #region user data
         setUserID(state, action){
             state.userID = action.payload;
@@ -102,32 +127,32 @@ const dbslice = createSlice({
             // Save the remaining time in the db
             set(ref(database, locationString), action.payload.value)
         },
+        // action.payload = {property: "isAdmin", value: true}
+        saveUserAccountData(state, action){
+            if(action.payload.value == undefined || !action.payload.property){
+                console.log("Error: saveRemainingSectionTime: missing data")
+                return
+            }
+            // This is the location that the remaining time will be saved
+            var locationString = "coursesApp/userData/"+state.userID+"/accountData/"+action.payload.property
+            // Save the remaining time in the db
+            set(ref(database, locationString), action.payload.value)
+        },
         
 
         // #endregion user data
 
-        // #region loading data
-        // The loading data actions put data into the store when it is loaded from the database
-
-        setCourseData (state, action) {        
-            state.courseData = action.payload;
-        },
-        // Set the courses data (metadata for all courses including title, description, etc.)
-        setCoursesData (state, action) {        
-            state.coursesData = action.payload;
-        },
-        setUserData(state, action){
-            state.userData = action.payload;
-        },
-
-        // #endregion  loading data
-
         // #region selections
         // The selections actions select items such as chapters, sections, and elements based on their ID
         
-        selectCourse(state, action) {
-            // Set the selected course ID
+        selectCourse(state, action) {  
             state.selectedCourseID = action.payload;
+            //console.log(state.coursesData)          
+            // if(state.coursesArray.find(course => course.id))
+            //     // Set the selected course ID
+            //     state.selectedCourseID = action.payload;
+            // else
+            //     console.log(action.payload + " is not a valid course ID")
 
         },
         selectChapter(state, action) {
@@ -343,6 +368,15 @@ const dbslice = createSlice({
             // Update the course info (will only change the name and description, will not affect the items or other data)
             update(ref(database, 'coursesApp/coursesMetaData/'+action.payload.courseID), {name: action.payload.newName, description: action.payload.newDescription})
             update(ref(database, 'coursesApp/coursesData/'+action.payload.courseID), {name: action.payload.newName, description: action.payload.newDescription})            
+        },
+        updateCourseInfo2 (state, action) {  
+            console.log("updateCourseInfo2")
+            console.log(action.payload.valuesObject)
+            // Make sure the payload is valid
+            if(!action.payload || !action.payload.courseID || !action.payload.valuesObject) return
+            // Update the course info
+            update(ref(database, 'coursesApp/coursesMetaData/'+action.payload.courseID), action.payload.valuesObject)            
+            update(ref(database, 'coursesApp/coursesData/'+action.payload.courseID), action.payload.valuesObject)            
         },
 
         // #endregion course actions
@@ -772,10 +806,12 @@ const dbslice = createSlice({
 export const dbsliceReducer = dbslice.reducer;
 // Loading actions
 export const {setCourseData, setCoursesData} = dbslice.actions;
+// User Data actions
+export const {setUserID, setUserData, saveUserSectionData, saveUserAccountData} = dbslice.actions;
 // Selection actions
 export const {selectCourse, selectChapter, selectSection, selectElement, selectNextSection, selectPreviousSection, selectSectionIfValid} = dbslice.actions;
 // Course actions
-export const {addCourse, deleteCourse, copyCourse, updateCourseInfo} = dbslice.actions;
+export const {addCourse, deleteCourse, copyCourse, updateCourseInfo, updateCourseInfo2} = dbslice.actions;
 // Chapter actions
 export const {addChapter, deleteChapter, copyChapter} = dbslice.actions;
 // Section actions
@@ -786,7 +822,5 @@ export const {addElement, deleteElement, copyElement} = dbslice.actions;
 export const {sidenavDragStart, sidenavDragEnd, sidenavDragOver} = dbslice.actions;
 // Helper actions
 export const {updateItemInfo, selectFirst, incrementTimerSaveCounter} = dbslice.actions;
-// User Data actions
-export const {setUserID, setUserData, saveUserSectionData} = dbslice.actions;
 
 // #endregion exports

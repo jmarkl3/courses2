@@ -1,10 +1,31 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import "./LandingPage.css"
 import backgroundImage from "../../Images/momAndChildBackground.jpg"
 import { useDispatch, useSelector } from 'react-redux'
 import { toggleLanguage, toggleShowAuthMenu } from '../../App/AppSlice'
 import Cart from '../Cart/Cart'
+import CartCourse from '../Cart/CartCourse'
 /*    
+
+    page content
+    match style from example page
+    add the courses from the sample data to the landing page description 
+    put the links to the page scrolls to the corresponding nav section
+
+    landing page content can switch when user clicks some nav buttons 
+    support page is the only one for now
+
+    language changes based on the app state  
+
+    create some content that is ok. it can be added to later if needed
+
+    links to the courses page via the cart
+    user signs up for a course and it saves in the db
+    they can get to their courses with a your courses button or in the account menu
+    account menu will be the main place
+    if theyre logged in and enrolled in a course there will be a go to my course button
+    or if multiple courses go to my courses will open the account page 
+
 
     nav buttons
       if it doesn't open a menu have the page scroll to where the corrosponding section is
@@ -25,6 +46,9 @@ import Cart from '../Cart/Cart'
       submit button      
       back button    
 
+      checkout page should be a seperate page
+      will look better and also less likley they will press back in the browser than close a modal
+
     information sections
       the company
       selling points
@@ -33,58 +57,48 @@ import Cart from '../Cart/Cart'
 
     when user comes back it says welcome back with a smile and emojo
 
+    selected course IDs are saved in global state to be accessed by cart and checkout
+    they are also stored in local storage and loaded when user returns
+    if user is logged in they are stored in the db and loaded when user returns
+
+    examples:
+        this is a good one:
+        https://parentingafterdivorce.org/
+        :
+        other examples
+        https://www.onlineparentingprograms.com/support/how-it-works.html
+        https://co.onlineparentingprograms.com/district-18-coparenting-programs.html
+        https://healthychildrenofdivorce.com/
+        https://www.courtparentclass.com/
+        https://www.factcolorado.com/
 
 */
 
-function LandingPage() {
-    const language = useSelector(state => state.appslice.language)
+function LandingPage({goto}) {
+    const language = useSelector(state => state.appslice.language)    
     const [showCart, setShowCart] = useState(false)
     const dispacher = useDispatch()
+    const aboutRef = useRef()
+    const coursesRef = useRef()
+    const coursesArray =useSelector(state => state.dbslice.coursesArray)
 
-    const sampleCourses = [
-        {
-            id: 1,
-            name: "Course 1",
-            description: "This is a course about parenting",
-            price: 28.25,
-            image: "https://imgs.search.brave.com/dn99u3fgXHBh-xtK2LmKtz-vKKFaXW4WCe9BGBYP5fQ/rs:fit:1200:1200:1/g:ce/aHR0cHM6Ly9pbWFn/ZXMucGFyZW50aW5n/Lm1kcGNkbi5jb20v/c2l0ZXMvcGFyZW50/aW5nLmNvbS9maWxl/cy9zdHlsZXMvZmFj/ZWJvb2tfb2dfaW1h/Z2UvcHVibGljLzEx/MDBfc3RvcnlfUGFy/ZW50c19vZl9zdWNj/ZXNzZnVsX2tpZHMu/anBnP2l0b2s9OTJK/THJZNlg",
-        },
-        {
-            id: 2,
-            name: "Course 2",
-            description: "This is another course about parenting",
-            price: 38.50,
-            image: "https://static-ssl.businessinsider.com/image/55c9f359dd089592618b457e-5184-3456/shutterstock_267541034.jpg",
-        },
-        {
-            id: 3,
-            name: "Course 1",
-            description: "This is a course about parenting",
-            price: 10.00,
-            image: "https://imgs.search.brave.com/dn99u3fgXHBh-xtK2LmKtz-vKKFaXW4WCe9BGBYP5fQ/rs:fit:1200:1200:1/g:ce/aHR0cHM6Ly9pbWFn/ZXMucGFyZW50aW5n/Lm1kcGNkbi5jb20v/c2l0ZXMvcGFyZW50/aW5nLmNvbS9maWxl/cy9zdHlsZXMvZmFj/ZWJvb2tfb2dfaW1h/Z2UvcHVibGljLzEx/MDBfc3RvcnlfUGFy/ZW50c19vZl9zdWNj/ZXNzZnVsX2tpZHMu/anBnP2l0b2s9OTJK/THJZNlg",
-        },
-        {
-            id: 4,
-            name: "Course 2",
-            description: "This is another course about parenting",
-            price: 10.00,
-            image: "https://static-ssl.businessinsider.com/image/55c9f359dd089592618b457e-5184-3456/shutterstock_267541034.jpg",
-        },
-        {
-            id: 5,
-            name: "Course 1",
-            description: "This is a course about parenting",
-            price: 10.00,
-            image: "https://imgs.search.brave.com/dn99u3fgXHBh-xtK2LmKtz-vKKFaXW4WCe9BGBYP5fQ/rs:fit:1200:1200:1/g:ce/aHR0cHM6Ly9pbWFn/ZXMucGFyZW50aW5n/Lm1kcGNkbi5jb20v/c2l0ZXMvcGFyZW50/aW5nLmNvbS9maWxl/cy9zdHlsZXMvZmFj/ZWJvb2tfb2dfaW1h/Z2UvcHVibGljLzEx/MDBfc3RvcnlfUGFy/ZW50c19vZl9zdWNj/ZXNzZnVsX2tpZHMu/anBnP2l0b2s9OTJK/THJZNlg",
-        },
-        {
-            id: 6,
-            name: "Course 2",
-            description: "This is another course about parenting",
-            price: 10.00,
-            image: "https://static-ssl.businessinsider.com/image/55c9f359dd089592618b457e-5184-3456/shutterstock_267541034.jpg",
-        },
-    ]
+    useEffect(() => {
+        if(goto === "about")
+        setTimeout(() => {
+            scrollToAbout()
+
+        }, 250)
+        
+    }, [])
+
+    function scrollToAbout(){
+        aboutRef.current.scrollIntoView({behavior: 'smooth'})
+
+    }
+    function scrollToCourses(){
+        coursesRef.current.scrollIntoView({behavior: 'smooth'})
+
+    }
 
   return (
 
@@ -107,10 +121,10 @@ function LandingPage() {
                     </div>
                 </div>
                 <div className='landingNav'>
-                    <div className='landingNavButton'>
-                        Info
+                    <div className='landingNavButton' onClick={scrollToAbout}>
+                        About
                     </div>
-                    <div className='landingNavButton'>
+                    <div className='landingNavButton' onClick={scrollToCourses}>
                         Courses
                     </div>
                     <div className='landingNavButton' onClick={()=>dispacher(toggleLanguage())}>
@@ -128,11 +142,61 @@ function LandingPage() {
                 </div>
             </div>
             <div className='landingContent'>
+                <div className='landingPageText'>
 
+                    <div className={"landingPageTextSection"} ref={aboutRef}> 
+                        <h3 className='center' >
+                            About
+                        </h3>    
+                        <div>
+                            If you have been mandated to complete one of our online parenting classes, it is your responsibility to make sure the court or government agency has a copy of your certificate or a record of your completion. OnlineParentingPrograms.com does not file completed certificates on your behalf. If you are unsure how to file your certificate contact the agency that required the program for specific instructions.
+                        </div>
+                    </div>
+                    <div className={"landingPageTextSection"}>
+                        <h3 className='center'>
+                            Key Facts
+                        </h3>  
+                        <hr></hr>
+                        <ul>
+                            <li>Meets the requirements of courts throughout Colorado</li>
+                            <li>More than 100,000 parents served since 1993</li>
+                            <li>Highly-experienced male-female teams of mental health professionals and educators</li>
+                            <li>Curriculum reflects the most recent research about children of divorce</li>
+                            <li>Convenient locations throughout the Denver Metro Area</li>
+                            <li>Reduced fee for qualified indigent participants</li>
+                            <li>Offered in English and Spanish</li>
+                            <li>Two Classes Offered &ndash; Levels 1 &amp; 2</li>
+                        </ul>
+                    </div>
+                    <div className={"landingPageTextSection"} ref={coursesRef}>
+                        <h3 className='center'>
+                            Our Courses
+                        </h3>  
+                        <hr></hr>
+                        <div>
+                            {coursesArray.map(courseData => (
+                                <CartCourse courseData={courseData} draggable={false} showCart={()=>setShowCart(true)}></CartCourse>
+                            ))}
+                        </div>
+                    </div>
+                    <div className={"landingPageTextSection"}>
+                        <h3 className='center'>
+                            A word of inspiration
+                        </h3>  
+                        <hr></hr>
+                        <div>
+                            <p><em>&ldquo;&hellip;there is hope for children. Divorcing parents cannot spare their children the pain of divorce, despite their sometimes fervent desire to do so. And perhaps they shouldn&rsquo;t try. Children are entitled to their own feelings; children need to grieve. But even after divorce parents can &ndash; in my view must &ndash; work hard to be good parents and co-parents. Over time after divorce, good parents and co-parents can promote their children&rsquo;s resilience and do much to ease their pain. Rather than forever being &ldquo;children of divorce,&rdquo; hardworking divorced parents and co-parents can help their kids to be, well, just kids.&rdquo;</em></p>
+                            <p><em>Robert Emery &ndash; Family Court Review &ndash; July, 2006</em></p>
+                        </div>
+
+                    </div>
+
+
+                </div>
             </div>
 
         </div>
-        {showCart && <Cart close={()=>setShowCart(false)} sampleCourses={sampleCourses}></Cart>}
+        {showCart && <Cart close={()=>setShowCart(false)}></Cart>}
     </div>
   )
 }

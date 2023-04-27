@@ -1,12 +1,15 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { auth, database, setCourseData, setCoursesData, setUserData, setUserID } from '../../App/DbSlice';
-import DisplayPage from '../../Components/Content/DisplayPage';
-import Navbar from '../../Components/Navbar/Navbar';
+import DisplayPage from '../Content/DisplayPage';
+import Navbar from '../Navbar/Navbar';
 import { onValue } from 'firebase/database';
 import { ref } from 'firebase/database';
-import AuthMenu from '../../Components/Auth/AuthMenu';
+import AuthMenu from '../Auth/AuthMenu';
 import { onAuthStateChanged } from 'firebase/auth';
+import { useParams } from 'react-router-dom';
+import { setEditMode } from '../../App/AppSlice';
+import { selectCourse } from '../../App/DbSlice';
 
 function Course() {  
   const selectedCourseID = useSelector(state => state.dbslice.selectedCourseID)
@@ -16,10 +19,18 @@ function Course() {
   const theme = useSelector(state => state.appslice.theme)
   const dispatcher = useDispatch()
 
+  const { courseID } = useParams();
+  
   // Load the meta data so all of the course tiles can be displayed
   useEffect(() => {   
     authListener()
     loadCoursesData()
+    console.log(courseID)
+    if(courseID){
+      dispatcher(selectCourse(courseID))
+      dispatcher(setEditMode(false))
+    }
+      
   }, [])
 
   useEffect(() => {   
@@ -85,7 +96,6 @@ function Course() {
       <div className={theme}>
         <DisplayPage></DisplayPage>
       </div>
-      <AuthMenu></AuthMenu>
     </div>
   );
 }

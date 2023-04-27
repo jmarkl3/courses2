@@ -1,11 +1,37 @@
 import './App.css';
 import "./Styles/Themes.css"
 import LandingPage from './Components/Pages/LandingPage';
-import Course from './Components/Pages/Course';
+import CoursePage from './Components/Pages/CoursePage';
 import AuthMenu from './Components/Auth/AuthMenu';
+import { useDispatch, useSelector } from 'react-redux';
+import CheckOutPage from './Components/Checkout/CheckOutPage';
+import { HashRouter, Router, Link, Route, Routes, useParams } from 'react-router-dom';
+import { useEffect } from 'react';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth, database, selectCourse, setCourseData, setCoursesData, setUserData, setUserID } from './App/DbSlice';
+import DisplayPage from './Components/Content/DisplayPage';
+import Dashboard from './Components/Content/Dashboards/Dashboard';
+import { onValue, ref } from 'firebase/database';
+import { setEditMode } from './App/AppSlice';
+import Course from './Components/Content/Course/Course';
+import About from './Components/Pages/About';
 
 /*  
     
+  when there is an admin user signed in they can go to the edit courses page
+  this will show all of the courses that they have created
+  when there is a non admin user signed in they can go 
+    their dashboard
+    a course they are signed up for
+
+  need to user router
+  if user is in checkout and clicks back it leaves the page
+  also need to be able to link to a course from the landing page
+
+  need a place to set the course image, price, extended description
+  pull for the actual courses to show in the landing page
+  connection from landing page to course
+
   landing page
   this is a good one:
   https://parentingafterdivorce.org/
@@ -155,14 +181,94 @@ ________________________________________________________________________________
 
 */
 
-function App() {  
- 
+function App() {    
+  const userID = useSelector(state => state.dbslice.userID)
+  const selectedCourseID = useSelector(state => state.dbslice.selectedCourseID)
+  const dispatcher = useDispatch()   
+  const { courseID } = useParams();
+
+  // Calls authListener which sets the user id in state on auth state change
+  // Also loads the courses meta data
+  useEffect(() => {   
+    authListener()
+    loadCoursesData()
+
+  }, [])
+
+    // when the userID changes load there data
+    useEffect(() => {   
+      loadUserData()
+    }, [userID])
+  
+    // Load the data for the selected course
+    useEffect(() => {   
+      loadCourseData(selectedCourseID)
+    }, [selectedCourseID])
+  
+
+  // Listen for auth state changes and puts userID in state
+  function authListener(){
+    onAuthStateChanged(auth, (user) => {
+      dispatcher(setUserID(user?.uid))
+
+    })
+  }
+
+  // Loads the meta data so all of the course tiles can be displayed
+  function loadCoursesData(){
+    onValue(ref(database, 'coursesApp/coursesMetaData'), (snapshot) => {
+      const data = snapshot.val();      
+      setTimeout(() => {
+        dispatcher(setCoursesData(data))
+      }, 250)
+    })    
+  }
+
+    // useEffect(() => {       
+    //   if(courseID){
+    //     dispatcher(selectCourse(courseID))
+    //     dispatcher(setEditMode(false))
+    //   }
+        
+    // }, [])
+  
+
+  
+    // Loads the user data in to state
+    function loadUserData(){
+      if(!userID) return
+      onValue(ref(database, 'coursesApp/userData/'+userID), (snapshot) => {
+        const data = snapshot.val();   
+        setTimeout(() => {
+          dispatcher(setUserData(data))
+        }, 250)
+      })    
+    }
+
+    // Loads data for the selected course
+    function loadCourseData(courseID){
+      if(!courseID || courseID === "") return
+      onValue(ref(database, 'coursesApp/coursesData/'+courseID), (snapshot) => {
+        const data = snapshot.val();   
+        setTimeout(() => {
+          dispatcher(setCourseData(data))
+        }, 250)
+      })    
+    }
 
   return (
-    <>
-      {/* <Course></Course> */}
-      <LandingPage></LandingPage>
-      <AuthMenu></AuthMenu>
+    <>      
+      <HashRouter>
+        <Routes>
+          <Route path='/' Component={LandingPage}></Route>
+          <Route path='/About' Component={About}></Route>
+          <Route path='/Checkout' Component={CheckOutPage}></Route>
+          <Route path='/Dashboard' Component={Dashboard}></Route>
+          <Route path='/Course' Component={Course}></Route>
+          <Route path='/Course/:courseID' Component={Course}></Route>
+        </Routes>
+        <AuthMenu></AuthMenu>
+      </HashRouter>
     </>
   );
 }

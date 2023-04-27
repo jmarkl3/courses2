@@ -51,3 +51,44 @@
     margin-top: 3px;    
     width: calc(100%);
 }
+.hamburgerMenuConteiner{
+    position: absolute;
+    top: 0;
+    right: 60px;
+}
+.adminCourseTileEditWindow{
+    position: fixed;
+    min-height: 120px;
+    width: 70vw;
+    top: 5vh;
+    left: 15vw;    
+}
+.adminCourseTileEditWindow textarea{
+    min-width: calc(100% - 20px);
+    max-width: calc(100% - 20px);    
+    height: 80px;
+}
+.tileEditImagePreview{
+    height: 80px;
+    width: 80px;
+    border: 1px solid rgb(206, 206, 206);
+    display: inline-block;
+    vertical-align: bottom;
+}
+.tileEditImagePreview img{
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
+.inputHalf{
+    width: calc((100% / 2) - 20px);
+    text-align: center;
+    display: inline-block;
+    margin: 10px;
+}
+.inputHalfM100{
+    width: calc(100% - 120px);
+    text-align: center;
+    display: inline-block;
+    margin: 10px;
+}

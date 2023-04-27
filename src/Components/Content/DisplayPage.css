@@ -12,6 +12,7 @@
     /* z-index: 1; */
     margin-top: 60px;         
     transition: 500ms;
+    text-align: center;
 }
 .pageOuterNavOpen{
     margin-left: 250px;

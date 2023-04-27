@@ -1,6 +1,11 @@
 import React from 'react'
 import "./Checkout.css"
-function Checkout({back}) {
+import { useNavigate } from 'react-router-dom';
+function Checkout({openCart}) {
+    const navigate = useNavigate();
+    function goToCourse(){
+        navigate("/Course")
+    }
   return (
     <div className='checkout'>        
         <div className='checkoutInput'>
@@ -44,8 +49,8 @@ function Checkout({back}) {
             <input></input>
         </div>  
         <div className='checkoutSubmit'>
-            <button onClick={back}>Back</button>    
-            <button className='checkoutButton'>Submit</button>    
+            <button onClick={openCart}>Edit Cart</button>    
+            <button className='checkoutButton' onClick={goToCourse}>Submit</button>    
         </div>    
     </div>
   )

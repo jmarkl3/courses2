@@ -65,6 +65,22 @@
     background-color: #f2f2f2;
     margin-bottom: 10px;
 }
+.landingPageText{
+    white-space: pre-line;
+    width: 600px;
+    margin-left: calc( 50% - 300px);
+    padding-top: 50px;
+    padding-bottom: 50px;
+    line-height: 20px;
+    font-size: 14px;
+}
+.landingPageTextSection{
+    padding-top: 20px;
+}
+.landingPageText h3{
+    font-size: 22px;
+    margin: 10px 0px;
+}
 @media screen and (min-width: 1200px){
     .landingPageTitleContainer{
         width: 1000px;

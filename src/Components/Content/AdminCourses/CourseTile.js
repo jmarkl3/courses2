@@ -39,6 +39,7 @@ function CourseTile({course}) {
 
     }
     function editCourseFunction(){
+        console.log(course.id)
         dispatcher(selectCourse(course.id))
         dispatcher(setEditMode(true))
         // dispatcher(setAdminMode(false))

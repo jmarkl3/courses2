@@ -1,6 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@600&display=swap');
+
 html body{
   padding: 0;
   margin: 0;
+  font-family: 'Roboto', sans-serif;
 }
 img{
   height: 100%;
@@ -72,6 +75,7 @@ button{
   border-radius: 3px;
   transition: 500ms;
   background-image: linear-gradient(white, rgba(0, 0, 0, 0.05));
+  vertical-align: top;
 }
 button:last-child{
   margin-right: 0px;
@@ -101,4 +105,23 @@ button:hover{
 }
 .w100{
   width: 100%;
+}
+.center{
+  text-align: center;
+}
+.space20{
+  height: 20px;
+  width: 100%;
+}
+.box{
+  margin: 10px;
+  padding: 10px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  box-shadow: 0 0 4px #ccc;
+  background-color: white;
+}
+.clickable{
+  user-select: none;
+  cursor: pointer;
 }

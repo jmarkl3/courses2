@@ -55,6 +55,7 @@
     background-image: none;
     box-shadow: none;
     width: auto;
+    user-select: none;
 }
 .navbar button:last-child{
     margin-right: 0px;

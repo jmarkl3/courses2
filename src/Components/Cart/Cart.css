@@ -5,7 +5,8 @@
     width: 80vw;
     height: 680px;
     background-color: white;
-    box-shadow: 0 4px 8px black;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.24);
+    border: 1px solid #d8d8d8;
     border-radius: 5px;
     opacity: 0;
     transition: 1000ms;
@@ -19,8 +20,11 @@
 .cartSection{
     padding: 20px 40px;
     box-sizing: border-box;
-    height: 50% ;    
+    height: 48% ;    
     position: relative;
+}
+.cartSectionTall{
+    height: calc(100% - 40px); 
 }
 .cartSectionCheckingOut{
     height: 190px;
@@ -29,15 +33,19 @@
 .cartSectionCheckingOut .cartMenuItems{
     height: calc(100% - 40px);
 }
-.yourCart{
-    border-bottom: 1px solid #f2f2f2;    
+.cartDivider{
+    height: 0px;
+    margin-top: 10px;
+    border-top: 1px solid #d8d8d8;
+    width: 90%;
+    margin-left: 5%;
 }
 .cartMenuItems{
     position: relative;
     overflow-y: auto;
     height: calc(100% - 60px);
     border: 1px solid #f2f2f2;
-    box-shadow: 0 2px 4px #f2f2f2 inset;
+    box-shadow: 0 2px 4px #d8d8d8 inset;
     padding: 5px;
     box-sizing: border-box;
 }
@@ -67,12 +75,16 @@
     margin-bottom: 5px;
 }
 .checkoutButton{
+    box-shadow: none;    
+    vertical-align: top;
+}
+.checkoutButtonBlue{
     background-color: rgb(196, 213, 240);
     background-image: linear-gradient(rgba(255, 255, 255, 0.418), rgba(255, 255, 255, 0));
-
 }
 .checkoutButton:hover{
     background-color: rgb(227, 235, 248);
+    box-shadow: none;
 }
 .checkoutButtonSize{
     height: 40px;

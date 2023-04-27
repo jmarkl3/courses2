@@ -4,6 +4,7 @@ import { addCourse } from '../../../App/DbSlice'
 import { objectToArray } from '../../../App/functions'
 import "./Courses.css"
 import CourseTile from './CourseTile'
+import AdminCourseTile from './AdminCourseTile'
 
 // Mapping the coursesData to CourseTile components
 function Courses() {
@@ -26,7 +27,7 @@ function Courses() {
             </div>
         </div>
             {coursesDataArray.map((course, index) => (
-                <CourseTile course={course} key={course.id}></CourseTile>
+                <AdminCourseTile course={course} key={course.id}></AdminCourseTile>
             ))}
     </div>
   )

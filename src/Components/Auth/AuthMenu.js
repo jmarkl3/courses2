@@ -4,20 +4,21 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setTheme, toggleShowAuthMenu, toggleTheme } from '../../App/AppSlice'
 
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth'
-import { auth } from '../../App/DbSlice'
+import { auth, saveUserAccountData } from '../../App/DbSlice'
+import { useNavigate } from 'react-router-dom'
 
 
 function AuthMenu() {
   const showAuthMenu = useSelector(state => state.appslice.showAuthMenu)
   const sideNavOpen = useSelector(state => state.appslice.sideNavOpen)
   const theme = useSelector(state => state.appslice.theme)
-  const dispatcher = useDispatch()
-
   const userID = useSelector(state => state.dbslice.userID)
   const [createNew, setCreateNew] = useState(true)
   const [errorMessage, setErrorMessage] = useState("")
   const emailInput = useRef()
   const passInput = useRef()
+  const dispatcher = useDispatch()
+  const navigate = useNavigate()
     
   function signIn(){
     var email = emailInput.current.value
@@ -77,6 +78,8 @@ function AuthMenu() {
                             <div>Account Actions</div>
                             <button onClick={signOutUser}>Log Out</button>
                             <button onClick={()=>dispatcher(toggleTheme("darkTheme"))}>{theme === "Light Theme" ? "Dark Theme" : "Light Theme"}</button>                            
+                            <button onClick={()=>dispatcher(saveUserAccountData({property: "isAdmin", value: true}))}>Make Admin</button>                            
+                            <button onClick={()=>navigate("/Dashboard")}>Your Courses</button>                            
                         </>
                         :
                         <>
@@ -97,7 +100,6 @@ function AuthMenu() {
                                 {
                                 createNew ?
                                 <button onClick={signUp}>Create Account</button>
-                
                                 :
                                 <button onClick={signIn}>Log In</button>
                                 } 

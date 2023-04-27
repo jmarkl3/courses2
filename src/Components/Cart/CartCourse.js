@@ -4,13 +4,18 @@ import { priceString } from '../../App/functions'
 import { useDispatch } from 'react-redux'
 import { removeCartCourse, selectCartCourse, setDraggingCourse} from '../../App/AppSlice'
 
-function CartCourse({courseData, selected, allowRemove}) {
+function CartCourse({courseData, selected, allowRemove, draggable, showCart, readOnly}) {
     const dispacher = useDispatch()
+
+    function selectCourse(){
+        showCart()
+        dispacher(selectCartCourse(courseData.id))
+    }
 
   return (
     <div 
-        className={'cartCourse ' + (selected ? "":"availableCourse")} 
-        draggable={!selected} 
+        className={'cartCourse ' + (draggable ? "draggable":"")} 
+        draggable={!selected && draggable} 
         onDragStart={()=>dispacher(setDraggingCourse(courseData.id))}
     >
         <div className='cartCourseImage'>
@@ -30,11 +35,13 @@ function CartCourse({courseData, selected, allowRemove}) {
         <div className='cartCourseButtons'>
         {!selected ?
             <>
-                <button onClick={()=>dispacher(selectCartCourse(courseData.id))}>Add To Cart</button>
+                <button onClick={selectCourse}>Add To Cart</button>
                 <button>More Info</button>
             </>:
             <>
-                {allowRemove && <button onClick={()=>dispacher(removeCartCourse(courseData.id))}>Remove</button>}
+                {!readOnly &&
+                    <button onClick={()=>dispacher(removeCartCourse(courseData.id))}>Remove</button>
+                }
                 <button>More Info</button>
             </>
         }
@@ -42,5 +49,7 @@ function CartCourse({courseData, selected, allowRemove}) {
     </div>
   )
 }
-
+CartCourse.defaultProps = {
+    showCart: ()=>{},
+}
 export default CartCourse
