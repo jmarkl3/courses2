@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import { addCourse } from '../../../App/DbSlice'
 import { objectToArray } from '../../../App/functions'
 import "./Courses.css"
-import CourseTile from '../../Unused/CourseTile'
 import AdminCourseTile from './AdminCourseTile'
 
 // Mapping the coursesData to CourseTile components
@@ -21,14 +20,12 @@ function Courses() {
 
   return (
     <div>
-        <div className='courseTile'>
-            <div className='newCourseButton' onClick={()=>dispacher(addCourse())}>
-                New Course
-            </div>
+    <div className='cartCourse newCourseButton' onClick={()=>dispacher(addCourse())}>
+            New Course
         </div>
-            {coursesDataArray.map((course, index) => (
-                <AdminCourseTile course={course} key={course.id}></AdminCourseTile>
-            ))}
+        {coursesDataArray.map(course => (
+            <AdminCourseTile course={course} key={course.id}></AdminCourseTile>
+        ))}
     </div>
   )
 }

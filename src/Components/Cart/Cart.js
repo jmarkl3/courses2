@@ -42,8 +42,11 @@ function Cart() {
     },[selectedCourses])
 
     useEffect(() => {
-        let tempAvailableCourses = coursesArray?.filter(courseData => !userData?.enrolledCourses?.includes(courseData.id))
-        tempAvailableCourses = tempAvailableCourses?.filter(courseData => !selectedCourseIDs.includes(courseData.id))
+        let tempAvailableCourses = coursesArray
+        if(userData?.enrolledCourses && Array.isArray(userData?.enrolledCourses))
+            tempAvailableCourses = coursesArray?.filter(courseData => !userData?.enrolledCourses?.includes(courseData.id))
+        if(selectedCourseIDs && Array.isArray(selectedCourseIDs))
+         tempAvailableCourses = tempAvailableCourses?.filter(courseData => !selectedCourseIDs.includes(courseData.id))
         setAvailableCourses(tempAvailableCourses)
     }, [coursesArray, userData, selectedCourseIDs])
 
@@ -53,7 +56,10 @@ function Cart() {
 
     // Filter the sample courses to only include the selected courses
     function filterSelectedCourses(){
-        setSelectedCourses(coursesArray.filter(courseData => selectedCourseIDs.includes(courseData?.id)))
+        if(!selectedCourseIDs || !Array.isArray(selectedCourseIDs))
+            setSelectedCourses([])
+        else
+            setSelectedCourses(coursesArray.filter(courseData => selectedCourseIDs.includes(courseData?.id)))
     }
 
     function cartTotalFunction(){

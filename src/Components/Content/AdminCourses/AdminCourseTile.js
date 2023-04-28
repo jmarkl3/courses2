@@ -58,7 +58,6 @@ function viewCourseAsAdminFunction(){
   return (
     <>
         <div className={'cartCourse'} >
-            <div className='hamburgerMenuConteiner'>
                 <HamburgerMenu height="190px">            
                     <div className="hamburgerMenuOption" onClick={()=>setEditing(!editing)}>Edit Tile</div>
                     <div className="hamburgerMenuOption" onClick={editCourseFunction}>Edit Course</div>
@@ -67,7 +66,6 @@ function viewCourseAsAdminFunction(){
                     <div className="hamburgerMenuOption" onClick={()=>dispatcher(copyCourse(course.id))}>Copy</div>                            
                     <div className="hamburgerMenuOption" onClick={confirmDelete}>Delete</div>                            
                 </HamburgerMenu>
-            </div>
             <div className='cartCourseImage'>
                 <img src={course?.image}></img>
             </div>
@@ -78,7 +76,7 @@ function viewCourseAsAdminFunction(){
                 <div className='cartCourseDescription'>
                     {course?.description}
                 </div>
-                <div className='priceBox priceText'>
+                <div className='priceBox priceBoxAdmin priceText'>
                     {priceString(course?.price)}
                 </div>
             </div>

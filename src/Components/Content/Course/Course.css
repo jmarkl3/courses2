@@ -1,3 +1,90 @@
 .noCourseMessage{
     margin: 20px;
 }
+.courseTile{
+    height: 200px;
+    width: 200px;  
+    padding: 10px;  
+    box-sizing: border-box;
+    display: inline-block;
+    margin: 10px 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);    
+    transition: 500ms;
+    display: inline-block;
+    vertical-align: top;
+    cursor: pointer;
+    background-image: linear-gradient(rgba(128, 128, 128, 0), rgba(128, 128, 128, 0), rgba(128, 128, 128, 0), rgba(128, 128, 128, 0), rgba(124, 140, 148, 0.1));
+    position: relative;
+}
+.courseTileTitle{
+    width: 180px;
+    display: inline-block;
+    margin-top: 20px;    
+    font-size: 20px;
+}
+.courseTileTitleEdit input{        
+    width: calc(100% - 20px);
+}
+.courseTileDescription{
+    margin-top: 10px;    
+    height: 80px;
+    font-size: 12px;
+    width: 180px;
+    display: inline-block;
+}
+.courseTileDescription textarea{
+    width: calc(100% - 20px);
+
+}
+.courseTile:hover{
+    /* transform: scale(1.01); */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);    
+    width: 204px;
+    width: 204px;
+    margin: 8px 3px;    
+}
+.buttonHolder{
+    margin-top: 3px;    
+    width: calc(100%);
+}
+.hamburgerMenuConteiner{
+    position: absolute;
+    top: 0;
+    right: 60px;
+}
+.adminCourseTileEditWindow{
+    position: fixed;
+    min-height: 120px;
+    width: 70vw;
+    top: 5vh;
+    left: 15vw;    
+}
+.adminCourseTileEditWindow textarea{
+    min-width: calc(100% - 20px);
+    max-width: calc(100% - 20px);    
+    height: 80px;
+}
+.tileEditImagePreview{
+    height: 80px;
+    width: 80px;
+    border: 1px solid rgb(206, 206, 206);
+    display: inline-block;
+    vertical-align: bottom;
+}
+.tileEditImagePreview img{
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
+.inputHalf{
+    width: calc((100% / 2) - 20px);
+    text-align: center;
+    display: inline-block;
+    margin: 10px;
+}
+.inputHalfM100{
+    width: calc(100% - 120px);
+    text-align: center;
+    display: inline-block;
+    margin: 10px;
+}

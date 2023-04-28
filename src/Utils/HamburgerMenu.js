@@ -44,7 +44,7 @@ function HamburgerMenu(props) {
         {"⋮"}
         <div className={`topRightMenu `} style={{height: heightFromProps()}}>
             {props.children}
-            <div className="closeButton" onClick={toggleMenu}>X</div>
+            <div className="closeButton" onClick={toggleMenu}>x</div>
         </div>
     </div>
   )

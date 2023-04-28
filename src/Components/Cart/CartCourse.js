@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import "./CartCourse.css"
 import { priceString } from '../../App/functions'
 import { useDispatch, useSelector } from 'react-redux'
@@ -7,13 +7,23 @@ import { useNavigate } from 'react-router-dom'
 
 function CartCourse({courseData, selected, draggable, readOnly}) {
     const userData = useSelector(state => state.dbslice.userData)
-    const isEnrolledInCourse = userData?.enrolledCourses?.includes(courseData.id)
     const dispacher = useDispatch()    
     const navigate = useNavigate()
+
+    useEffect(()=>{
+        checkIfIsEnrolledInCourse()
+    }, [userData])
 
     function selectCourse(){
         dispacher(setShowCart(true))
         dispacher(selectCartCourse(courseData.id))
+    }
+    const [isEnrolledInCourse, setIsEnrolledInCourse] = useState(false)
+    function checkIfIsEnrolledInCourse(){
+        if(userData?.enrolledCourses && Array.isArray(userData?.enrolledCourses))
+            setIsEnrolledInCourse(userData?.enrolledCourses?.includes(courseData.id))
+        else    
+            setIsEnrolledInCourse(false)
     }
 
   return (
@@ -32,7 +42,7 @@ function CartCourse({courseData, selected, draggable, readOnly}) {
             <div className='cartCourseDescription'>
                 {courseData?.description}
             </div>
-            {userData?.enrolledCourses.includes(courseData.id) ?
+            {isEnrolledInCourse ?
                 <div className='priceBox'>
                     Progress Status
                 </div>
