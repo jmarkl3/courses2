@@ -50,7 +50,11 @@ function Cart({close, inCheckout}) {
     }
 
     function cartTotalFunction(){
-        setCartTotal(priceString(selectedCourses.reduce((total, courseData) => total + courseData?.price, 0)))        
+        let total = 0
+        selectedCourses.forEach(courseData => {
+            total += parseFloat(courseData?.price)
+        })
+        setCartTotal(priceString(total))
     }
 
     const cartMenuRef = useRef()

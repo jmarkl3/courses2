@@ -2,9 +2,10 @@
     background-color: #474444;
     color: white;
 }
-.darkTheme .pagePackground{
-    background-color: #474444;
+.darkTheme .pageBackground {
     color: white;
+    background-color: #474444;    
+    background-image: linear-gradient(rgba(207, 207, 235, 0), rgb(107, 107, 131));
 }
 .darkTheme .pageInner{
     background-color: #474444;    
@@ -43,3 +44,10 @@
 .darkTheme .courseTile{
     color: white;
 }
+.darkTheme .authMenu{
+    background-color: #474444; 
+}
+.darkTheme .cartCourse{
+    box-shadow: 0 0 4px rgb(104, 104, 211);
+    border: 1px solid rgb(60, 60, 148);
+} 

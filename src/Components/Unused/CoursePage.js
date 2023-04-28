@@ -14,9 +14,6 @@ import { selectCourse } from '../../App/DbSlice';
 function Course() {  
   const selectedCourseID = useSelector(state => state.dbslice.selectedCourseID)
   const userID = useSelector(state => state.dbslice.userID)
-  const editMode = useSelector(state => state.appslice.editMode)
-  const previewMode = useSelector(state => state.appslice.previewMode)
-  const theme = useSelector(state => state.appslice.theme)
   const dispatcher = useDispatch()
 
   const { courseID } = useParams();
@@ -91,10 +88,8 @@ function Course() {
 
   return (
     <div className="App"> 
-      <Navbar></Navbar>
-      <div className={theme}>
-        <DisplayPage></DisplayPage>
-      </div>
+      <Navbar></Navbar>      
+      <DisplayPage></DisplayPage>      
     </div>
   );
 }

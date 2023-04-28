@@ -2,9 +2,10 @@ import React, { useEffect, useRef, useState } from 'react'
 import "./LandingPage.css"
 import backgroundImage from "../../Images/momAndChildBackground.jpg"
 import { useDispatch, useSelector } from 'react-redux'
-import { toggleLanguage, toggleShowAuthMenu } from '../../App/AppSlice'
+import { toggleShowAuthMenu } from '../../App/AppSlice'
 import Cart from '../Cart/Cart'
 import CartCourse from '../Cart/CartCourse'
+import { toggleLanguage } from '../../App/DbSlice'
 /*    
 
     page content
@@ -75,13 +76,13 @@ import CartCourse from '../Cart/CartCourse'
 */
 
 function LandingPage({goto}) {
-    const language = useSelector(state => state.appslice.language)    
+    const language = useSelector(state => state.dbslice.userData?.accountData?.language)
     const [showCart, setShowCart] = useState(false)
     const dispacher = useDispatch()
     const aboutRef = useRef()
     const coursesRef = useRef()
-    const coursesArray =useSelector(state => state.dbslice.coursesArray)
-    const userData =useSelector(state => state.dbslice.userData)
+    const coursesArray = useSelector(state => state.dbslice.coursesArray)
+    const userData = useSelector(state => state.dbslice.userData)
 
     useEffect(() => {
         if(goto === "about")
@@ -169,22 +170,22 @@ function LandingPage({goto}) {
                             <li>Two Classes Offered &ndash; Levels 1 &amp; 2</li>
                         </ul>
                     </div>
-                    {(userData.enrolledCourses && Array.isArray(userData.enrolledCourses) && userData.enrolledCourses.length > 0) &&
+                    {(userData?.enrolledCourses && Array.isArray(userData?.enrolledCourses) && userData?.enrolledCourses?.length > 0) &&
                         <div className={"landingPageTextSection"} ref={coursesRef}>
                             <h3 className='center'>
                                 Your Courses
                             </h3>  
                             <hr></hr>
                             <div>
-                                {coursesArray.filter(courseData => userData.enrolledCourses.includes(courseData.id)).map(courseData => (
-                                    <CartCourse courseData={courseData} draggable={false} showCart={()=>setShowCart(true)} key={courseData.id}></CartCourse>
+                                {coursesArray.filter(courseData => userData?.enrolledCourses?.includes(courseData.id)).map(courseData => (
+                                    <CartCourse courseData={courseData} draggable={false} key={courseData.id}></CartCourse>
                                 ))}
                             </div>
                         </div>
                     }
                     <div className={"landingPageTextSection"} ref={coursesRef}>
                         <h3 className='center'>
-                            Our Courses
+                            Available Courses
                         </h3>  
                         <hr></hr>
                         <div>

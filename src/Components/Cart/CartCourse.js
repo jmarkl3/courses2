@@ -11,10 +11,6 @@ function CartCourse({courseData, selected, allowRemove, draggable, showCart, rea
     const dispacher = useDispatch()    
     const navigate = useNavigate()
 
-    console.log(userData?.enrolledCourses)
-    console.log(userData?.enrolledCourses?.includes(courseData.id))
-    console.log(isEnrolledInCourse)
-
     function selectCourse(){
         showCart()
         dispacher(selectCartCourse(courseData.id))

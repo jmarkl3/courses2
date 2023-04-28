@@ -81,14 +81,14 @@ const dbslice = createSlice({
         responsePath: null,
         saveStatus: null,
         timerSaveCounter: 0,
+        theme: "lightTheme",
+        language: "English",
     },
     reducers: {
         // #region loading data
+
         // The loading data actions put data into the store when it is loaded from the database
 
-        setCourseData (state, action) {        
-            state.courseData = action.payload;
-        },
         // Set the courses data (metadata for all courses including title, description, etc.)
         setCoursesData (state, action) {        
             state.coursesData = action.payload;
@@ -102,9 +102,12 @@ const dbslice = createSlice({
                 state.coursesArray = tempArray
             }
         },
-        setUserData(state, action){
-            state.userData = action.payload;
+        // Set the course data for a selected course
+        setCourseData (state, action) {        
+            state.courseData = action.payload;
         },
+
+        
 
         // #endregion  loading data
 
@@ -112,8 +115,20 @@ const dbslice = createSlice({
         setUserID(state, action){
             state.userID = action.payload;
         },   
+        // action.payload = userData
         setUserData(state, action){
+
+            // Save the user data in state
             state.userData = action.payload;
+            
+            // Set the theme if one is saved
+            if(action.payload?.accountData?.theme)
+                state.theme = action.payload?.accountData?.theme
+
+            // Set the language if one is saved
+            if(action.payload?.accountData?.language)
+                state.language = action.payload?.accountData?.language
+                
         },
         // This saves the user's response to a section
         // var locationString = "coursesApp/userData/"+state.userID+"/responses/"+state.selectedCourseID+"/"+action.payload.chapterID+"/"+action.payload.sectionID+"/"+action.payload.property
@@ -136,8 +151,6 @@ const dbslice = createSlice({
             // This is the location that the remaining time will be saved
             var locationString = "coursesApp/userData/"+( action.payload.userID || state.userID)+"/accountData"
             // If a property is specified put the data there
-            if(action.payload.property)
-                locationString += "/"+action.payload.property
             // Save the remaining time in the db (shouldnt overwrite other data)
             update(ref(database, locationString), action.payload.value)
         },
@@ -183,7 +196,38 @@ const dbslice = createSlice({
                 }
             )
         },
+        toggleTheme(state, action) {
+            var newTheme 
+            if(state.theme === "darkTheme")
+                newTheme = "lightTheme";
+            else
+                newTheme = "darkTheme";  
+            
+            console.log("setting theme to ", newTheme)
 
+            // Save the new value in state (will update when userData changes anyway)
+            state.theme = newTheme
+
+            // This is the location in the db that the language will be saved
+            var locationString = "coursesApp/userData/" + state.userID + "/accountData"            
+            // Save the new language in the db
+            update(ref(database, locationString), {theme: newTheme})
+        },
+        toggleLanguage(state, action) {
+            var newLanguage 
+            if(state.language === "English")
+                newLanguage = "Español";
+            else
+                newLanguage = "English";  
+            
+            // Save the new value in state (will update when userData changes anyway)
+            state.language = newLanguage
+
+            // This is the location in the db that the language will be saved
+            var locationString = "coursesApp/userData/" + state.userID + "/accountData"            
+            // Save the new language in the db
+            update(ref(database, locationString), {language: newLanguage})
+        },
         // #endregion user data
 
         // #region selections
@@ -851,7 +895,7 @@ export const dbsliceReducer = dbslice.reducer;
 // Loading actions
 export const {setCourseData, setCoursesData} = dbslice.actions;
 // User Data actions
-export const {enrollUserInCourses, setUserID, setUserData, saveUserSectionData, saveUserAccountData} = dbslice.actions;
+export const {toggleLanguage, toggleTheme, enrollUserInCourses, setUserID, setUserData, saveUserSectionData, saveUserAccountData} = dbslice.actions;
 // Selection actions
 export const {selectCourse, selectChapter, selectSection, selectElement, selectNextSection, selectPreviousSection, selectSectionIfValid} = dbslice.actions;
 // Course actions

@@ -109,19 +109,7 @@ const appSlice = createSlice({
         setTheme(state, action) {
             state.theme = action.payload;
         },
-        toggleTheme(state, action) {
-            if(state.theme === "Dark Theme")
-                state.language = "Light Theme";
-            else
-                state.language = "Dark Theme";            
-        },
-        toggleLanguage(state, action) {
-            if(state.language === "English")
-                state.language = "Español";
-            else
-                state.language = "English";            
-        },
-        setPage(state, action) {
+         setPage(state, action) {
             state.page = action.payload;
         },
         setLoading(state, action) {
@@ -165,6 +153,11 @@ const appSlice = createSlice({
             // Update the state
             state.selectedCourseIDs = newSelectedCourseIDs
         },
+        clearCartCourses: (state, action) => {
+            state.selectedCourseIDs = []
+            window.localStorage.setItem("selectedCourseIDs", [])
+
+        },
         setDraggingCourse(state, action) {
             state.draggingCourseID = action.payload;
         }
@@ -181,7 +174,7 @@ export const {setSideNavOpen, setAdminMode} = appSlice.actions;
 // Edit Course
 export const {setEditMode, toggleMinimizeAll, togglePreviewMode} = appSlice.actions;
 // Geranl App State
-export const {setLoading, toggleShowAuthMenu, setTheme, toggleLanguage, toggleTheme, setPage} = appSlice.actions;
+export const {setLoading, toggleShowAuthMenu, setTheme, setPage} = appSlice.actions;
 // Cart
-export const {selectCartCourse, removeCartCourse, setDraggingCourse} = appSlice.actions;
+export const {clearCartCourses, selectCartCourse, removeCartCourse, setDraggingCourse} = appSlice.actions;
 // #endregion Exports

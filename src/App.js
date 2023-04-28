@@ -17,7 +17,7 @@ import About from './Components/Pages/About';
 /*  
     
   dashboards
-  show user course progress in cart course component (make a new component for that)
+  show user course progress in cart course component
   user information
   styling like the example site
 
@@ -26,6 +26,7 @@ import About from './Components/Pages/About';
   cart course more info button
 
   Style changes
+  admin dash new course button same shape and size as cart course component
   checkoutInputThird and Half style changes on screen resize 
   show password checkbox on right
   flexbox for checkout options space between
@@ -243,8 +244,6 @@ function App() {
       if(!userID) return
       onValue(ref(database, 'coursesApp/userData/'+userID), (snapshot) => {
         const data = snapshot.val();   
-        console.log("user data")
-        console.log(data)
         setTimeout(() => {
           dispatcher(setUserData(data))
         }, 250)

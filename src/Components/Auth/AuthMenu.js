@@ -1,17 +1,17 @@
 import React, { useEffect, useRef, useState } from 'react'
 import "./Auth.css"
 import { useDispatch, useSelector } from 'react-redux'
-import { setTheme, toggleShowAuthMenu, toggleTheme } from '../../App/AppSlice'
-
+import { toggleShowAuthMenu} from '../../App/AppSlice'
+import "../../Styles/Themes.css"
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth'
-import { auth, enrollUserInCourses, saveUserAccountData, setUserID } from '../../App/DbSlice'
+import { auth, enrollUserInCourses, saveUserAccountData, setUserID, toggleTheme } from '../../App/DbSlice'
 import { useNavigate } from 'react-router-dom'
 
 
 function AuthMenu() {
   const showAuthMenu = useSelector(state => state.appslice.showAuthMenu)
   const sideNavOpen = useSelector(state => state.appslice.sideNavOpen)
-  const theme = useSelector(state => state.appslice.theme)
+  const theme = useSelector(state => state.dbslice.userData?.accountData?.theme)
   const userID = useSelector(state => state.dbslice.userID)
   const [createNew, setCreateNew] = useState(true)
   const [errorMessage, setErrorMessage] = useState("")
@@ -74,7 +74,7 @@ function AuthMenu() {
   }
 
     return (
-        <>
+        <div className={theme}>
             {showAuthMenu && 
                 <div className={`authMenu ${sideNavOpen ? "sideNavAuthLeftAdjust":""}`}>
                     <div className='closeButton' onClick={()=>dispatcher(toggleShowAuthMenu())}>x</div>
@@ -83,9 +83,10 @@ function AuthMenu() {
                         <>
                             <div>Account Actions</div>
                             <button onClick={signOutUser}>Log Out</button>
-                            <button onClick={()=>dispatcher(toggleTheme("darkTheme"))}>{theme === "Light Theme" ? "Dark Theme" : "Light Theme"}</button>                            
-                            <button onClick={()=>dispatcher(saveUserAccountData({property: "isAdmin", value: true}))}>Make Admin</button>                            
-                            <button onClick={()=>navigate("/Dashboard")}>Your Courses</button>                            
+                            <button onClick={()=>dispatcher(toggleTheme())}>{theme === "lightTheme" ? "Dark Theme" : "Light Theme"}</button>                            
+                            <button onClick={()=>dispatcher(saveUserAccountData({value: {isAdmin: false}}))}>Make Admin</button>                            
+                            <button onClick={()=>navigate("/Dashboard")}>Your Courses / Dashboard</button>                            
+                            <button >Change Email</button>                            
                         </>
                         :
                         <>
@@ -112,10 +113,9 @@ function AuthMenu() {
                             </div>
                             <div className='loginBottomText'>
                                 <div className='errorMessage'>
-                                {errorMessage}
+                                  {errorMessage}
                                 </div>
-                                {
-                                    createNew ?
+                                {createNew ?
                                     <div>
                                         Have an account? 
                                         <a onClick={()=>creatingNew(false)}>
@@ -127,17 +127,19 @@ function AuthMenu() {
                                         New Here? 
                                         <a onClick={()=>creatingNew(true)}>
                                             Sign Up now
-                                        </a>
-                
+                                        </a>                
                                     </div>                
                                 }
+                                <div>
+                                  <a>Forgot Password?</a>
+                                </div>
                             </div>
                         </>
                         }     
                     </>
                 </div>
             } 
-        </>
+        </div>
   )
 }
 

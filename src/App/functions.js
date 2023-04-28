@@ -261,6 +261,11 @@ export function isEmptyString(string){
     if(typeof string === "string" && string.trim() === "") return true
 }
 export function priceString(price){
+    if(typeof price === "string") {
+        try{
+            price = parseFloat(price)
+        } catch {}
+    }
     if(!price) return "$0.00"
     // If it is an even whole number add a .00
     if(price % 1 == 0)

@@ -8,7 +8,7 @@ import CartCourse from '../Cart/CartCourse'
 import { priceString } from '../../App/functions'
 import { useNavigate } from 'react-router-dom'
 import DisplayPage from '../Content/DisplayPage'
-import { setSideNavOpen, toggleShowAuthMenu } from '../../App/AppSlice'
+import { clearCartCourses, setSideNavOpen, toggleShowAuthMenu } from '../../App/AppSlice'
 import { auth, enrollUserInCourses, saveUserAccountData, setUserID } from '../../App/DbSlice'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
 /*
@@ -42,7 +42,7 @@ function CheckOutPage() {
   const caseNInput = useRef()
   const hearAboutInput = useRef()
   const addressInput = useRef()
-  const adress2Input = useRef()
+  const address2Input = useRef()
   const emailInput = useRef()
   const passInput = useRef()
   const passRetypeInput = useRef()
@@ -72,9 +72,9 @@ function CheckOutPage() {
     // If there is a user account
     if(userData){
       // Enroll user in course
-      dispatcher(enrollUserInCourses({userID: userID, courseIDArray: selectedCourseIDs}))          
-      // Go to first course
-      navigate("/Course/"+selectedCourses[0].id)
+      dispatcher(enrollUserInCourses({userID: userID, courseIDArray: selectedCourseIDs}))
+      dispatcher(clearCartCourses())          
+      goToCourses()
       
     }else{
 
@@ -104,8 +104,13 @@ function CheckOutPage() {
       }
            
       // Address
-      let address = addressInput.current.value+" "+adress2Input.current.value
-      if(!address){
+      let address1 = addressInput.current.value
+      if(!address1){
+        setErrorMessage("Please enter an address")
+        return
+      }
+      let address2 = address2Input.current.value
+      if(!address2){
         setErrorMessage("Please enter an address")
         return
       }
@@ -128,21 +133,34 @@ function CheckOutPage() {
         dispatcher(saveUserAccountData({userID: user.uid, property: "", value: {
           firstName: firstName,
           lastName: lastName,
-          address: address,
+          address1: address1,
+          address2: address2,
           caseNumber: caseNumber,
           hearAbout: hearAbout
         }}))
 
         // Enroll user in course
         dispatcher(enrollUserInCourses({userID: user.uid, courseIDArray: selectedCourseIDs}))    
-              
-        // Go to first course
-        navigate("/Course/"+selectedCourses[0].id)
+        dispatcher(clearCartCourses())          
+        goToCourses()
 
       }).catch(err=>{        
         setErrorMessage(errToErrorMessage(err.message))
       })
     }
+  }
+  /**
+   * If there is only one course it will go directly there
+   * If there is more than one course goes to the dashboard
+   */
+  function goToCourses(){
+    // If thre is only one course go directly to that course
+    if(selectedCourses.length == 1)    
+      navigate("/Course/"+selectedCourses[0].id)
+    // Else go to the dashboard
+    else
+      navigate("/Dashboard")
+    
   }
 
   /**
@@ -159,7 +177,11 @@ function CheckOutPage() {
     setSelectedCourses(coursesArray.filter(courseData => selectedCourseIDs.includes(courseData?.id)))
   }
   function cartTotalFunction(){
-    setCartTotal(priceString(selectedCourses.reduce((total, courseData) => total + courseData?.price, 0)))        
+    let total = 0
+    selectedCourses.forEach(courseData => {
+        total += parseFloat(courseData?.price)
+    })
+    setCartTotal(priceString(total))
   }
 
   return (
@@ -167,63 +189,62 @@ function CheckOutPage() {
       <DisplayPage>
         <>
           <h2>Checkout</h2>
-          {userData ?
-            <>
-              {"< Account Info >"}
-            </>
-            :
-            <div className='checkout'>        
-              <div className='checkoutInput'>
-                  First Name
-                  <input placeholder='First Name' ref={name1Input}></input>
-              </div>
-              <div className='checkoutInput'>
-                  Last Name
-                  <input placeholder='First Name' ref={name2Input}></input>
-              </div>   
-              <div className='checkoutInput'>
-                  Case Number (optional)
-                  <input placeholder='Case Number' ref={caseNInput}></input>
-              </div>   
-              <div className='checkoutInput'>
-                  How did you hear about us? (optional)
-                  <input ref={hearAboutInput}></input>
-              </div>  
-              <div className='checkoutInput checkoutInputW100'>
-                  Address
-                    <input ref={addressInput}></input>
-              </div>   
-              <div className='checkoutInput checkoutInputW100'>
-                  Address 2
-                  <input ref={adress2Input}></input>
-              </div>   
-              <div className='checkoutInput checkoutInputThird'>
-                  Email
-                  <input ref={emailInput}></input>
-              </div>   
-              <div className='checkoutInput checkoutInputThird'>
-                Create Password                               
-                <input type={showPassword ? '' : 'password'} placeholder='Password' ref={passInput}></input>
-              </div>               
-              <div className='checkoutInput checkoutInputThird'>
-                Create Password (retype)
-                <input type={showPassword ? '' : 'password'}  placeholder='Password (retype)' ref={passRetypeInput}></input>
-              </div>  
-              <div className='checkoutOptions'>
-                <label htmlFor={showPasswordCheckbox} className='checkoutInputCheckbox'>
-                  <span className='labelText'>
-                    Show Password
-                  </span>
-                  <input 
-                    type='checkbox'                     
-                    ref={showPasswordCheckbox}
-                    onChange={()=>setShowPassword(showPasswordCheckbox.current.checked)}
-                  ></input> 
-                </label>  
-                <button onClick={()=>dispatcher(toggleShowAuthMenu())}>Have an account? Login</button>
-              </div>
+          <div className='checkout'>        
+            <div className='checkoutInput'>
+                First Name
+                <input placeholder='First Name' ref={name1Input} defaultValue={userData?.firstName}></input>
             </div>
-          }
+            <div className='checkoutInput'>
+                Last Name
+                <input placeholder='First Name' ref={name2Input} defaultValue={userData?.lastName}></input>
+            </div>   
+            <div className='checkoutInput'>
+                Case Number (optional)
+                <input placeholder='Case Number' ref={caseNInput} defaultValue={userData?.caseNumber}></input>
+            </div>   
+            <div className='checkoutInput'>
+                How did you hear about us? (optional)
+                <input ref={hearAboutInput}></input>
+            </div>  
+            <div className='checkoutInput checkoutInputW100'>
+                Address
+                  <input ref={addressInput} defaultValue={userData?.address1}></input>
+            </div>   
+            <div className='checkoutInput checkoutInputW100'>
+                Address 2
+                <input ref={address2Input} defaultValue={userData?.address2}></input>
+            </div>   
+            {!userData &&
+              <>
+                <div className='checkoutInput checkoutInputThird'>
+                    Email
+                    <input ref={emailInput}></input>
+                </div>   
+                <div className='checkoutInput checkoutInputThird'>
+                  Create Password                               
+                  <input type={showPassword ? '' : 'password'} placeholder='Password' ref={passInput}></input>
+                </div>               
+                <div className='checkoutInput checkoutInputThird'>
+                  Create Password (retype)
+                  <input type={showPassword ? '' : 'password'}  placeholder='Password (retype)' ref={passRetypeInput}></input>
+                </div>  
+                <div className='checkoutOptions'>
+                  <label htmlFor={showPasswordCheckbox} className='checkoutInputCheckbox'>
+                    <span className='labelText'>
+                      Show Password
+                    </span>
+                    <input 
+                      type='checkbox'                     
+                      ref={showPasswordCheckbox}
+                      onChange={()=>setShowPassword(showPasswordCheckbox.current.checked)}
+                    ></input> 
+                  </label>  
+                  <button onClick={()=>dispatcher(toggleShowAuthMenu())}>Have an account? Login</button>
+                </div>
+              </>              
+            }
+          </div>
+          
           
           <div className='box'>
               <div className='checkoutErrorMessage'>{errorMessage}</div>

@@ -2,13 +2,13 @@ import React from 'react'
 import "./Navbar.css"
 import starIcon from "../../Images/starIconW.png"
 import { useDispatch, useSelector } from 'react-redux'
-import { incrementTimerSaveCounter, selectCourse } from '../../App/DbSlice'
-import { setSideNavOpen, toggleLanguage, toggleShowAuthMenu } from '../../App/AppSlice'
+import { toggleLanguage } from '../../App/DbSlice'
+import { toggleShowAuthMenu } from '../../App/AppSlice'
 import { useNavigate } from 'react-router-dom'
 
 function Navbar() {
     const dispacher = useDispatch()
-    const language = useSelector(state => state.appslice.language)
+    const language = useSelector(state => state.dbslice.userData?.accountData?.language)
     const navigate = useNavigate();
 
   return (
