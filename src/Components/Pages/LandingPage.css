@@ -81,6 +81,10 @@
     font-size: 22px;
     margin: 10px 0px;
 }
+li a{
+    color: blue;
+    cursor: pointer;
+}
 @media screen and (min-width: 1200px){
     .landingPageTitleContainer{
         width: 1000px;

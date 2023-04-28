@@ -167,13 +167,13 @@ function LandingPage({goto}) {
                         <hr></hr>
                         <ul>
                             <li>Meets the requirements of courts throughout Colorado</li>
-                            <li>More than 100,000 parents served since 1993</li>
-                            <li>Highly-experienced male-female teams of mental health professionals and educators</li>
-                            <li>Curriculum reflects the most recent research about children of divorce</li>
-                            <li>Convenient locations throughout the Denver Metro Area</li>
+                            <li>Dark theme available for easy reading</li>                            
+                            <li>Entire course can be completed online</li>
+                            <li>Offered in English and <a onClick={()=>dispatcher(toggleLanguage())}>Español</a></li>
+                            <li>Curriculum reflects the most recent research about children of divorce</li>                            
                             <li>Reduced fee for qualified indigent participants</li>
-                            <li>Offered in English and Spanish</li>
-                            <li>Two Classes Offered &ndash; Levels 1 &amp; 2</li>
+                            <li>Multiple classes offered for different situations</li>
+                            <li>Automitacally generated certificate of completion</li>
                         </ul>
                     </div>
                     {(userData?.enrolledCourses && Array.isArray(userData?.enrolledCourses) && userData?.enrolledCourses?.length > 0) &&

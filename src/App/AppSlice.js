@@ -124,6 +124,9 @@ const appSlice = createSlice({
         },
         setViewAsAdmin(state, action) {
             state.viewAsAdmin = action.payload
+            // If they set this to false hold it until they manually change it base. Else it will to back to true on every refresh or user data change
+            state.changedViewAdmin = true
+            
         },
        
         // #endregion General App Controls

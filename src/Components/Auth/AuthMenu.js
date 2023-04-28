@@ -97,6 +97,14 @@ function AuthMenu() {
     
   }
 
+  function goToDashboard(){
+    dispatcher(toggleShowAuthMenu(false))
+    // Give the state time to update before navigating
+    setTimeout(() => {
+      navigate("/Dashboard")      
+    }, 250);
+  }
+
     return (
         <div className={theme}>
             {showAuthMenu && 
@@ -106,7 +114,7 @@ function AuthMenu() {
                         {userID ? 
                         <>
                             <div>Account Actions</div>
-                            {isAdmin &&
+                            {(isAdmin || canEdit) &&
                               <>                          
                                 <button onClick={()=>dispatcher(setViewAsAdmin(!viewAsAdmin))}>{`View As ${viewAsAdmin ? "User": "Admin"}`}</button>                            
                               </>
@@ -114,11 +122,11 @@ function AuthMenu() {
                             {viewAsAdmin &&
                               <>
                                 <button onClick={()=>dispatcher(clearEnrolledCourses())}>Clear Courses</button>                                                        
-                                <button onClick={()=>dispatcher(saveUserAccountData({value: {isAdmin: !isAdmin}}))}>Toggle Admin {" "+isAdmin}</button>                                                                                  
-                                <button onClick={()=>dispatcher(saveUserAccountData({value: {canEdit: !canEdit}}))}>Toggle Can Edit {" "+canEdit}</button>                                                                                  
+                                {/* <button onClick={()=>dispatcher(saveUserAccountData({value: {isAdmin: !isAdmin}}))}>Toggle Admin {" "+isAdmin}</button>                                                                                  
+                                <button onClick={()=>dispatcher(saveUserAccountData({value: {canEdit: !canEdit}}))}>Toggle Can Edit {" "+canEdit}</button>                                                                                   */}
                               </>
                             }
-                            <button onClick={()=>navigate("/Dashboard")}>Your Courses / Dashboard</button>                            
+                            <button onClick={goToDashboard}>Your Courses / Dashboard</button>                            
                             <button onClick={()=>dispatcher(toggleTheme())}>{theme === "lightTheme" ? "Dark Theme" : "Light Theme"}</button>                                                                                
                             <button onClick={signOutUser}>Log Out</button>
                         </>

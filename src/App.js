@@ -29,9 +29,14 @@ import Cart from './Components/Cart/Cart';
   user information
   styling like the example site
 
+  
+  time component 
+  restes sometimes
+  background color from theme. Currently its clear and the title in the sidemenu can overlap
+
   multi language support
     on landing page and other hard coded text locations
-    in course edit have inputs for multiple languages
+    in course edit have inputs for multiple languages  
 
   firebase rules so only a user can update their own data
   or an admin
@@ -191,6 +196,7 @@ ________________________________________________________________________________
 function App() {    
   const userID = useSelector(state => state.dbslice.userID)
   const selectedCourseID = useSelector(state => state.dbslice.selectedCourseID)
+  const changedViewAdmin = useSelector(state => state.appslice.changedViewAdmin)
   const dispatcher = useDispatch()   
 
   // Calls authListener which sets the user id in state on auth state change
@@ -226,11 +232,11 @@ function App() {
       onValue(ref(database, 'coursesApp/userData/'+userID), (snapshot) => {
         const data = snapshot.val();   
         setTimeout(() => {
-          dispatcher(setUserData(data))
-          // If the user is an admin default the view to admin
-          if(data?.accountData?.isAdmin)
-            dispatcher(setViewAsAdmin(true))
-          
+          dispatcher(setUserData(data))          
+          // If the user is an admin default the view to admin          
+          if(data?.accountData?.isAdmin && !changedViewAdmin)
+            dispatcher(setViewAsAdmin(true))            
+
         }, 250)
       })    
     }
