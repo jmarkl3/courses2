@@ -11,7 +11,9 @@ function UserDash() {
     <div>
       
       <div>
-        Your Courses
+        <h3>
+          Your Courses
+        </h3>
         <div>
           {coursesArray.filter(courseData => userData?.enrolledCourses?.includes(courseData.id)).map(courseData => (
               <CartCourse courseData={courseData} draggable={false} key={courseData.id}></CartCourse>

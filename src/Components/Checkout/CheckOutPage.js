@@ -120,6 +120,9 @@ function CheckOutPage() {
         return
       }
       
+      // Save the user creation date
+      userInputData.accountCreationDate = new Date().getTime()
+
       // Create user account
       createUserWithEmailAndPassword(auth, email, pasword).then( user =>{
         

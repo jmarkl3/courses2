@@ -1,8 +1,8 @@
 import React, { useRef, useState } from 'react'
 import "../../Cart/CartCourse.css"
 import { priceString } from '../../../App/functions'
-import { useDispatch } from 'react-redux'
-import { removeCartCourse, selectCartCourse, setAdminMode, setDraggingCourse, setEditMode} from '../../../App/AppSlice'
+import { useDispatch, useSelector } from 'react-redux'
+import { setEditMode} from '../../../App/AppSlice'
 import { copyCourse, deleteCourse, selectCourse, updateCourseInfo } from '../../../App/DbSlice'
 import HamburgerMenu from '../../../Utils/HamburgerMenu'
 import ConfirmationBox from '../../../Utils/ConfirmationBox'
@@ -10,10 +10,11 @@ import { useNavigate } from 'react-router-dom'
 import AdminCourseTileEdit from './AdminCourseTileEdit'
 
 function AdminCourseTile({course}) {
-    const [editing, setEditing] = useState()
+    const canEdit = useSelector(state => state.dbslice.userData?.accountData?.canEdit)
     const [confirmDeleteMessage, setConfirmDeleteMessage] = useState()
-    const courseNameInputRef = useRef()
+    const [editing, setEditing] = useState()
     const courseDescriptionInputRef = useRef()
+    const courseNameInputRef = useRef()
     const navigate = useNavigate()
     const dispatcher = useDispatch()
 
@@ -36,8 +37,7 @@ function confirmDelete(){
 
 function viewCourseFunction(){
     // dispatcher(selectCourse(course.id))
-    dispatcher(setEditMode(false))
-    dispatcher(setAdminMode(false))
+    dispatcher(setEditMode(false))    
     navigate("/course/"+course.id)
 
 }
@@ -45,19 +45,19 @@ function editCourseFunction(){
     dispatcher(selectCourse(course.id))
     dispatcher(setEditMode(true))
     navigate("/course/"+course.id)
-    // dispatcher(setAdminMode(false))
 
 }
 function viewCourseAsAdminFunction(){
     dispatcher(selectCourse(course.id))
+    navigate("/course/"+course.id)
     dispatcher(setEditMode(false))
-    dispatcher(setAdminMode(true))
 
 }
 
   return (
     <>
         <div className={'cartCourse'} >
+            {canEdit && 
                 <HamburgerMenu height="190px">            
                     <div className="hamburgerMenuOption" onClick={()=>setEditing(!editing)}>Edit Tile</div>
                     <div className="hamburgerMenuOption" onClick={editCourseFunction}>Edit Course</div>
@@ -65,7 +65,8 @@ function viewCourseAsAdminFunction(){
                     <div className="hamburgerMenuOption" onClick={viewCourseFunction}>View Course</div>                            
                     <div className="hamburgerMenuOption" onClick={()=>dispatcher(copyCourse(course.id))}>Copy</div>                            
                     <div className="hamburgerMenuOption" onClick={confirmDelete}>Delete</div>                            
-                </HamburgerMenu>
+                </HamburgerMenu>            
+            }
             <div className='cartCourseImage'>
                 <img src={course?.image}></img>
             </div>
@@ -76,13 +77,13 @@ function viewCourseAsAdminFunction(){
                 <div className='cartCourseDescription'>
                     {course?.description}
                 </div>
-                <div className='priceBox priceBoxAdmin priceText'>
+                <div className={`priceBox priceText ${canEdit ? "priceBoxAdmin":""}`}>
                     {priceString(course?.price)}
                 </div>
             </div>
             <div className='cartCourseButtons'>
             <>
-                <button>Add To Cart</button>
+                <button onClick={viewCourseAsAdminFunction}>View</button>
                 <button>More Info</button>
             </>
             </div>

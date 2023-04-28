@@ -6,7 +6,7 @@ import DisplayPage from '../DisplayPage'
 import { setSideNavOpen } from '../../../App/AppSlice'
 
 function Dashboard() {
-  const isAdmin = useSelector(state => state.dbslice.userData?.accountData?.isAdmin)
+  const viewAsAdmin = useSelector(state => state.appslice.viewAsAdmin)
   
   const dispacher = useDispatch()
   useEffect(()=>{
@@ -15,7 +15,7 @@ function Dashboard() {
 
     return (
     <DisplayPage>
-        {isAdmin ?
+        {viewAsAdmin ?
             <AdminDash></AdminDash>
             :
             <UserDash></UserDash>

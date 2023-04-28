@@ -5,10 +5,7 @@ import DisplayPage from '../Content/DisplayPage';
 import Navbar from '../Navbar/Navbar';
 import { onValue } from 'firebase/database';
 import { ref } from 'firebase/database';
-import AuthMenu from '../Auth/AuthMenu';
-import { onAuthStateChanged } from 'firebase/auth';
 import { useParams } from 'react-router-dom';
-import { setEditMode } from '../../App/AppSlice';
 import { selectCourse } from '../../App/DbSlice';
 
 function Course() {  

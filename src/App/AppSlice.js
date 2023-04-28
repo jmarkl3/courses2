@@ -12,8 +12,6 @@ const appSlice = createSlice({
         sideNavOpen: false,
         // Preview mode is when the user is editing and can view a course as a student would
         previewMode: false,
-        // Admin mode is when the user is viewing a course without timers
-        adminMode: false,
         // When this is true the user is editing a course
         editMode: false,
         // When this changes the element edit component will minimize or expand based on the value
@@ -71,6 +69,7 @@ const appSlice = createSlice({
         loading: false,
         checkingOut: false,
         showCart: false,
+        viewAsAdmin: false,
     },
     reducers: {
         // ================================================================================
@@ -79,9 +78,6 @@ const appSlice = createSlice({
         // Determines if the sidenav will show along with other corresponding css classes
         setSideNavOpen(state, action) {
             state.sideNavOpen = action.payload;
-        },
-        setAdminMode(state, action) {
-            state.adminMode = action.payload;
         },
 
         // #endregion View Course Controls
@@ -105,8 +101,11 @@ const appSlice = createSlice({
         // ================================================================================
         // #region General App State        
         
-        toggleShowAuthMenu(state, action) {
+        toggleShowAuthMenu(state, action) {            
             state.showAuthMenu = !state.showAuthMenu;
+        },
+        setShowAuthMenu(state, action) {            
+            state.showAuthMenu = action.payload
         },
         setTheme(state, action) {
             state.theme = action.payload;
@@ -122,6 +121,9 @@ const appSlice = createSlice({
         },
         setShowCart(state, action) {
             state.showCart = action.payload;
+        },
+        setViewAsAdmin(state, action) {
+            state.viewAsAdmin = action.payload
         },
        
         // #endregion General App Controls
@@ -179,11 +181,11 @@ const appSlice = createSlice({
 // #region Exports
 export const appSliceReducer = appSlice.reducer;
 // View Course
-export const {setSideNavOpen, setAdminMode} = appSlice.actions;
+export const {setSideNavOpen} = appSlice.actions;
 // Edit Course
 export const {setEditMode, toggleMinimizeAll, togglePreviewMode} = appSlice.actions;
 // Geranl App State
-export const {setCheckingOut, setLoading, toggleShowAuthMenu, setTheme, setPage} = appSlice.actions;
+export const {setViewAsAdmin, setCheckingOut, setLoading, setShowAuthMenu, toggleShowAuthMenu, setTheme, setPage} = appSlice.actions;
 // Cart
 export const {loadCartCourses, setShowCart, clearCartCourses, selectCartCourse, removeCartCourse, setDraggingCourse} = appSlice.actions;
 // #endregion Exports

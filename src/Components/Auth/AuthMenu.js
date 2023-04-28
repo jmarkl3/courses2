@@ -1,16 +1,17 @@
 import React, { useEffect, useRef, useState } from 'react'
 import "./Auth.css"
 import { useDispatch, useSelector } from 'react-redux'
-import { toggleShowAuthMenu} from '../../App/AppSlice'
+import { setShowAuthMenu, setViewAsAdmin, toggleShowAuthMenu} from '../../App/AppSlice'
 import "../../Styles/Themes.css"
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth'
-import { auth, clearEnrolledCourses, enrollUserInCourses, saveUserAccountData, setUserID, toggleTheme } from '../../App/DbSlice'
+import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth'
+import { auth, clearEnrolledCourses, enrollUserInCourses, saveUserAccountData, setUserData, setUserID, toggleTheme } from '../../App/DbSlice'
 import { useNavigate } from 'react-router-dom'
-
 
 function AuthMenu() {
   const showAuthMenu = useSelector(state => state.appslice.showAuthMenu)
-  const userData = useSelector(state => state.dbslice.userData)
+  const isAdmin = useSelector(state => state.dbslice.userData?.accountData?.isAdmin)
+  const viewAsAdmin = useSelector(state => state.appslice.viewAsAdmin)
+  const canEdit = useSelector(state => state.dbslice.userData?.accountData?.canEdit)
   const sideNavOpen = useSelector(state => state.appslice.sideNavOpen)
   const theme = useSelector(state => state.dbslice.userData?.accountData?.theme)
   const userID = useSelector(state => state.dbslice.userID)
@@ -20,8 +21,11 @@ function AuthMenu() {
   const passInput = useRef()
   const dispatcher = useDispatch()
   const navigate = useNavigate()
-    
-  console.log(userData)
+
+  useEffect(()=>{
+    authListener()
+  },[])
+  
 
   function signIn(){
     var email = emailInput.current.value
@@ -66,6 +70,23 @@ function AuthMenu() {
     setCreateNew(bool)
     setErrorMessage("")
   }
+  // Listen for auth state changes and puts userID in state
+  function authListener(){
+    onAuthStateChanged(auth, (user) => {
+      dispatcher(setUserID(user?.uid))
+      // If the user signs in take them to the dashboard and hide the auth menu 
+      if(user) {
+        dispatcher(setShowAuthMenu(false))
+        // Doing this in a timeout so the auth menu has time to close before navigating
+        setTimeout(()=>navigate("/Dashboard"), 250)
+      }
+      // If the user signed out take them to the home page and clear their user data
+      else{
+        navigate("/")
+        dispatcher(setUserData(null))
+      }
+    })
+  }
   function signOutUser(){
     // Signs the user out and calls onAuthStateChanged in App.js
     signOut(auth).then(msg => { 
@@ -85,12 +106,21 @@ function AuthMenu() {
                         {userID ? 
                         <>
                             <div>Account Actions</div>
-                            <button onClick={signOutUser}>Log Out</button>
-                            <button onClick={()=>dispatcher(toggleTheme())}>{theme === "lightTheme" ? "Dark Theme" : "Light Theme"}</button>                            
-                            <button onClick={()=>dispatcher(saveUserAccountData({value: {isAdmin: !userData?.accountData?.isAdmin}}))}>Toggle Admin {" "+userData?.accountData?.isAdmin}</button>                            
+                            {isAdmin &&
+                              <>                          
+                                <button onClick={()=>dispatcher(setViewAsAdmin(!viewAsAdmin))}>{`View As ${viewAsAdmin ? "User": "Admin"}`}</button>                            
+                              </>
+                            }
+                            {viewAsAdmin &&
+                              <>
+                                <button onClick={()=>dispatcher(clearEnrolledCourses())}>Clear Courses</button>                                                        
+                                <button onClick={()=>dispatcher(saveUserAccountData({value: {isAdmin: !isAdmin}}))}>Toggle Admin {" "+isAdmin}</button>                                                                                  
+                                <button onClick={()=>dispatcher(saveUserAccountData({value: {canEdit: !canEdit}}))}>Toggle Can Edit {" "+canEdit}</button>                                                                                  
+                              </>
+                            }
                             <button onClick={()=>navigate("/Dashboard")}>Your Courses / Dashboard</button>                            
-                            <button onClick={()=>dispatcher(clearEnrolledCourses())}>Clear Courses</button>                                                        
-                            <button >Change Email</button>                            
+                            <button onClick={()=>dispatcher(toggleTheme())}>{theme === "lightTheme" ? "Dark Theme" : "Light Theme"}</button>                                                                                
+                            <button onClick={signOutUser}>Log Out</button>
                         </>
                         :
                         <>

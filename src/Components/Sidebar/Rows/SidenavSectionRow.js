@@ -14,7 +14,8 @@ function SidenavSectionRow({itemData, chapterID, setSectionRenaming}) {
   const selectedSectionID = useSelector((state) => state.dbslice.selectedSectionID);
   const dragItemType = useSelector((state) => state.dbslice.dragItemType);
   const editMode = useSelector((state) => state.appslice.editMode);
-  const adminMode = useSelector((state) => state.appslice.adminMode);
+  const viewAsAdmin = useSelector(state => state.appslice.viewAsAdmin)
+
   const dispatcher = useDispatch()
 
   // Determines if the items are shown or hidden
@@ -102,7 +103,7 @@ function SidenavSectionRow({itemData, chapterID, setSectionRenaming}) {
   }
 
   function selectSectionFunction(){    
-    if(editMode || adminMode)
+    if(editMode || viewAsAdmin)
       dispatcher(selectFirst({chapterID: chapterID, sectionID: itemData?.id}))
     else
       dispatcher(selectSectionIfValid({sectionID: itemData?.id}))    

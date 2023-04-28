@@ -5,7 +5,7 @@ import "./CourseTile.css"
 // import "../../../Styles/Slider.css"
 import ConfirmationBox from '../../Utils/ConfirmationBox'
 import HamburgerMenu from '../../Utils/HamburgerMenu'
-import { setAdminMode, setEditMode } from '../../App/AppSlice'
+import { setEditMode } from '../../App/AppSlice'
 
 
 function CourseTile({course}) {
@@ -34,22 +34,16 @@ function CourseTile({course}) {
 
     function viewCourseFunction(){
         dispatcher(selectCourse(course.id))
-        dispatcher(setEditMode(false))
-        dispatcher(setAdminMode(false))
-
+        dispatcher(setEditMode(false))        
     }
     function editCourseFunction(){
         console.log(course.id)
         dispatcher(selectCourse(course.id))
-        dispatcher(setEditMode(true))
-        // dispatcher(setAdminMode(false))
-
+        dispatcher(setEditMode(true))        
     }
     function viewCourseAsAdminFunction(){
         dispatcher(selectCourse(course.id))
         dispatcher(setEditMode(false))
-        dispatcher(setAdminMode(true))
-
     }
 
   return (
