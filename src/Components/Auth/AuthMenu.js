@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { toggleShowAuthMenu} from '../../App/AppSlice'
 import "../../Styles/Themes.css"
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth'
-import { auth, enrollUserInCourses, saveUserAccountData, setUserID, toggleTheme } from '../../App/DbSlice'
+import { auth, clearEnrolledCourses, enrollUserInCourses, saveUserAccountData, setUserID, toggleTheme } from '../../App/DbSlice'
 import { useNavigate } from 'react-router-dom'
 
 
@@ -86,6 +86,7 @@ function AuthMenu() {
                             <button onClick={()=>dispatcher(toggleTheme())}>{theme === "lightTheme" ? "Dark Theme" : "Light Theme"}</button>                            
                             <button onClick={()=>dispatcher(saveUserAccountData({value: {isAdmin: false}}))}>Make Admin</button>                            
                             <button onClick={()=>navigate("/Dashboard")}>Your Courses / Dashboard</button>                            
+                            <button onClick={()=>dispatcher(clearEnrolledCourses())}>Clear Courses</button>                                                        
                             <button >Change Email</button>                            
                         </>
                         :

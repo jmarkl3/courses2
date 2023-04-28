@@ -91,7 +91,7 @@ function TimeDisplay({sectionData, chapterID, viewOnly, setRemainingTime}) {
     function pauseTimer(){
         // If the timer is active and is now becoming inactive, save the current remaining time in userData
         // if(activeRef.current)
-            syncTime()
+        syncTime()
 
         // Set this flag so the useEffect knows when to save the time in user data
         activeRef.current = false

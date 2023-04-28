@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import "./LandingPage.css"
 import backgroundImage from "../../Images/momAndChildBackground.jpg"
 import { useDispatch, useSelector } from 'react-redux'
-import { setCheckingOut, toggleShowAuthMenu } from '../../App/AppSlice'
+import { setCheckingOut, setShowCart, toggleShowAuthMenu } from '../../App/AppSlice'
 import Cart from '../Cart/Cart'
 import CartCourse from '../Cart/CartCourse'
 import { toggleLanguage } from '../../App/DbSlice'
@@ -79,7 +79,6 @@ function LandingPage({goto}) {
     const language = useSelector(state => state.dbslice.language)
     const coursesArray = useSelector(state => state.dbslice.coursesArray)
     const userData = useSelector(state => state.dbslice.userData)
-    const [showCart, setShowCart] = useState(false)
     const [availableCourses, setAvailableCourses] = useState([])
     const aboutRef = useRef()
     const coursesRef = useRef()
@@ -142,7 +141,7 @@ function LandingPage({goto}) {
                     <div className='landingNavButton'>
                         Support
                     </div>
-                    <div className='landingNavButton' onClick={()=>setShowCart(true)}>
+                    <div className='landingNavButton' onClick={()=>dispatcher(setShowCart(true))}>
                         Cart
                     </div>
                     <div className='landingNavButton' onClick={()=>dispatcher(toggleShowAuthMenu())}>
@@ -228,7 +227,6 @@ function LandingPage({goto}) {
             </div>
 
         </div>
-        {showCart && <Cart close={()=>setShowCart(false)}></Cart>}
     </div>
   )
 }

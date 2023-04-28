@@ -2,17 +2,17 @@ import React, { useEffect, useRef } from 'react'
 import "./CartCourse.css"
 import { priceString } from '../../App/functions'
 import { useDispatch, useSelector } from 'react-redux'
-import { removeCartCourse, selectCartCourse, setDraggingCourse} from '../../App/AppSlice'
+import { removeCartCourse, selectCartCourse, setDraggingCourse, setShowCart} from '../../App/AppSlice'
 import { useNavigate } from 'react-router-dom'
 
-function CartCourse({courseData, selected, allowRemove, draggable, showCart, readOnly}) {
+function CartCourse({courseData, selected, draggable, readOnly}) {
     const userData = useSelector(state => state.dbslice.userData)
     const isEnrolledInCourse = userData?.enrolledCourses?.includes(courseData.id)
     const dispacher = useDispatch()    
     const navigate = useNavigate()
 
     function selectCourse(){
-        showCart()
+        dispacher(setShowCart(true))
         dispacher(selectCartCourse(courseData.id))
     }
 
@@ -32,9 +32,15 @@ function CartCourse({courseData, selected, allowRemove, draggable, showCart, rea
             <div className='cartCourseDescription'>
                 {courseData?.description}
             </div>
-            <div className='priceBox priceText'>
-                {priceString(courseData?.price)}
-            </div>
+            {userData?.enrolledCourses.includes(courseData.id) ?
+                <div className='priceBox'>
+                    Progress Status
+                </div>
+                :           
+                <div className='priceBox priceText'>
+                    {priceString(courseData?.price)}
+                </div>
+            }
         </div>
         <div className='cartCourseButtons'>
         {isEnrolledInCourse?
@@ -63,7 +69,5 @@ function CartCourse({courseData, selected, allowRemove, draggable, showCart, rea
     </div>
   )
 }
-CartCourse.defaultProps = {
-    showCart: ()=>{},
-}
+
 export default CartCourse

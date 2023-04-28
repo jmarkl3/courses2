@@ -141,18 +141,15 @@ const dbslice = createSlice({
             set(ref(database, locationString), action.payload.value)
         },
         // action.payload = {property: "isAdmin", value: true}
-        saveUserAccountData(state, action){
-            
+        saveUserAccountData(state, action){            
             if(action.payload.value == undefined){
                 console.log("Error: saveRemainingSectionTime: missing data")
                 return
             }
+
             // This is the location that the remaining time will be saved
-            var locationString = "coursesApp/userData/"+( action.payload.userID || state.userID)+"/accountData"
-            console.log("saveUserAccountData")
-            console.log(locationString)
-            console.log(action.payload.value)
-            // If a property is specified put the data there
+            var locationString = "coursesApp/userData/"+( action.payload.userID || state.userID)+"/accountData"          
+
             // Save the remaining time in the db (shouldnt overwrite other data)
             update(ref(database, locationString), action.payload.value)
         },
@@ -197,6 +194,9 @@ const dbslice = createSlice({
                     return enrolledCourses
                 }
             )
+        },
+        clearEnrolledCourses(state, action){
+            set(ref(database, "coursesApp/userData/"+state.userID+"/enrolledCourses"), null)
         },
         toggleTheme(state, action) {
             var newTheme 
@@ -900,7 +900,7 @@ export const dbsliceReducer = dbslice.reducer;
 // Loading actions
 export const {setCourseData, setCoursesData} = dbslice.actions;
 // User Data actions
-export const {toggleLanguage, toggleTheme, enrollUserInCourses, setUserID, setUserData, saveUserSectionData, saveUserAccountData} = dbslice.actions;
+export const {toggleLanguage, toggleTheme, enrollUserInCourses, clearEnrolledCourses, setUserID, setUserData, saveUserSectionData, saveUserAccountData} = dbslice.actions;
 // Selection actions
 export const {selectCourse, selectChapter, selectSection, selectElement, selectNextSection, selectPreviousSection, selectSectionIfValid} = dbslice.actions;
 // Course actions

@@ -13,6 +13,7 @@ import { onValue, ref } from 'firebase/database';
 import { setLoading } from './App/AppSlice';
 import Course from './Components/Content/Course/Course';
 import About from './Components/Pages/About';
+import Cart from './Components/Cart/Cart';
 
 /*  
     
@@ -277,6 +278,7 @@ function App() {
           <Route path='/Course/:courseID' Component={Course}></Route>
         </Routes>
         <AuthMenu></AuthMenu>
+        <Cart></Cart>
       </HashRouter>
     </>
   );

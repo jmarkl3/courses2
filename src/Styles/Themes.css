@@ -58,3 +58,7 @@
 .darkTheme .priceText{
     color: rgba(255, 255, 255, 0.9);
 }
+.darkTheme .cartMenu{
+    color: rgba(255, 255, 255, 0.9);
+    background-color: #474444; 
+}

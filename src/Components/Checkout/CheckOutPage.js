@@ -8,7 +8,7 @@ import CartCourse from '../Cart/CartCourse'
 import { priceString } from '../../App/functions'
 import { useNavigate } from 'react-router-dom'
 import DisplayPage from '../Content/DisplayPage'
-import { clearCartCourses, setCheckingOut, setSideNavOpen, toggleShowAuthMenu } from '../../App/AppSlice'
+import { clearCartCourses, setCheckingOut, setShowCart, setSideNavOpen, toggleShowAuthMenu } from '../../App/AppSlice'
 import { auth, enrollUserInCourses, saveUserAccountData, setUserID } from '../../App/DbSlice'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
 /*
@@ -27,7 +27,6 @@ import { createUserWithEmailAndPassword } from 'firebase/auth'
 
 */
 function CheckOutPage() {
-  const [showCart, setShowCart] = useState()
   const [selectedCourses, setSelectedCourses] = useState([])
   const selectedCourseIDs = useSelector(state => state.appslice.selectedCourseIDs)
   const coursesArray = useSelector(state => state.dbslice.coursesArray)
@@ -53,6 +52,7 @@ function CheckOutPage() {
     dispatcher(setSideNavOpen(false))
     // This changes the way the cart is displayed
     dispatcher(setCheckingOut(true))
+    dispatcher(setShowCart(false))
   },[])
 
   // If the array of selected course IDs changes update the array of selected courses
@@ -262,12 +262,10 @@ function CheckOutPage() {
                 </div>
               </>              
             }
-          </div>
-          
-          
+          </div>                    
           <div className='box'>
               <div className='checkoutErrorMessage'>{errorMessage}</div>
-              <button className='checkoutButton checkoutButtonSize' onClick={()=>setShowCart(true)}>Edit Cart</button>    
+              <button className='checkoutButton checkoutButtonSize' onClick={()=>dispatcher(setShowCart(true))}>Edit Cart</button>    
               <button className='checkoutButton checkoutButtonSize checkoutButtonBlue' onClick={checkout}>
                 <>
                     <span>
@@ -287,10 +285,7 @@ function CheckOutPage() {
           </div> 
         </>
       </DisplayPage>
-      {showCart &&
-        <Cart close={()=>setShowCart(false)} inCheckout></Cart>
-      }
-  </>
+    </>
   )
 }
 

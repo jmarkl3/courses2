@@ -70,6 +70,7 @@ const appSlice = createSlice({
         page: "landing",
         loading: false,
         checkingOut: false,
+        showCart: false,
     },
     reducers: {
         // ================================================================================
@@ -119,28 +120,32 @@ const appSlice = createSlice({
         setCheckingOut(state, action) {
             state.checkingOut = action.payload;
         },
+        setShowCart(state, action) {
+            state.showCart = action.payload;
+        },
        
         // #endregion General App Controls
 
         // ================================================================================
         // #region Cart
+        loadCartCourses: (state, action) => {
+            const previouslySelectedCourseIDsString = window.localStorage.getItem("selectedCourseIDs")        
+            if(previouslySelectedCourseIDsString){
+                let previouslySelectedCourseIDs = previouslySelectedCourseIDsString.split(",")            
 
+                // Update the state
+                state.selectedCourseIDs = previouslySelectedCourseIDs
+
+            }
+        },
         selectCartCourse: (state, action) => {
             // Even if it has a duplicate id it will be ok becasue the filter adds it from all courses based on if the id is in this array
+            
+            // If it is not a duplicate add it to the array
             if(!state.selectedCourseIDs.includes(action.payload)){
                 // Create the new array of selected cart courses
                 let newSelectedCourseIDs = [...state.selectedCourseIDs];   
-                if(Array.isArray(action.payload)){
-                    // Filter out undefined values
-                    var tempArray = []
-                    action.payload.forEach(courseID => {
-                        if(courseID !== "undfined")
-                            tempArray.push(courseID)
-                    })
-                    newSelectedCourseIDs.push(...tempArray)
-                }             
-                else
-                    newSelectedCourseIDs.push(action.payload)
+                newSelectedCourseIDs.push(action.payload)
 
                 // Save in local storage
                 window.localStorage.setItem("selectedCourseIDs", newSelectedCourseIDs)                
@@ -180,5 +185,5 @@ export const {setEditMode, toggleMinimizeAll, togglePreviewMode} = appSlice.acti
 // Geranl App State
 export const {setCheckingOut, setLoading, toggleShowAuthMenu, setTheme, setPage} = appSlice.actions;
 // Cart
-export const {clearCartCourses, selectCartCourse, removeCartCourse, setDraggingCourse} = appSlice.actions;
+export const {loadCartCourses, setShowCart, clearCartCourses, selectCartCourse, removeCartCourse, setDraggingCourse} = appSlice.actions;
 // #endregion Exports
