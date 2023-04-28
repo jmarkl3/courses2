@@ -105,9 +105,7 @@ const dbslice = createSlice({
         // Set the course data for a selected course
         setCourseData (state, action) {        
             state.courseData = action.payload;
-        },
-
-        
+        },        
 
         // #endregion  loading data
 
@@ -128,7 +126,7 @@ const dbslice = createSlice({
             // Set the language if one is saved
             if(action.payload?.accountData?.language)
                 state.language = action.payload?.accountData?.language
-                
+
         },
         // This saves the user's response to a section
         // var locationString = "coursesApp/userData/"+state.userID+"/responses/"+state.selectedCourseID+"/"+action.payload.chapterID+"/"+action.payload.sectionID+"/"+action.payload.property
@@ -144,12 +142,16 @@ const dbslice = createSlice({
         },
         // action.payload = {property: "isAdmin", value: true}
         saveUserAccountData(state, action){
+            
             if(action.payload.value == undefined){
                 console.log("Error: saveRemainingSectionTime: missing data")
                 return
             }
             // This is the location that the remaining time will be saved
             var locationString = "coursesApp/userData/"+( action.payload.userID || state.userID)+"/accountData"
+            console.log("saveUserAccountData")
+            console.log(locationString)
+            console.log(action.payload.value)
             // If a property is specified put the data there
             // Save the remaining time in the db (shouldnt overwrite other data)
             update(ref(database, locationString), action.payload.value)
@@ -220,13 +222,16 @@ const dbslice = createSlice({
             else
                 newLanguage = "English";  
             
-            // Save the new value in state (will update when userData changes anyway)
+            // Save the new value in state
             state.language = newLanguage
 
-            // This is the location in the db that the language will be saved
-            var locationString = "coursesApp/userData/" + state.userID + "/accountData"            
-            // Save the new language in the db
-            update(ref(database, locationString), {language: newLanguage})
+            // This could be updated on the landing page even if there is no signe in user
+            if(state.userData){
+                // This is the location in the db that the language will be saved
+                var locationString = "coursesApp/userData/" + state.userID + "/accountData"            
+                // Save the new language in the db
+                update(ref(database, locationString), {language: newLanguage})
+            }
         },
         // #endregion user data
 

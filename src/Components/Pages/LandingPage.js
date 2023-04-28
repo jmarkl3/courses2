@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import "./LandingPage.css"
 import backgroundImage from "../../Images/momAndChildBackground.jpg"
 import { useDispatch, useSelector } from 'react-redux'
-import { toggleShowAuthMenu } from '../../App/AppSlice'
+import { setCheckingOut, toggleShowAuthMenu } from '../../App/AppSlice'
 import Cart from '../Cart/Cart'
 import CartCourse from '../Cart/CartCourse'
 import { toggleLanguage } from '../../App/DbSlice'
@@ -76,13 +76,14 @@ import { toggleLanguage } from '../../App/DbSlice'
 */
 
 function LandingPage({goto}) {
-    const language = useSelector(state => state.dbslice.userData?.accountData?.language)
-    const [showCart, setShowCart] = useState(false)
-    const dispacher = useDispatch()
-    const aboutRef = useRef()
-    const coursesRef = useRef()
+    const language = useSelector(state => state.dbslice.language)
     const coursesArray = useSelector(state => state.dbslice.coursesArray)
     const userData = useSelector(state => state.dbslice.userData)
+    const [showCart, setShowCart] = useState(false)
+    const [availableCourses, setAvailableCourses] = useState([])
+    const aboutRef = useRef()
+    const coursesRef = useRef()
+    const dispatcher = useDispatch()
 
     useEffect(() => {
         if(goto === "about")
@@ -90,8 +91,14 @@ function LandingPage({goto}) {
             scrollToAbout()
 
         }, 250)
-        
+        // This changes the way the cart displays
+        dispatcher(setCheckingOut(false))
     }, [])
+    useEffect(() => {
+        let tempAvailableCourses = coursesArray?.filter(courseData => !userData?.enrolledCourses?.includes(courseData.id))
+        if(Array.isArray(tempAvailableCourses))
+            setAvailableCourses(tempAvailableCourses)
+    }, [coursesArray, userData])
 
     function scrollToAbout(){
         aboutRef.current.scrollIntoView({behavior: 'smooth'})
@@ -129,7 +136,7 @@ function LandingPage({goto}) {
                     <div className='landingNavButton' onClick={scrollToCourses}>
                         Courses
                     </div>
-                    <div className='landingNavButton' onClick={()=>dispacher(toggleLanguage())}>
+                    <div className='landingNavButton' onClick={()=>dispatcher(toggleLanguage())}>
                         {language === "English" ? "Español" : "English"}
                     </div>
                     <div className='landingNavButton'>
@@ -138,7 +145,7 @@ function LandingPage({goto}) {
                     <div className='landingNavButton' onClick={()=>setShowCart(true)}>
                         Cart
                     </div>
-                    <div className='landingNavButton' onClick={()=>dispacher(toggleShowAuthMenu())}>
+                    <div className='landingNavButton' onClick={()=>dispatcher(toggleShowAuthMenu())}>
                         Account
                     </div>
                 </div>
@@ -183,17 +190,27 @@ function LandingPage({goto}) {
                             </div>
                         </div>
                     }
-                    <div className={"landingPageTextSection"} ref={coursesRef}>
-                        <h3 className='center'>
-                            Available Courses
-                        </h3>  
-                        <hr></hr>
-                        <div>
-                            {coursesArray.map(courseData => (
-                                <CartCourse courseData={courseData} draggable={false} showCart={()=>setShowCart(true)} key={courseData.id}></CartCourse>
-                            ))}
+                    {availableCourses.length > 0 ?                        
+                        <div className={"landingPageTextSection"} ref={coursesRef}>
+                            <h3 className='center'>
+                                Available Courses
+                            </h3>  
+                            <hr></hr>
+                            <div>
+                                {coursesArray.filter(courseData => !userData?.enrolledCourses?.includes(courseData.id)).map(courseData => (
+                                    <CartCourse courseData={courseData} draggable={false} key={courseData.id}></CartCourse>
+                                ))}
+                            </div>
                         </div>
-                    </div>
+                        :
+                        <div>
+                            <hr></hr>
+                            <h3 className='center'>
+                                You have enrolled in all available courses
+                            </h3>  
+                            <hr></hr>
+                        </div>
+                    }
                     <div className={"landingPageTextSection"}>
                         <h3 className='center'>
                             A word of inspiration

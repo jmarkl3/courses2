@@ -42,6 +42,12 @@
     width: 20px;
     height: 20px;
 }
+.checkoutOptions{
+    display: flex;
+    justify-content: space-between;
+    width: calc(100% - 10px);
+    margin: 10px;
+}
 .checkoutOptions button{
     width: calc(30% - 20px);
 }

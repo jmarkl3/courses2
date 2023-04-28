@@ -4,10 +4,10 @@ import LandingPage from './Components/Pages/LandingPage';
 import AuthMenu from './Components/Auth/AuthMenu';
 import { useDispatch, useSelector } from 'react-redux';
 import CheckOutPage from './Components/Checkout/CheckOutPage';
-import { HashRouter, Router, Link, Route, Routes, useParams } from 'react-router-dom';
+import { HashRouter, Route, Routes, useParams } from 'react-router-dom';
 import { useEffect } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
-import { auth, database, selectCourse, setCourseData, setCoursesData, setUserData, setUserID } from './App/DbSlice';
+import { auth, database, setCourseData, setCoursesData, setUserData, setUserID } from './App/DbSlice';
 import Dashboard from './Components/Content/Dashboards/Dashboard';
 import { onValue, ref } from 'firebase/database';
 import { setLoading } from './App/AppSlice';
@@ -21,7 +21,8 @@ import About from './Components/Pages/About';
   user information
   styling like the example site
 
-  the price string needs to be converted to a number
+  only enroll user in a course if they are not already enrolled
+  filter available courses for ones the user is not enrolled in
 
   cart course more info button
 
@@ -225,7 +226,8 @@ function App() {
     function authListener(){
       onAuthStateChanged(auth, (user) => {
         dispatcher(setUserID(user?.uid))
-
+        if(!user) 
+          dispatcher(setUserData(null))
       })
     }
 

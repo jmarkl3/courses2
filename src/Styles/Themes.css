@@ -51,3 +51,10 @@
     box-shadow: 0 0 4px rgb(104, 104, 211);
     border: 1px solid rgb(60, 60, 148);
 } 
+.darkTheme .box{
+    background-color: #474444;          
+    color: white;
+}
+.darkTheme .priceText{
+    color: rgba(255, 255, 255, 0.9);
+}

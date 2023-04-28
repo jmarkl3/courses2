@@ -69,6 +69,7 @@ const appSlice = createSlice({
         ],
         page: "landing",
         loading: false,
+        checkingOut: false,
     },
     reducers: {
         // ================================================================================
@@ -114,6 +115,9 @@ const appSlice = createSlice({
         },
         setLoading(state, action) {
             state.loading = action.payload;
+        },
+        setCheckingOut(state, action) {
+            state.checkingOut = action.payload;
         },
        
         // #endregion General App Controls
@@ -174,7 +178,7 @@ export const {setSideNavOpen, setAdminMode} = appSlice.actions;
 // Edit Course
 export const {setEditMode, toggleMinimizeAll, togglePreviewMode} = appSlice.actions;
 // Geranl App State
-export const {setLoading, toggleShowAuthMenu, setTheme, setPage} = appSlice.actions;
+export const {setCheckingOut, setLoading, toggleShowAuthMenu, setTheme, setPage} = appSlice.actions;
 // Cart
 export const {clearCartCourses, selectCartCourse, removeCartCourse, setDraggingCourse} = appSlice.actions;
 // #endregion Exports

@@ -8,14 +8,18 @@ import Checkout from '../Unused/Checkout'
 import { useNavigate } from 'react-router-dom'
 
 function Cart({close, inCheckout}) {
+    const selectedCourseIDs = useSelector(state => state.appslice.selectedCourseIDs)
+    const draggingCourseID = useSelector(state => state.appslice.draggingCourseID)
+    const checkingOut = useSelector(state => state.appslice.checkingOut)
+    //const sampleCourses = useSelector(state => state.appslice.sampleCourses)
+    const coursesArray =useSelector(state => state.dbslice.coursesArray)
     // The array of selected courses
     const [selectedCourses, setSelectedCourses] = useState([])
     const [viewAvailable, setViewAvailable] = useState()
     const [cartTotal, setCartTotal] = useState(0)
-    const selectedCourseIDs = useSelector(state => state.appslice.selectedCourseIDs)
-    const draggingCourseID = useSelector(state => state.appslice.draggingCourseID)
-    //const sampleCourses = useSelector(state => state.appslice.sampleCourses)
-    const coursesArray =useSelector(state => state.dbslice.coursesArray)
+    const userData =useSelector(state => state.dbslice.userData)
+    const [availableCourses, setAvailableCourses] = useState([])
+
     const navigate = useNavigate();
     const dispacher = useDispatch()
 
@@ -29,10 +33,17 @@ function Cart({close, inCheckout}) {
         filterSelectedCourses()
 
     },[selectedCourseIDs])
+    
     // When the array of selected courses changes update the cart total
     useEffect(()=>{
         cartTotalFunction()
     },[selectedCourses])
+
+    useEffect(() => {
+        let tempAvailableCourses = coursesArray?.filter(courseData => !userData?.enrolledCourses?.includes(courseData.id))
+        if(Array.isArray(tempAvailableCourses))
+            setAvailableCourses(tempAvailableCourses)
+    }, [coursesArray, userData])
 
     // If there are previously selected courses in localStroage load them
     function loadCartCourses(){        
@@ -68,7 +79,9 @@ function Cart({close, inCheckout}) {
     function dragDropCourse(e){
         dispacher(selectCartCourse(draggingCourseID))
     }
-    function openCheckOut(){            
+    function openCheckOut(){        
+        if(checkingOut)    
+            close()
         if(selectedCourses.length > 0)
             navigate("/Checkout")
 
@@ -103,7 +116,7 @@ function Cart({close, inCheckout}) {
                     {selectedCourses.length > 0 ? 
                         <>
                             <span>
-                                {"Check Out "}
+                                {`${checkingOut ? "Return to Check Out":"Check Out"}  `}
                             </span>                    
                             <div className='checkoutButtonPrice priceText'>{" (Total: " + cartTotal + ")"}</div>    
                         </>
@@ -130,12 +143,20 @@ function Cart({close, inCheckout}) {
         <div className='cartDivider'></div>
         {(viewAvailable || selectedCourseIDs.length < 1) ? 
             <div className='cartSection'>
-                <div className='cartMenuTitle'>Available Courses</div>
-                <div className='cartMenuItems cartMenuItemsAvailable'>
-                    {coursesArray.map((courseData, index)=>(
-                        <CartCourse courseData={courseData} addedClass={"cartCourseAvailable"} priceString={priceString} draggable  key={courseData.id}></CartCourse>
-                    ))}               
-                </div>
+                {availableCourses.length > 0 ?
+                    <>
+                        <div className='cartMenuTitle'>Available Courses</div>
+                        <div className='cartMenuItems cartMenuItemsAvailable'>
+                            {availableCourses.map((courseData, index)=>(
+                                <CartCourse courseData={courseData} addedClass={"cartCourseAvailable"} priceString={priceString} draggable  key={courseData.id}></CartCourse>
+                            ))}               
+                        </div>
+                    </>
+                    :
+                    <h3 className='center'>
+                        You have enrolled in all available courses
+                    </h3>
+                }
             </div>
             :
             <div className='avaialableCoursesButton'>

@@ -8,7 +8,7 @@ import CartCourse from '../Cart/CartCourse'
 import { priceString } from '../../App/functions'
 import { useNavigate } from 'react-router-dom'
 import DisplayPage from '../Content/DisplayPage'
-import { clearCartCourses, setSideNavOpen, toggleShowAuthMenu } from '../../App/AppSlice'
+import { clearCartCourses, setCheckingOut, setSideNavOpen, toggleShowAuthMenu } from '../../App/AppSlice'
 import { auth, enrollUserInCourses, saveUserAccountData, setUserID } from '../../App/DbSlice'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
 /*
@@ -51,6 +51,8 @@ function CheckOutPage() {
 
   useEffect(()=>{
     dispatcher(setSideNavOpen(false))
+    // This changes the way the cart is displayed
+    dispatcher(setCheckingOut(true))
   },[])
 
   // If the array of selected course IDs changes update the array of selected courses
@@ -66,11 +68,17 @@ function CheckOutPage() {
 
   function checkout(){
     // If there are no selected courses don't continue with checkout
-    if(selectedCourses.length == 0)    
+    if(selectedCourses.length == 0)  {
+      setErrorMessage("Please edit cart and select at least one course")
       return
+    }  
 
     // If there is a user account
     if(userData){
+      // Update the user data if it has changed
+      let userInputData = gatherUserData()
+      dispatcher(saveUserAccountData({value: userInputData}))
+
       // Enroll user in course
       dispatcher(enrollUserInCourses({userID: userID, courseIDArray: selectedCourseIDs}))
       dispatcher(clearCartCourses())          
@@ -95,31 +103,23 @@ function CheckOutPage() {
         return
       }
 
-      // Name
-      let firstName = name1Input.current.value
-      let lastName = name2Input.current.value
-      if(!firstName || !lastName){
+      // Other input values
+      let userInputData = gatherUserData()
+
+      // Check values
+      if(!userInputData.firstName || !userInputData.lastName){
         setErrorMessage("Please enter a first and last name")
         return
       }
-           
-      // Address
-      let address1 = addressInput.current.value
-      if(!address1){
+      if(!userInputData.address1){
         setErrorMessage("Please enter an address")
         return
       }
-      let address2 = address2Input.current.value
-      if(!address2){
+      if(!userInputData.address2){
         setErrorMessage("Please enter an address")
         return
       }
-
-      // Case Number
-      let caseNumber = caseNInput.current.value
-      let hearAbout  = hearAboutInput .current.value
       
-
       // Create user account
       createUserWithEmailAndPassword(auth, email, pasword).then( user =>{
         
@@ -130,14 +130,7 @@ function CheckOutPage() {
         }
 
         // Save user input data to user account
-        dispatcher(saveUserAccountData({userID: user.uid, property: "", value: {
-          firstName: firstName,
-          lastName: lastName,
-          address1: address1,
-          address2: address2,
-          caseNumber: caseNumber,
-          hearAbout: hearAbout
-        }}))
+        dispatcher(saveUserAccountData({userID: user.uid, value: userInputData}))
 
         // Enroll user in course
         dispatcher(enrollUserInCourses({userID: user.uid, courseIDArray: selectedCourseIDs}))    
@@ -148,6 +141,32 @@ function CheckOutPage() {
         setErrorMessage(errToErrorMessage(err.message))
       })
     }
+  }
+  function gatherUserData(){
+    // Name
+    let firstName = name1Input.current.value
+    let lastName = name2Input.current.value
+    let address1 = addressInput.current.value
+    let address2 = address2Input.current.value
+    let caseNumber = caseNInput.current.value
+    let hearAbout  = hearAboutInput .current.value
+    
+    var returnObject = {}
+    if(firstName)
+      returnObject.firstName = firstName
+    if(lastName)
+      returnObject.lastName = lastName
+    if(address1)
+      returnObject.address1 = address1
+    if(address2)
+      returnObject.address2 = address2
+    if(caseNumber)
+      returnObject.caseNumber = caseNumber
+    if(hearAbout)
+      returnObject.hearAbout = hearAbout
+
+    return returnObject
+
   }
   /**
    * If there is only one course it will go directly there
@@ -192,15 +211,15 @@ function CheckOutPage() {
           <div className='checkout'>        
             <div className='checkoutInput'>
                 First Name
-                <input placeholder='First Name' ref={name1Input} defaultValue={userData?.firstName}></input>
+                <input placeholder='First Name' ref={name1Input} defaultValue={userData?.accountData?.firstName}></input>
             </div>
             <div className='checkoutInput'>
                 Last Name
-                <input placeholder='First Name' ref={name2Input} defaultValue={userData?.lastName}></input>
+                <input placeholder='First Name' ref={name2Input} defaultValue={userData?.accountData?.lastName}></input>
             </div>   
             <div className='checkoutInput'>
                 Case Number (optional)
-                <input placeholder='Case Number' ref={caseNInput} defaultValue={userData?.caseNumber}></input>
+                <input placeholder='Case Number' ref={caseNInput} defaultValue={userData?.accountData?.caseNumber}></input>
             </div>   
             <div className='checkoutInput'>
                 How did you hear about us? (optional)
@@ -208,11 +227,11 @@ function CheckOutPage() {
             </div>  
             <div className='checkoutInput checkoutInputW100'>
                 Address
-                  <input ref={addressInput} defaultValue={userData?.address1}></input>
+                  <input ref={addressInput} defaultValue={userData?.accountData?.address1}></input>
             </div>   
             <div className='checkoutInput checkoutInputW100'>
                 Address 2
-                <input ref={address2Input} defaultValue={userData?.address2}></input>
+                <input ref={address2Input} defaultValue={userData?.accountData?.address2}></input>
             </div>   
             {!userData &&
               <>
@@ -229,6 +248,7 @@ function CheckOutPage() {
                   <input type={showPassword ? '' : 'password'}  placeholder='Password (retype)' ref={passRetypeInput}></input>
                 </div>  
                 <div className='checkoutOptions'>
+                  <button onClick={()=>dispatcher(toggleShowAuthMenu())}>Have an account? Login</button>
                   <label htmlFor={showPasswordCheckbox} className='checkoutInputCheckbox'>
                     <span className='labelText'>
                       Show Password
@@ -239,7 +259,6 @@ function CheckOutPage() {
                       onChange={()=>setShowPassword(showPasswordCheckbox.current.checked)}
                     ></input> 
                   </label>  
-                  <button onClick={()=>dispatcher(toggleShowAuthMenu())}>Have an account? Login</button>
                 </div>
               </>              
             }

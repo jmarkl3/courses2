@@ -46,9 +46,7 @@ function Course() {
         dispatcher(setCoursesData(data))
 
       }, 250)
-
     })    
-
   }
 
   // Loads data for the selected course
@@ -57,18 +55,8 @@ function Course() {
       const data = snapshot.val();   
       setTimeout(() => {
         dispatcher(setCourseData(data))
-
       }, 250)
-
     })    
-
-  }
-
-  function authListener(){
-    onAuthStateChanged(auth, (user) => {
-      dispatcher(setUserID(user?.uid))
-
-    })
   }
 
   function loadUserData(){
