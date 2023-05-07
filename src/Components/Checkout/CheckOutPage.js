@@ -4,7 +4,7 @@ import topImage from "../../Images/topImage.jpg"
 import Navbar from '../Navbar/Navbar'
 import Cart from '../Cart/Cart'
 import { useDispatch, useSelector } from 'react-redux'
-import CartCourse from '../Cart/CartCourse'
+import CartCourse from '../CourseTile/CartCourse'
 import { priceString } from '../../App/functions'
 import { useNavigate } from 'react-router-dom'
 import DisplayPage from '../Content/DisplayPage'

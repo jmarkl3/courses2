@@ -3,7 +3,7 @@
     width: 80vw;
     height: 220px;
     top: 10vh;
-    left: 10vw;
+    left: 8.5vw;
     z-index: 4;
 }
 .courseInfoImage{
@@ -36,5 +36,5 @@
     width: calc(100% - 280px);    
     position: absolute;
     bottom: 10px;
-    left: 230px;
+    right: 40px;
 }

@@ -1,7 +1,7 @@
 import React from 'react'
 import "./Dashboards.css"
 import { useSelector } from 'react-redux'
-import CartCourse from '../../Cart/CartCourse'
+import CartCourse from '../../CourseTile/CartCourse'
 
 function UserDash() {
   const coursesArray = useSelector(state => state.dbslice.coursesArray)

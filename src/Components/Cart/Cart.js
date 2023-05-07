@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import "./Cart.css"
-import CartCourse from './CartCourse'
+import CartCourse from '../CourseTile/CartCourse'
 import { priceString } from '../../App/functions'
 import { useDispatch, useSelector } from 'react-redux'
 import { loadCartCourses, selectCartCourse, setShowCart } from '../../App/AppSlice'

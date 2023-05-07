@@ -1,14 +1,14 @@
 import React, { useRef, useState } from 'react'
-import "../../Cart/CartCourse.css"
-import { priceString } from '../../../App/functions'
+import "./CartCourse.css"
+import { priceString } from '../../App/functions'
 import { useDispatch, useSelector } from 'react-redux'
-import { setEditMode} from '../../../App/AppSlice'
-import { copyCourse, deleteCourse, selectCourse, updateCourseInfo } from '../../../App/DbSlice'
-import HamburgerMenu from '../../../Utils/HamburgerMenu'
-import ConfirmationBox from '../../../Utils/ConfirmationBox'
+import { setEditMode} from '../../App/AppSlice'
+import { copyCourse, deleteCourse, selectCourse, updateCourseInfo } from '../../App/DbSlice'
+import HamburgerMenu from '../../Utils/HamburgerMenu'
+import ConfirmationBox from '../../Utils/ConfirmationBox'
 import { useNavigate } from 'react-router-dom'
 import AdminCourseTileEdit from './AdminCourseTileEdit'
-import CartCourseMoreInfo from '../../Cart/CartCourseMoreInfo'
+import CartCourseMoreInfo from './CartCourseMoreInfo'
 
 function AdminCourseTile({course}) {
     const canEdit = useSelector(state => state.dbslice.userData?.accountData?.canEdit)

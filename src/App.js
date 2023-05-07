@@ -17,7 +17,19 @@ import Cart from './Components/Cart/Cart';
 /*  
     
   support page
-  cart course more info button
+  just a menu with contact information and a message form
+
+  progress status on course
+  when user completes a section it will save in their user data
+  that data is used to show completion status on the course tile
+
+  dashboards
+  user information
+  recharts
+  log how many new users per day and amount per day
+  styling like the example site
+
+  certificate generation
 
   can have multiple custom domanes that point to this app
   based on the domain it can display different images and courses
@@ -29,10 +41,7 @@ import Cart from './Components/Cart/Cart';
   edit rights are a seperate variable
   so there can be admins that cna just view the courses as an admin without the ability to edit
 
-  dashboards
-  show user course progress in cart course component
-  user information
-  styling like the example site
+
 
   
   time component 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { addCourse } from '../../../App/DbSlice'
-import { objectToArray } from '../../../App/functions'
+import { addCourse } from '../../App/DbSlice'
+import { objectToArray } from '../../App/functions'
 import "./Courses.css"
 import AdminCourseTile from './AdminCourseTile'
 

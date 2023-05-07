@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { updateCourseInfo2 } from '../../../App/DbSlice'
+
 import { useDispatch } from 'react-redux'
+import { updateCourseInfo2 } from '../../App/DbSlice'
 
 function AdminCourseTileEdit({close, course}) {
     const [imgSrc, setImgSrc] = useState(course.image) 

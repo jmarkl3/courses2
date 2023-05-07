@@ -3,8 +3,7 @@ import "./LandingPage.css"
 import backgroundImage from "../../Images/momAndChildBackground.jpg"
 import { useDispatch, useSelector } from 'react-redux'
 import { setCheckingOut, setShowCart, toggleShowAuthMenu } from '../../App/AppSlice'
-import Cart from '../Cart/Cart'
-import CartCourse from '../Cart/CartCourse'
+import CartCourse from '../CourseTile/CartCourse'
 import { toggleLanguage } from '../../App/DbSlice'
 /*    
 

@@ -1,6 +1,6 @@
 import React from 'react'
 import "./Dashboards.css"
-import AdminCourses from '../AdminCourses/AdminCourses'
+import AdminCourses from '../../CourseTile/AdminCourses'
 
 function AdminDash() {
   return (
