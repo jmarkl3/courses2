@@ -1,0 +1,40 @@
+.cartCourseMoreInfo{
+    position: fixed;
+    width: 80vw;
+    height: 220px;
+    top: 10vh;
+    left: 10vw;
+    z-index: 4;
+}
+.courseInfoImage{
+    height: 200px;
+    width: 200px;
+    display: inline-block;
+}
+.courseInfoImage img{
+    height: 100%;
+    width: 100%;
+}
+.textSection{
+    display: inline-block;
+    height: 100%;
+    width: calc(100% - 220px);
+    vertical-align: top;
+}
+.nameDisplay{
+    text-align: center;
+    margin: 5px;
+    display: inline-block;
+    width: 100%;
+}
+.descriptionDisplay{
+    margin: 20px;
+    display: inline-block;
+    text-align: left;
+}
+.courseInfoBottomButton{
+    width: calc(100% - 280px);    
+    position: absolute;
+    bottom: 10px;
+    left: 230px;
+}

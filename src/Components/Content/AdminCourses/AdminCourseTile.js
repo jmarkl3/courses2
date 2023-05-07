@@ -8,11 +8,13 @@ import HamburgerMenu from '../../../Utils/HamburgerMenu'
 import ConfirmationBox from '../../../Utils/ConfirmationBox'
 import { useNavigate } from 'react-router-dom'
 import AdminCourseTileEdit from './AdminCourseTileEdit'
+import CartCourseMoreInfo from '../../Cart/CartCourseMoreInfo'
 
 function AdminCourseTile({course}) {
     const canEdit = useSelector(state => state.dbslice.userData?.accountData?.canEdit)
     const [confirmDeleteMessage, setConfirmDeleteMessage] = useState()
     const [editing, setEditing] = useState()
+    const [showMoreInfo, setShowMoreInfo] = useState(false)
     const courseDescriptionInputRef = useRef()
     const courseNameInputRef = useRef()
     const navigate = useNavigate()
@@ -84,7 +86,7 @@ function viewCourseAsAdminFunction(){
             <div className='cartCourseButtons'>
             <>
                 <button onClick={viewCourseAsAdminFunction}>View</button>
-                <button>More Info</button>
+                <button onClick={()=>setShowMoreInfo(true)}>More Info</button>
             </>
             </div>
         </div>
@@ -95,6 +97,9 @@ function viewCourseAsAdminFunction(){
         ></ConfirmationBox>
         {editing && 
             <AdminCourseTileEdit course={course} close={()=>setEditing(false)}></AdminCourseTileEdit>
+        }
+        {showMoreInfo &&
+            <CartCourseMoreInfo courseData={course} close={()=>setShowMoreInfo(false)}></CartCourseMoreInfo>
         }
     </>
   )

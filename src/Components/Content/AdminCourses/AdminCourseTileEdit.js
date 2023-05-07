@@ -37,15 +37,15 @@ function AdminCourseTileEdit({close, course}) {
         <div className='tileEditImagePreview'>
             <img src={imgSrc}></img>
         </div>
-        <div className='inputHalfM100'>
+        <div className='inputHalfM100 '>
             Image Url
             <input defaultValue={course.image} placeholder='Image Url' ref={imageUrlRef} onChange={()=>setImgSrc(imageUrlRef.current.value)}></input>
         </div>
-        <div>
+        <div className='editSection'>
             Description (short)
             <input defaultValue={course.description} placeholder='Description (short)' ref={descriptionRef}></input>
         </div>
-        <div>
+        <div className='editSection'>
             Description (long)
             <textarea defaultValue={course.descriptionLong} placeholder='Description (long)' ref={descriptionLongRef}></textarea>
         </div>

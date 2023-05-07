@@ -4,9 +4,11 @@ import { priceString } from '../../App/functions'
 import { useDispatch, useSelector } from 'react-redux'
 import { removeCartCourse, selectCartCourse, setDraggingCourse, setShowCart} from '../../App/AppSlice'
 import { useNavigate } from 'react-router-dom'
+import CartCourseMoreInfo from './CartCourseMoreInfo'
 
 function CartCourse({courseData, selected, draggable, readOnly}) {
     const userData = useSelector(state => state.dbslice.userData)
+    const [showMoreInfo, setShowMoreInfo] = useState(false)
     const dispacher = useDispatch()    
     const navigate = useNavigate()
 
@@ -56,7 +58,7 @@ function CartCourse({courseData, selected, draggable, readOnly}) {
         {isEnrolledInCourse?
             <>
                 <button onClick={()=>navigate("/Course/"+courseData.id)}>Go To Course</button>
-                <button>More Info</button>
+                <button onClick={()=>setShowMoreInfo(true)}>More Info</button>
             </>
             :
             <>
@@ -65,17 +67,20 @@ function CartCourse({courseData, selected, draggable, readOnly}) {
                         {!readOnly &&
                             <button onClick={()=>dispacher(removeCartCourse(courseData.id))}>Remove</button>
                         }
-                        <button>More Info</button>
+                        <button onClick={()=>setShowMoreInfo(true)}>More Info</button>
                     </>
                     :
                     <>
                         <button onClick={selectCourse}>Add To Cart</button>
-                        <button>More Info</button>
+                        <button onClick={()=>setShowMoreInfo(true)}>More Info</button>
                     </>
                 }
             </>
         }        
         </div>
+        {showMoreInfo &&
+            <CartCourseMoreInfo courseData={courseData} close={()=>setShowMoreInfo(false)}></CartCourseMoreInfo>
+        }
     </div>
   )
 }

@@ -122,8 +122,8 @@ function AuthMenu() {
                             {viewAsAdmin &&
                               <>
                                 <button onClick={()=>dispatcher(clearEnrolledCourses())}>Clear Courses</button>                                                        
-                                {/* <button onClick={()=>dispatcher(saveUserAccountData({value: {isAdmin: !isAdmin}}))}>Toggle Admin {" "+isAdmin}</button>                                                                                  
-                                <button onClick={()=>dispatcher(saveUserAccountData({value: {canEdit: !canEdit}}))}>Toggle Can Edit {" "+canEdit}</button>                                                                                   */}
+                                <button onClick={()=>dispatcher(saveUserAccountData({value: {isAdmin: !isAdmin}}))}>Toggle Admin {" "+isAdmin}</button>                                                                                  
+                                <button onClick={()=>dispatcher(saveUserAccountData({value: {canEdit: !canEdit}}))}>Toggle Can Edit {" "+canEdit}</button>                                                                                   
                               </>
                             }
                             <button onClick={goToDashboard}>Your Courses / Dashboard</button>                            

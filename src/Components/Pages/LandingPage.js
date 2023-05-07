@@ -120,11 +120,10 @@ function LandingPage({goto}) {
                     hey
                     <div className='landingPageTitleContainer'>
                         <div className='landingTitle'>
-                            Online Coparenting Courses
+                            Online Courses
                         </div>
                         <div className='landingTitleText'>
-                            The best online parenting courses.   
-                            landingTitleText landingTitleText landingTitleText landingTitleText landingTitleText landingTitleText landingTitleText landingTitleText landingTitleText landingTitleText landingTitleText landingTitleTextlandingTitleText landingTitleText
+                            We offer online courses here. Select a course from the list below to get started.
                         </div>
                     </div>
                 </div>

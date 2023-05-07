@@ -19,6 +19,11 @@ import Cart from './Components/Cart/Cart';
   support page
   cart course more info button
 
+  can have multiple custom domanes that point to this app
+  based on the domain it can display different images and courses
+  there will be a main on that shows all courses
+  and the coparenting thing, maybe a dev one, and others if they come up
+
   view as admin button
   admin state stays but another variable is set to show the admin view
   edit rights are a seperate variable
