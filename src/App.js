@@ -1,9 +1,9 @@
 import './App.css';
 import "./Styles/Themes.css"
-import LandingPage from './Components/Pages/LandingPage';
-import AuthMenu from './Components/Auth/AuthMenu';
+import LandingPage from './Components/LandingPage/LandingPage';
+import AuthMenu from './Components/Menus/Auth/AuthMenu';
 import { useDispatch, useSelector } from 'react-redux';
-import CheckOutPage from './Components/Checkout/CheckOutPage';
+import CheckOutPage from './Components/Content/Checkout/CheckOutPage';
 import { HashRouter, Route, Routes} from 'react-router-dom';
 import { useEffect } from 'react';
 import {database, setCourseData, setCoursesData, setUserData, setUserID } from './App/DbSlice';
@@ -11,8 +11,8 @@ import Dashboard from './Components/Content/Dashboards/Dashboard';
 import { onValue, ref } from 'firebase/database';
 import { setLoading, setViewAsAdmin } from './App/AppSlice';
 import Course from './Components/Content/Course/Course';
-import About from './Components/Pages/About';
-import Cart from './Components/Cart/Cart';
+import About from './Components/LandingPage/About';
+import Cart from './Components/Menus/Cart/Cart';
 
 /*  
     
