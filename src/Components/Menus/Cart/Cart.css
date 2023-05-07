@@ -1,0 +1,117 @@
+.cartMenu{
+    position: fixed;
+    top: 8vh;
+    left: 10vw;
+    width: 80vw;
+    height: 680px;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.24);
+    border: 1px solid #d8d8d8;
+    border-radius: 5px;
+    opacity: 0;
+    transition: 1000ms;
+}
+.cartMenuTitle{
+    width: 100%;
+    text-align: center;
+    font-size: 1.5em;
+    margin-bottom: 5px;
+}
+.cartSection{
+    padding: 20px 40px;
+    box-sizing: border-box;
+    height: 48% ;    
+    position: relative;
+}
+.cartSectionTall{
+    height: calc(100% - 40px); 
+}
+.cartSectionCheckingOut{
+    height: 190px;
+    padding-bottom: 0;
+}
+.cartSectionCheckingOut .cartMenuItems{
+    height: calc(100% - 40px);
+}
+.cartDivider{
+    height: 0px;
+    margin-top: 10px;
+    border-top: 1px solid #d8d8d8;
+    width: 90%;
+    margin-left: 5%;
+}
+.cartMenuItems{
+    position: relative;
+    overflow-y: auto;
+    height: calc(100% - 60px);
+    border: 1px solid #f2f2f2;
+    box-shadow: 0 2px 4px #d8d8d8 inset;
+    padding: 5px;
+    box-sizing: border-box;
+}
+.cartMenuItemsAvailable{
+    height: calc(100% - 20px);
+
+}
+.cartMenuItemsMessage{
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.yourCartButtons{
+    position: absolute;
+    bottom: 5px;
+    width: calc(100% - 80px);    
+    text-align: center;
+}
+.yourCartButtons2{
+    /* position: absolute; */
+    width: 100%;
+    bottom: 5px;    
+    text-align: center;
+    margin-bottom: 5px;
+}
+.checkoutButton{
+    box-shadow: none;    
+    vertical-align: top;
+}
+.checkoutButtonBlue{
+    background-color: rgb(196, 213, 240);
+    background-image: linear-gradient(rgba(255, 255, 255, 0.418), rgba(255, 255, 255, 0));
+}
+.checkoutButton:hover{
+    background-color: rgb(227, 235, 248);
+    box-shadow: none;
+}
+.checkoutButtonSize{
+    height: 40px;
+    font-size: 20px;   
+    line-height: 30px; 
+}
+.checkoutButtonPrice{    
+    display: inline-block;
+    font-size: 16px;
+    height: 100%;
+    vertical-align: top;  
+    padding-top: 1px;  
+}
+.priceText{
+    filter: blur(0.3px);
+    color: rgba(0, 0, 0, 0.95);
+}
+.smallButtonText{
+    font-size: 12px;
+}
+.checkoutContiner{
+    overflow-y: auto;
+    height: calc(50% + 150px);
+}
+@media screen and (max-width: 800px){
+    .cartMenu{
+        width: 95vw;
+    }
+    
+}

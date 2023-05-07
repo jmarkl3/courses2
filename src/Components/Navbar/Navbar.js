@@ -3,11 +3,11 @@ import "./Navbar.css"
 import starIcon from "../../Images/starIconW.png"
 import { useDispatch, useSelector } from 'react-redux'
 import { toggleLanguage } from '../../App/DbSlice'
-import { toggleShowAuthMenu } from '../../App/AppSlice'
+import { setShowSupportMenu, toggleShowAuthMenu } from '../../App/AppSlice'
 import { useNavigate } from 'react-router-dom'
 
 function Navbar() {
-    const dispacher = useDispatch()
+    const dispatcher = useDispatch()
     const language = useSelector(state => state.dbslice.userData?.accountData?.language)
     const navigate = useNavigate();
 
@@ -24,12 +24,12 @@ function Navbar() {
             <div className='navbarCenter'>
                 <img src={starIcon}></img>
             </div>
-            <div className='top right clickable' onClick={()=>dispacher(toggleLanguage())}>
+            <div className='top right clickable' onClick={()=>dispatcher(toggleLanguage())}>
                 {language === "English" ? "Español" : "English"}
             </div>
             <div className='bottom right'>
-                <button>Support</button>
-                <button onClick={()=>dispacher(toggleShowAuthMenu())}>Account</button>
+                <button onClick={()=>dispatcher(setShowSupportMenu(true))}>Support</button>
+                <button onClick={()=>dispatcher(toggleShowAuthMenu())}>Account</button>
             </div>
         </div>
     </div>

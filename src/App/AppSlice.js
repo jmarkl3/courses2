@@ -128,6 +128,9 @@ const appSlice = createSlice({
             state.changedViewAdmin = true
             
         },
+        setShowSupportMenu(state, action) {
+            state.showSupportMenu = action.payload;
+        },
        
         // #endregion General App Controls
 
@@ -188,7 +191,7 @@ export const {setSideNavOpen} = appSlice.actions;
 // Edit Course
 export const {setEditMode, toggleMinimizeAll, togglePreviewMode} = appSlice.actions;
 // Geranl App State
-export const {setViewAsAdmin, setCheckingOut, setLoading, setShowAuthMenu, toggleShowAuthMenu, setTheme, setPage} = appSlice.actions;
+export const {setShowSupportMenu, setViewAsAdmin, setCheckingOut, setLoading, setShowAuthMenu, toggleShowAuthMenu, setTheme, setPage} = appSlice.actions;
 // Cart
 export const {loadCartCourses, setShowCart, clearCartCourses, selectCartCourse, removeCartCourse, setDraggingCourse} = appSlice.actions;
 // #endregion Exports

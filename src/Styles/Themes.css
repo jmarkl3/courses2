@@ -1,6 +1,6 @@
 .darkTheme{
-    background-color: #474444;
-    color: white;
+   
+    color: white; 
 }
 .darkTheme .pageBackground {
     color: white;
@@ -61,4 +61,8 @@
 .darkTheme .cartMenu{
     color: rgba(255, 255, 255, 0.9);
     background-color: #474444; 
+}
+.darkTheme .landingContent{
+    color: white;
+    background-color: #474444;    
 }

@@ -1,0 +1,59 @@
+.checkout{
+    margin: 10px;
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 4px #ccc;        
+}
+.checkoutInput{
+    width: calc(50% - 20px);
+    text-align: center;
+    display: inline-block;
+    margin: 10px;
+}
+.checkoutInputThird{
+    width: calc((100% / 3) - 20px);
+    text-align: center;
+    display: inline-block;
+    margin: 10px;
+}
+.checkoutInputW100{
+    width: calc(100% - 20px);;
+}
+.checkoutSubmit{
+    width: 100%;
+    padding-top: 10px;
+    text-align: center;
+}
+.checkoutInputCheckbox{
+    margin: 0 20px;        
+}
+.labelText{
+    margin: 0 5px;
+    font-size: 12px;
+    line-height: 20px;
+    vertical-align: top;
+}
+.checkoutInputCheckbox input{
+    background-color: none;
+    border: none;
+    outline: none;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+}
+.checkoutOptions{
+    display: flex;
+    justify-content: space-between;
+    width: calc(100% - 10px);
+    margin: 10px;
+}
+.checkoutOptions button{
+    width: calc(30% - 20px);
+}
+.checkoutErrorMessage{
+    color: rgb(150, 69, 69);
+    margin: 10px;
+    padding: 0;
+    text-align: center;
+}

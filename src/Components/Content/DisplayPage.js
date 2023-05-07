@@ -6,10 +6,9 @@ import { useSelector } from 'react-redux'
 
 function DisplayPage(props) {
     const sideNavOpen = useSelector(state => state.appslice.sideNavOpen)
-    const theme = useSelector(state => state.dbslice.userData?.accountData?.theme)
 
-  return (
-    <div className={theme}>    
+    return (
+    <div>    
         <Navbar></Navbar>
         <div className='pageBackground'>
             <div className='topImage'>

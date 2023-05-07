@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import "./LandingPage.css"
 import backgroundImage from "../../Images/momAndChildBackground.jpg"
 import { useDispatch, useSelector } from 'react-redux'
-import { setCheckingOut, setShowCart, toggleShowAuthMenu } from '../../App/AppSlice'
+import { setCheckingOut, setShowCart, setShowSupportMenu, toggleShowAuthMenu } from '../../App/AppSlice'
 import CartCourse from '../CourseTile/CartCourse'
 import { toggleLanguage } from '../../App/DbSlice'
 /*    
@@ -136,7 +136,7 @@ function LandingPage({goto}) {
                     <div className='landingNavButton' onClick={()=>dispatcher(toggleLanguage())}>
                         {language === "English" ? "Español" : "English"}
                     </div>
-                    <div className='landingNavButton'>
+                    <div className='landingNavButton' onClick={()=>dispatcher(setShowSupportMenu(true))}>
                         Support
                     </div>
                     <div className='landingNavButton' onClick={()=>dispatcher(setShowCart(true))}>

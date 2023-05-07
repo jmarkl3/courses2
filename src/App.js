@@ -13,6 +13,7 @@ import { setLoading, setViewAsAdmin } from './App/AppSlice';
 import Course from './Components/Content/Course/Course';
 import About from './Components/LandingPage/About';
 import Cart from './Components/Menus/Cart/Cart';
+import Support from './Components/Menus/Support/Support';
 
 /*  
     
@@ -209,6 +210,7 @@ ________________________________________________________________________________
 
 function App() {    
   const userID = useSelector(state => state.dbslice.userID)
+  const theme = useSelector(state => state.dbslice.userData?.accountData?.theme)
   const selectedCourseID = useSelector(state => state.dbslice.selectedCourseID)
   const changedViewAdmin = useSelector(state => state.appslice.changedViewAdmin)
   const dispatcher = useDispatch()   
@@ -269,7 +271,7 @@ function App() {
     }
 
   return (
-    <>      
+    <div className={theme}>      
       <HashRouter>
         <Routes>
           <Route path='/' Component={LandingPage}></Route>
@@ -280,9 +282,10 @@ function App() {
           <Route path='/Course/:courseID' Component={Course}></Route>
         </Routes>
         <AuthMenu></AuthMenu>
+        <Support></Support>
         <Cart></Cart>
       </HashRouter>
-    </>
+    </div>
   );
 }
 

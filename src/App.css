@@ -21,6 +21,9 @@ img{
   width: 100%;  
   position: fixed;  
 }
+.landingPage{
+  color: black;
+}
 .landingPage .topImage{
   height: 400px;
 }
