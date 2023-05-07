@@ -15,81 +15,72 @@ import About from './Components/LandingPage/About';
 import Cart from './Components/Menus/Cart/Cart';
 import Support from './Components/Menus/Support/Support';
 
-/*  
-    
-  support page
-  just a menu with contact information and a message form
-
+// TODO
+/*      
   progress status on course
-  when user completes a section it will save in their user data
-  that data is used to show completion status on the course tile
+    when user completes a section it will save in their user data
+    that data is used to show completion status on the course tile
+    when complete shows a check mark and on click shows the certificate. Hover title shows "View Certificate of Completion"
+    button says view certificate instead of go to course when course is complete
 
   dashboards
-  user information
-  recharts
-  log how many new users per day and amount per day
-  styling like the example site
-
-  certificate generation
-
-  can have multiple custom domanes that point to this app
-  based on the domain it can display different images and courses
-  there will be a main on that shows all courses
-  and the coparenting thing, maybe a dev one, and others if they come up
+    user information  
+    styling like the example site
+    admin dashboard
+      recharts
+        log how many new users per day and amount per day  
+      user search
+      user reports             
+        completion status 
+        certificate if complete        
+        full course report with all user info prompts, answers, time on each section, webcam images                                 
 
   view as admin button
-  admin state stays but another variable is set to show the admin view
-  edit rights are a seperate variable
-  so there can be admins that cna just view the courses as an admin without the ability to edit
-
-
-
-  
-  time component 
-  restes sometimes
-  background color from theme. Currently its clear and the title in the sidemenu can overlap
+    admin state stays but another variable is set to show the admin view
+    edit rights are a seperate variable
+    so there can be admins that cna just view the courses as an admin without the ability to edit
 
   multi language support
-    on landing page and other hard coded text locations
+    on landing page add hard coded text that changes based on language
     in course edit have inputs for multiple languages  
 
-  firebase rules so only a user can update their own data
-  or an admin
+  security
+    firebase rules so only a user can update their own data
+    or an admin
 
   generate completion certificate
   
   email 
-  auto email certificate to address based on user data
-  their email and maybe another one based on selection
-  email when they sign up to give them a link to their dashboard
-  also for course signup information
+    auto email certificate to address based on user data
+    their email and maybe another one based on selection
+    email when they sign up to give them a link to their dashboard
+    also for course signup information
+    support page input sends an email to the support email address
+
+  auth
+    forgot password button
 
   Style changes
   checkoutInputThird and Half style changes on screen resize 
   mobile view
 
-  landing page
-  this is a good one:
-  https://parentingafterdivorce.org/
-  :
-  other examples
-  https://www.onlineparentingprograms.com/support/how-it-works.html
-  https://co.onlineparentingprograms.com/district-18-coparenting-programs.html
-  https://healthychildrenofdivorce.com/
-  https://www.courtparentclass.com/
-  https://www.factcolorado.com/
+  ________________________________________________________________________________
+  Bugs
 
-  user search
-  user reports
-
-  auth
-    forgot password button
-
+  time component 
+  restes sometimes
+  background color from theme. Currently its clear and the title in the sidemenu can overlap
 
 */
+// Misc Notes
 /*
   ________________________________________________________________________________
   Misc notes
+
+  can have multiple custom domanes that point to this app
+  based on the domain it can display different images and courses
+  there will be a main on that shows all courses
+  and the coparenting thing, maybe a dev one, and others if they come up
 
   question parser
     paste question text from page and it will parse what is input into a multiple choice element
@@ -142,11 +133,23 @@ import Support from './Components/Menus/Support/Support';
   rokid max
   https://fsymbols.com/signs/triangle/
 
+  landing page
+  this is a good one:
+  https://parentingafterdivorce.org/
+  :
+  other examples
+  https://www.onlineparentingprograms.com/support/how-it-works.html
+  https://co.onlineparentingprograms.com/district-18-coparenting-programs.html
+  https://healthychildrenofdivorce.com/
+  https://www.courtparentclass.com/
+  https://www.factcolorado.com/
 
 ________________________________________________________________________________
   For CRM app:
   
-  // load the forst 2 buckets so between 10 and 20 log entries are loaded
+  security
+
+  // load the first 2 buckets so between 10 and 20 log entries are loaded
   // an array of log bucket refs will be kept in state and when they change the onValue will be called again in useEffect
   // when a new log item is added, check if the current bucket is full
 
@@ -209,25 +212,23 @@ ________________________________________________________________________________
 */
 
 function App() {    
-  const userID = useSelector(state => state.dbslice.userID)
-  const theme = useSelector(state => state.dbslice.userData?.accountData?.theme)
-  const selectedCourseID = useSelector(state => state.dbslice.selectedCourseID)
-  const changedViewAdmin = useSelector(state => state.appslice.changedViewAdmin)
-  const dispatcher = useDispatch()   
+    const userID = useSelector(state => state.dbslice.userID)
+    const theme = useSelector(state => state.dbslice.userData?.accountData?.theme)
+    const selectedCourseID = useSelector(state => state.dbslice.selectedCourseID)
+    const changedViewAdmin = useSelector(state => state.appslice.changedViewAdmin)
+    const dispatcher = useDispatch()   
 
-  // Calls authListener which sets the user id in state on auth state change
-  // Also loads the courses meta data
-  useEffect(() => {   
-    loadCoursesData()
+    // Loads the courses meta data on start
+    useEffect(() => {   
+      loadCoursesData()
+    }, [])
 
-  }, [])
-
-    // when the userID changes load there data
+    // When the userID changes loads there data
     useEffect(() => {   
       loadUserData()
     }, [userID])
   
-    // Load the data for the selected course
+    // Loads the data for the selected course when a course is selected
     useEffect(() => {   
       loadCourseData(selectedCourseID)
     }, [selectedCourseID])

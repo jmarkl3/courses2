@@ -66,3 +66,7 @@
     color: white;
     background-color: #474444;    
 }
+.darkTheme .cartMenuItems {
+    box-shadow: 0 2px 8px rgba(0, 0, 5, 0.5) inset;
+    border: none;
+}

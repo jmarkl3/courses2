@@ -120,7 +120,7 @@ button:hover{
   margin: 10px;
   padding: 10px;
   box-sizing: border-box;
-  border: 1px solid #ccc;
+  /* border: 1px solid #ccc; */
   box-shadow: 0 0 4px #ccc;
   background-color: white;
 }

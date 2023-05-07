@@ -4,6 +4,7 @@
     left: calc(50% - 200px);
     width: 400px;
     background-color: white;
+    /* background-image: linear-gradient(rgba(128, 128, 128, 0), rgba(91, 174, 252, 0.205)); */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
     transition: 500ms;
     border-radius: 5px;

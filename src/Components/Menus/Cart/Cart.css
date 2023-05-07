@@ -43,15 +43,14 @@
 .cartMenuItems{
     position: relative;
     overflow-y: auto;
-    height: calc(100% - 60px);
+    height: calc(100% - 80px);
     border: 1px solid #f2f2f2;
-    box-shadow: 0 2px 4px #d8d8d8 inset;
+    box-shadow: 0 2px 4px #b1b0b0 inset;
     padding: 5px;
-    box-sizing: border-box;
+    box-sizing: border-box;    
 }
 .cartMenuItemsAvailable{
     height: calc(100% - 20px);
-
 }
 .cartMenuItemsMessage{
     width: 100%;
