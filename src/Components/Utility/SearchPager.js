@@ -8,10 +8,10 @@ function SearchPager({dataObject, searchKey, searchKey2, objectSubsetKey, search
     const searchInputRef = useRef()
 
     useEffect(()=>{
-        filterUsers()
+        filterData()
     },[dataObject, pageRange, searchInput])
 
-    function filterUsers(){
+    function filterData(){
         // If there is no valid data object there is no need to filter it
         if(!dataObject || typeof dataObject !== "object") return
 
@@ -31,7 +31,7 @@ function SearchPager({dataObject, searchKey, searchKey2, objectSubsetKey, search
                 tempData = {...object[1]}
 
             // Put the id in the data object that will go in the array 
-            tempData.id = dataObject[0]               
+            tempData.id = object[0]               
 
             // Now filter it for a search term if there is one
 

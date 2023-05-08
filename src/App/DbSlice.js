@@ -3,6 +3,7 @@ import {initializeApp} from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { get, getDatabase, push, ref, remove, runTransaction, set, update } from "firebase/database";
 import { gePreviousItem, getFirstItem, getItem, getLastItemID, getNextItem, getUserData, insertItem, newIDsObject, nItemsInObject, objectToArray, removeItem, removeUndefined } from "./functions";
+import { act } from "react-dom/test-utils";
 
 // #region firebase config
 
@@ -76,7 +77,7 @@ const dbslice = createSlice({
         sidenavHoverItemID: null,
         // The type of item being dragged determines the type of drop and how the bottom bars are displayed
         dragItemType: null,
-        userId: null,
+        userID: null,
         // This is used to get user resopnse data
         responsePath: null,
         saveStatus: null,
@@ -95,8 +96,12 @@ const dbslice = createSlice({
             if(typeof action.payload === "object"){
                 var tempArray = []
                 Object.entries(action.payload).forEach(([key, value]) => {
+                    console.log("parsing course")
+                    console.log(key, value)
                     var dataObject = {...value}
                     dataObject.id = key
+                    console.log("dataObject")
+                    console.log(dataObject)
                     tempArray.push(dataObject)
                 })
                 state.coursesArray = tempArray
@@ -131,6 +136,8 @@ const dbslice = createSlice({
         // This saves the user's response to a section
         // var locationString = "coursesApp/userData/"+state.userID+"/responses/"+state.selectedCourseID+"/"+action.payload.chapterID+"/"+action.payload.sectionID+"/"+action.payload.property
         saveUserSectionData(state, action){
+            console.log("saveUserSectionData depreciated")
+            return
             if(!action.payload.sectionID || !action.payload.chapterID || action.payload.value == undefined || !action.payload.property){
                 console.log("Error: saveRemainingSectionTime: missing data")
                 return
@@ -140,10 +147,79 @@ const dbslice = createSlice({
             // Save the remaining time in the db
             set(ref(database, locationString), action.payload.value)
         },
-        // action.payload = {property: "isAdmin", value: true}
+
+
+        // New: saveUserCourseData (for enrolled, completed, and certificate path)
+        saveUserCourseData(state, action){
+            if(!action.payload.kvPairs){
+                console.log("saveUserCourseData missing info")
+                return
+            }
+            
+            // This is the location that the key value pair will be stored
+            var locationString = "coursesApp/userData/"+state.userID+
+                "/courses/"+(action.payload.courseID || state.selectedCourseID)
+
+            // Save the key value pair in the db
+            update(ref(database, locationString), action.payload.kvPairs)
+        },
+        // New: saveUserChapterData (for chapter complete)
+        saveUserChapterData(state, action){
+            if(!action.payload.kvPairs){
+                console.log("saveUserChapterData missing info")
+                return
+            }
+            
+            // This is the location that the key value pair will be stored
+            var locationString = "coursesApp/userData/"+state.userID+
+                "/courses/"+(action.payload.courseID || state.selectedCourseID)+
+                "/chapterData/"+(action.payload.chapterID || state.selectedChapterID)
+
+            // Save the key value pair in the db
+            update(ref(database, locationString), action.payload.kvPairs)
+        },
+        // New: saveUserSectionData (for section complete, time it took to complete, image capture urls)
+        saveUserSectionData2(state, action){
+            if(action.payload.kvPairs){
+                console.log("saveUserSectionData2 missing info")
+                return
+            }
+            
+            // This is the location that the key value pair will be stored
+            var locationString = "coursesApp/userData/"+state.userID+
+            "/courses/"+(action.payload.courseID || state.selectedCourseID)+
+            "/chapterData/"+(action.payload.chapterID || state.selectedChapterID)+
+            "/sectionData/"+(action.payload.sectionID || state.selectedSectionID)
+            
+            // Save the key value pair in the db
+            update(ref(database, locationString), action.payload.kvPairs)
+        },
+
+        // New: saveUserResponse (for answered questions)
+        saveUserResponse(state, action){
+            if(!action.payload.kvPairs || !action.payload.elementID){
+                console.log("saveUserResponse missing info")
+                return
+            }
+            
+            // This is the location that the key value pair will be stored
+            var locationString = "coursesApp/userData/"+state.userID+
+            "/courses/"+(action.payload.courseID || state.selectedCourseID)+
+            "/chapterData/"+(action.payload.chapterID || state.selectedChapterID)+
+            "/sectionData/"+(action.payload.sectionID || state.selectedSectionID)+
+            "/responseData/"+action.payload.elementID
+            
+            // Save the key value pair in the db
+            update(ref(database, locationString), action.payload.kvPairs)
+        },
+
+
+
+
+        // New action.payload.kvPairs = ex:{property: "isAdmin", value: true}
         saveUserAccountData(state, action){            
-            if(action.payload.value == undefined){
-                console.log("Error: saveRemainingSectionTime: missing data")
+            if(action.payload.kvPairs == undefined){
+                console.log("Error: saveUserAccountData: missing data")
                 return
             }
 
@@ -151,8 +227,9 @@ const dbslice = createSlice({
             var locationString = "coursesApp/userData/"+( action.payload.userID || state.userID)+"/accountData"          
 
             // Save the remaining time in the db (shouldnt overwrite other data)
-            update(ref(database, locationString), action.payload.value)
+            update(ref(database, locationString), action.payload.kvPairs)
         },
+        // depreciated
         enrollUserInCourses(state, action){
             if(!action.payload || !action.payload.userID || !Array.isArray(action.payload.courseIDArray)) {
                 console.log("Error: enrollUserInCourses: missing data")
@@ -195,8 +272,56 @@ const dbslice = createSlice({
                 }
             )
         },
+
+        // New: enrollUserInCourses2
+        enrollUserInCourses2(state, action){
+            if(!action.payload || !action.payload.userID || !Array.isArray(action.payload.courseIDArray)) {
+                console.log("Error: enrollUserInCourses: missing data")
+                return
+            }
+            // For each course ID in the array
+            action.payload.courseIDArray.forEach(courseID => {
+                // Update the enrolled state to true
+                update(ref(database, "coursesApp/userData/"+action.payload.userID+"/courses/"+courseID), {enrolled: true})
+
+            })
+
+        },
+        // New: Sets all courses to not enrolled
         clearEnrolledCourses(state, action){
-            set(ref(database, "coursesApp/userData/"+state.userID+"/enrolledCourses"), null)
+            if(!action.payload || !action.payload.userID)
+                return
+
+            // set(ref(database, "coursesApp/userData/"+state.userID+"/enrolledCourses"), null)
+            runTransaction(ref(database, "coursesApp/userData/"+action.payload.userID+"/courses"), item => {
+                if(!item) return item
+
+                var tempObject = {}
+                // Go through each course
+                Object.entries(item).forEach(courseDataItem => {
+                    // Create a new object with the same data but enrolled set to false
+                    let tempCourseDataItem = {...courseDataItem[1]}
+                    tempCourseDataItem.enrolled = false
+                    // Add the new object to the temp object
+                    tempObject[courseDataItem[0]] = {...tempCourseDataItem}
+                })
+
+                // This is how the object will be stored now, with all of the same data but the user will not be enrolled in any courses
+                return tempObject
+
+            })
+        },
+        // New: Clears all course data for the given user
+        clearAllCourseData(state, action){
+            if(!action.payload || !action.payload.userID)
+                return
+            set(ref(database, "coursesApp/userData/"+action.payload.userID+"/courses"), null)
+
+        },
+        // New: Clears all user data for the given user
+        clearAllUserData(state, action){
+
+            set(ref(database, "coursesApp/userData/"+(action.payload?.userID || state.userID)), null)
         },
         toggleTheme(state, action) {
             var newTheme 
@@ -253,6 +378,8 @@ const dbslice = createSlice({
 
         },
         selectSection(state, action) {
+            console.log("selectSection depreciated")
+            return
             state.selectedSectionID = action.payload;
             state.responsePath = "responses/"+state.selectedCourseID+"/"+state.selectedChapterID+"/"+state.selectedSectionID
 
@@ -264,6 +391,7 @@ const dbslice = createSlice({
 
         },
         selectFirst(state, action) {
+      
             // If there is no course data, return
             if(!state.courseData)
                 return
@@ -900,7 +1028,14 @@ export const dbsliceReducer = dbslice.reducer;
 // Loading actions
 export const {setCourseData, setCoursesData} = dbslice.actions;
 // User Data actions
-export const {toggleLanguage, toggleTheme, enrollUserInCourses, clearEnrolledCourses, setUserID, setUserData, saveUserSectionData, saveUserAccountData} = dbslice.actions;
+export const {toggleLanguage, toggleTheme, enrollUserInCourses, enrollUserInCourses2, clearEnrolledCourses, setUserID, setUserData, saveUserSectionData, saveUserAccountData} = dbslice.actions;
+// New User Data actions
+export const {
+    saveUserCourseData,
+    saveUserChapterData,
+    saveUserSectionData2,
+    saveUserResponse,
+    clearAllUserData} = dbslice.actions;
 // Selection actions
 export const {selectCourse, selectChapter, selectSection, selectElement, selectNextSection, selectPreviousSection, selectSectionIfValid} = dbslice.actions;
 // Course actions

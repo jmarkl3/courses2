@@ -6,7 +6,7 @@ import { priceString } from '../../../App/functions'
 import { useNavigate } from 'react-router-dom'
 import DisplayPage from '../DisplayPage'
 import { clearCartCourses, setCheckingOut, setShowCart, setSideNavOpen, toggleShowAuthMenu } from '../../../App/AppSlice'
-import { auth, enrollUserInCourses, saveUserAccountData, setUserID } from '../../../App/DbSlice'
+import { auth, enrollUserInCourses, enrollUserInCourses2, saveUserAccountData, setUserID } from '../../../App/DbSlice'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
 /*
   if there is no user account 
@@ -74,10 +74,11 @@ function CheckOutPage() {
     if(userData){
       // Update the user data if it has changed
       let userInputData = gatherUserData()
-      dispatcher(saveUserAccountData({value: userInputData}))
+      dispatcher(saveUserAccountData({kvPairs: userInputData}))
 
       // Enroll user in course
-      dispatcher(enrollUserInCourses({userID: userID, courseIDArray: selectedCourseIDs}))
+      //dispatcher(enrollUserInCourses({userID: userID, courseIDArray: selectedCourseIDs}))
+      dispatcher(enrollUserInCourses2({userID: userID, courseIDArray: selectedCourseIDs}))
       dispatcher(clearCartCourses())          
       goToCourses()
       
@@ -130,10 +131,11 @@ function CheckOutPage() {
         }
 
         // Save user input data to user account
-        dispatcher(saveUserAccountData({userID: user.uid, value: userInputData}))
+        dispatcher(saveUserAccountData({userID: user.uid, kvPairs: userInputData}))
 
         // Enroll user in course
-        dispatcher(enrollUserInCourses({userID: user.uid, courseIDArray: selectedCourseIDs}))    
+        //dispatcher(enrollUserInCourses({userID: user.uid, courseIDArray: selectedCourseIDs})) 
+        dispatcher(enrollUserInCourses2({userID: userID, courseIDArray: selectedCourseIDs}))   
         dispatcher(clearCartCourses())          
         goToCourses()
 

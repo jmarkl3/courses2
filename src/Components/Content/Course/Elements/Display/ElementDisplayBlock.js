@@ -11,15 +11,20 @@ import FadeMessage from './Components/FadeMessage'
 
 function ElementDisplayBlock({elementData}) {
   
-  const userData = useSelector(state => state.dbslice.userData)
-  const [userResponse, setUserResponse] = useState()
-  const selectedCourseID = useSelector(state => state.dbslice.selectedCourseID)
-  const selectedChapterID = useSelector(state => state.dbslice.selectedChapterID)
-  const selectedSectionID = useSelector(state => state.dbslice.selectedSectionID)
+    const userData = useSelector(state => state.dbslice.userData)
+    const [userResponse, setUserResponse] = useState()
+    const selectedCourseID = useSelector(state => state.dbslice.selectedCourseID)
+    const selectedChapterID = useSelector(state => state.dbslice.selectedChapterID)
+    const selectedSectionID = useSelector(state => state.dbslice.selectedSectionID)
+    const locationString = "courses/"+selectedCourseID+"/chapterData/"+selectedChapterID+"/sectionData/"+selectedSectionID+"/responseData/"+elementData?.id
 
   useEffect(() => {
 
-    var userResponseData = getUserData(userData, "responses/"+selectedCourseID+"/"+selectedChapterID+"/"+selectedSectionID+"/"+elementData?.id)
+    var userResponseData = getUserData(userData, locationString)
+    console.log("userData")
+    console.log(userData)
+    console.log("userResponseData")
+    console.log(userResponseData)
 
     if(!userResponseData)
         return
@@ -46,23 +51,27 @@ function ElementDisplayBlock({elementData}) {
   const [saveIndicatorMessageCount, setSaveIndicatorMessageCount] = useState(0)
   function saveUserResponseFunction(response){
     //dispatcher(saveUserResponse({elementData: elementData, response: response}))
-    var locationString = 'coursesApp/userData/'+userID+'/responses/'+
-        selectedCourseID+'/'+
-        selectedChapterID+'/'+
-        selectedSectionID+'/'+
-        elementData.id
+    // var locationString = 'coursesApp/userData/'+userID+'/courses/'+
+    //     selectedCourseID+
+    //     '/chapterData/'+selectedChapterID+
+    //     '/sectionData/'+selectedSectionID+
+    //     '/responseData/'+elementData.id
 
     var responseData = {
         response: response,
         elementData: elementData,
     }
 
+    console.log("saving response")
+    console.log(locationString)
+    console.log(responseData)
+
     // If there is no response then set the responseData to null (will remove that response from the database)
     if(isEmptyString(response))
         responseData = null    
 
     // Fetching from random API to see if there is an internet connection
-    fetch("https://v2.jokeapi.dev/joke/Any ").then(res => {
+    fetch("https://v2.jokeapi.dev/joke/Any").then(res => {
         set(ref(database, locationString), responseData)  
             // The save was successful
             .then(m => {

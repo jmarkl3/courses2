@@ -9,6 +9,9 @@ import SearchPager from '../Utility/SearchPager'
 // Mapping the coursesData to CourseTile components
 function Courses() {
     const coursesData = useSelector(state => state.dbslice.coursesData)
+    console.log("admin courses coursesData")
+    console.log(coursesData)
+    
     const [coursesDataArray, setCoursesDataArray] = useState([])
     const dispacher = useDispatch()
 

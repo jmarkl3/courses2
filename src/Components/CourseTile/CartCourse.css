@@ -48,6 +48,12 @@
     margin: 5px;
     float: right;
 }
+.adminCartCourseButtons{
+    width: 480px;
+}
+.adminCartCourseButtons button{
+    width: calc(32% - 10px);
+}
 .priceBox{
     position: absolute;
     top: 5px;

@@ -25,6 +25,14 @@ import Support from './Components/Menus/Support/Support';
   refactor db structure
   and also all of the places it is set and loaded from
 
+  things to update
+    saveUserResponse
+      in the place where the user selects an answer (in the courses area)
+      in the place this information is displayed (in the courses area) 
+    saveUserSectionData2,
+    saveUserChapterData,
+    saveUserCourseData,
+
   toggle is full admin button
   when full admin can see all users in a display in the dashboard
   can click on user and see thier data as well as change their admin or preveiw status
@@ -162,21 +170,27 @@ import Support from './Components/Menus/Support/Support';
             enrolled: true/false,
             complete: true/false,
             certificate: url string,
-            sectionData: {
-              sectionID: {
+            chapterData: {
+              chapterID: {
                 complete: true/false,
-                completionTime: number,
-                webcamImages: [url strings],
-                responses: {
-                  elementID: {
-                    response: string,
-                    correct: true/false,
+                sectionData: {
+                  sectionID: {
+                    complete: true/false,
+                    completionTime: number,
+                    webcamImages: [url strings],
+                    responseData: {
+                      elementID: {
+                        response: string,
+                        elementData: {element data including the correct answer if there is one}
+                      },
+                      ...elements
+                    }
                   },
-                  ...elements
+                  ...sections
                 }
-              },
-              ...sections
+              }
             }
+            
           },
           ...courses
         }

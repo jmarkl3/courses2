@@ -9,7 +9,7 @@ import AdminUsers from './AdminUsers'
 function AdminDash() {
     const userData = useSelector(state => state.dbslice.userData)
     // Display components based on admin permissions
-    const isFullAdmin = useSelector(state => state.dbslice.userData?.accountData?.isFullAdmin)
+    const fullAdmin = useSelector(state => state.dbslice.userData?.accountData?.fullAdmin)
     const courseAdmin = useSelector(state => state.dbslice.userData?.accountData?.courseAdmin)
     const userAdmin = useSelector(state => state.dbslice.userData?.accountData?.userAdmin)
 
@@ -18,19 +18,19 @@ function AdminDash() {
       <div className='dashboardWelcomeMessage'>
         {`Welcome ${userData?.accountData?.firstName}`}
       </div>
-      { isFullAdmin && 
+      { fullAdmin && 
         <>
           <Charts></Charts>
           <hr></hr>
         </>
       }
       {/* <h3>Courses</h3> */}
-      {(isFullAdmin || courseAdmin)?
+      {(fullAdmin || courseAdmin)?
         <AdminCourses></AdminCourses>
         :
         <UserCourses></UserCourses>
       }
-      { (isFullAdmin || userAdmin) && 
+      { (fullAdmin || userAdmin) && 
         <>
           <hr></hr>
           <AdminUsers></AdminUsers>

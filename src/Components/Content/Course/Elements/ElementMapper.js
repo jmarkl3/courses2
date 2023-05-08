@@ -11,11 +11,15 @@ import { setSideNavOpen } from '../../../../App/AppSlice';
 
 function ElementMapper() {
     const courseData = useSelector((state) => state.dbslice.courseData);
+    console.log("element mapper courseData")
+    console.log(courseData)
     const selectedChapterID = useSelector((state) => state.dbslice.selectedChapterID);
     const selectedSectionID = useSelector((state) => state.dbslice.selectedSectionID);
     const editMode = useSelector((state) => state.appslice.editMode);
     const loading = useSelector((state) => state.appslice.loading);
     const [elementsArray, setElementsArray] = useState([])
+    console.log("elementsArray")
+    console.log(elementsArray)
     const [sectionData, setSectionData] = useState()
     const dispatcher = useDispatch()
     const navitage = useNavigate()
@@ -33,7 +37,13 @@ function ElementMapper() {
   }, [sectionData])
 
     useEffect(() => {
+        console.log("courseData")
+        console.log(courseData)
+        console.log("selectedChapterID", selectedChapterID, "selectedSectionID", selectedSectionID)
         var sectionData = getItem(courseData, selectedChapterID, selectedSectionID)
+        console.log("sectionData")
+        console.log(sectionData)
+
         setSectionData(sectionData)
         var elementsArrayTemp = objectToArray(sectionData?.items)
         setElementsArray(elementsArrayTemp)

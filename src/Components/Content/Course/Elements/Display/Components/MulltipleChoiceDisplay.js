@@ -55,6 +55,7 @@ function MulltipleChoiceDisplay({elementData, userResponse, saveUserResponseFunc
             answerChoiceID: answerData.id,
 
         }
+        console.log("calling saveUserResponseFunction from multiple choice display")
         saveUserResponseFunction(responseObject)
     }
 

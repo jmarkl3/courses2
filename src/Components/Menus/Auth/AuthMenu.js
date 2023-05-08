@@ -1,15 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react'
 import "./Auth.css"
 import { useDispatch, useSelector } from 'react-redux'
-import { setShowAuthMenu, setViewAsAdmin, toggleShowAuthMenu} from '../../../App/AppSlice'
+import { setShowAuthMenu, toggleShowAuthMenu} from '../../../App/AppSlice'
 import "../../../Styles/Themes.css"
 import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth'
-import { auth, clearEnrolledCourses, enrollUserInCourses, saveUserAccountData, setUserData, setUserID, toggleTheme } from '../../../App/DbSlice'
+import { auth, clearAllUserData, clearEnrolledCourses, enrollUserInCourses, saveUserAccountData, setUserData, setUserID, toggleTheme } from '../../../App/DbSlice'
 import { useNavigate } from 'react-router-dom'
 
 function AuthMenu() {
   const showAuthMenu = useSelector(state => state.appslice.showAuthMenu)
-  const isFullAdmin = useSelector(state => state.dbslice.userData?.accountData?.isFullAdmin)
+  const fullAdmin = useSelector(state => state.dbslice.userData?.accountData?.fullAdmin)
   const sideNavOpen = useSelector(state => state.appslice.sideNavOpen)
   const theme = useSelector(state => state.dbslice.userData?.accountData?.theme)
   const userID = useSelector(state => state.dbslice.userID)
@@ -43,7 +43,8 @@ function AuthMenu() {
       dispatcher(setUserID(user.user.uid))
       
       // Put some stuff in their user data so it loads
-      dispatcher(enrollUserInCourses({userID: user.user.uid, courseIDArray: []}))
+      let date = new Date()
+      dispatcher(saveUserAccountData({kvPairs: {creationDate: date.getFullYear() + "/" + date.getMonth() + "/" + date.getDate()}}))
 
       }).catch(err=>{
         displayErrorMessage(err.message)
@@ -117,10 +118,11 @@ function AuthMenu() {
                                 <button onClick={()=>dispatcher(setViewAsAdmin(!viewAsAdmin))}>{`View As ${viewAsAdmin ? "User": "Admin"}`}</button>                            
                               </>
                             } */}
-                            {isFullAdmin &&
+                            {true &&
                               <>
                                 <button onClick={()=>dispatcher(clearEnrolledCourses())}>Clear Courses</button>                                                        
-                                <button onClick={()=>dispatcher(saveUserAccountData({value: {isFullAdmin: !isFullAdmin}}))}>Toggle isFullAdmin {" "+isFullAdmin}</button>                                                                                                               
+                                <button onClick={()=>dispatcher(saveUserAccountData({kvPairs: {fullAdmin: !fullAdmin}}))}>Toggle fullAdmin {" "+fullAdmin}</button>                                                                                                               
+                                <button onClick={()=>dispatcher(clearAllUserData())}>Clear all user data</button>                                                                                                               
                               </>
                             }
                             <button onClick={goToDashboard}>Your Courses / Dashboard</button>                            

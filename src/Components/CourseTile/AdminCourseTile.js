@@ -11,7 +11,9 @@ import AdminCourseTileEdit from './AdminCourseTileEdit'
 import CartCourseMoreInfo from './CartCourseMoreInfo'
 
 function AdminCourseTile({course}) {
-    const canEdit = useSelector(state => state.dbslice.userData?.accountData?.canEdit)
+    const userData = useSelector(state => state.dbslice.userData)
+    const fullAdmin = useSelector(state => state.dbslice.userData?.accountData?.fullAdmin)
+    const courseAdmin = useSelector(state => state.dbslice.userData?.accountData?.courseAdmin)
     const [confirmDeleteMessage, setConfirmDeleteMessage] = useState()
     const [editing, setEditing] = useState()
     const [showMoreInfo, setShowMoreInfo] = useState(false)
@@ -37,33 +39,26 @@ function confirmDelete(){
     setConfirmDeleteMessage("Are you sure you want to delete this course? ("+course.name+")")
 }
 
-function viewCourseFunction(){
+function viewCourseFunction(){    
     // dispatcher(selectCourse(course.id))
     dispatcher(setEditMode(false))    
     navigate("/course/"+course.id)
 
 }
 function editCourseFunction(){
-    dispatcher(selectCourse(course.id))
+    // dispatcher(selectCourse(course.id))
     dispatcher(setEditMode(true))
     navigate("/course/"+course.id)
-
-}
-function viewCourseAsAdminFunction(){
-    dispatcher(selectCourse(course.id))
-    navigate("/course/"+course.id)
-    dispatcher(setEditMode(false))
 
 }
 
   return (
     <>
         <div className={'cartCourse'} >
-            {canEdit && 
+            {(fullAdmin || (courseAdmin && courseAdmin.includes(course.id))) && 
                 <HamburgerMenu height="190px">            
                     <div className="hamburgerMenuOption" onClick={()=>setEditing(!editing)}>Edit Tile</div>
                     <div className="hamburgerMenuOption" onClick={editCourseFunction}>Edit Course</div>
-                    <div className="hamburgerMenuOption" onClick={viewCourseAsAdminFunction}>View Course (admin)</div>
                     <div className="hamburgerMenuOption" onClick={viewCourseFunction}>View Course</div>                            
                     <div className="hamburgerMenuOption" onClick={()=>dispatcher(copyCourse(course.id))}>Copy</div>                            
                     <div className="hamburgerMenuOption" onClick={confirmDelete}>Delete</div>                            
@@ -79,13 +74,14 @@ function viewCourseAsAdminFunction(){
                 <div className='cartCourseDescription'>
                     {course?.description}
                 </div>
-                <div className={`priceBox priceText ${canEdit ? "priceBoxAdmin":""}`}>
+                <div className={`priceBox priceText ${(fullAdmin || (courseAdmin && courseAdmin.includes(course.id))) ? "priceBoxAdmin":""}`}>
                     {priceString(course?.price)}
                 </div>
             </div>
-            <div className='cartCourseButtons'>
+            <div className='cartCourseButtons adminCartCourseButtons'>
             <>
-                <button onClick={viewCourseAsAdminFunction}>View</button>
+                <button onClick={viewCourseFunction}>View</button>
+                <button onClick={editCourseFunction}>Edit</button>
                 <button onClick={()=>setShowMoreInfo(true)}>More Info</button>
             </>
             </div>
