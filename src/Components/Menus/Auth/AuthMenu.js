@@ -9,9 +9,7 @@ import { useNavigate } from 'react-router-dom'
 
 function AuthMenu() {
   const showAuthMenu = useSelector(state => state.appslice.showAuthMenu)
-  const isAdmin = useSelector(state => state.dbslice.userData?.accountData?.isAdmin)
-  const viewAsAdmin = useSelector(state => state.appslice.viewAsAdmin)
-  const canEdit = useSelector(state => state.dbslice.userData?.accountData?.canEdit)
+  const isFullAdmin = useSelector(state => state.dbslice.userData?.accountData?.isFullAdmin)
   const sideNavOpen = useSelector(state => state.appslice.sideNavOpen)
   const theme = useSelector(state => state.dbslice.userData?.accountData?.theme)
   const userID = useSelector(state => state.dbslice.userID)
@@ -114,16 +112,15 @@ function AuthMenu() {
                         {userID ? 
                         <>
                             <div>Account Actions</div>
-                            {(isAdmin || canEdit) &&
+                            {/* {(isAdmin || canEdit) &&
                               <>                          
                                 <button onClick={()=>dispatcher(setViewAsAdmin(!viewAsAdmin))}>{`View As ${viewAsAdmin ? "User": "Admin"}`}</button>                            
                               </>
-                            }
-                            {viewAsAdmin &&
+                            } */}
+                            {isFullAdmin &&
                               <>
                                 <button onClick={()=>dispatcher(clearEnrolledCourses())}>Clear Courses</button>                                                        
-                                <button onClick={()=>dispatcher(saveUserAccountData({value: {isAdmin: !isAdmin}}))}>Toggle Admin {" "+isAdmin}</button>                                                                                  
-                                <button onClick={()=>dispatcher(saveUserAccountData({value: {canEdit: !canEdit}}))}>Toggle Can Edit {" "+canEdit}</button>                                                                                   
+                                <button onClick={()=>dispatcher(saveUserAccountData({value: {isFullAdmin: !isFullAdmin}}))}>Toggle isFullAdmin {" "+isFullAdmin}</button>                                                                                                               
                               </>
                             }
                             <button onClick={goToDashboard}>Your Courses / Dashboard</button>                            

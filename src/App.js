@@ -17,6 +17,14 @@ import Support from './Components/Menus/Support/Support';
 
 // TODO
 /*      
+
+  send judge email
+  check on pm email
+  law  
+
+  refactor db structure
+  and also all of the places it is set and loaded from
+
   progress status on course
     when user completes a section it will save in their user data
     that data is used to show completion status on the course tile
@@ -70,6 +78,106 @@ import Support from './Components/Menus/Support/Support';
   time component 
   restes sometimes
   background color from theme. Currently its clear and the title in the sidemenu can overlap
+
+*/
+// DB Structure
+/* 
+
+  coursesApp: {
+
+    courses: {unused},
+
+    coursesMetaData: {
+      courseID: {
+        id: string, (this should not be here, and on coppy it will be inaccurate)
+        description: string,       
+        descriptionLong: string,
+        image: url sttring,
+        name: string
+        price: string,
+      },
+      ...
+    },
+
+    coursesData: {
+      courseID: {
+        id: string, (this should not be here),
+        also don't need the name, description, etc
+        webcam: true/false (add this)
+        items: {
+          chapterID: {
+            id: string, (should not be in there)
+            name: string,
+            index: number,
+            items: {
+              sectionID: {
+                id: string, (should not be in there)
+                name: string,
+                index: number,
+                requiredTime: 10000 (optional parameter, showing as a string, should be a number),
+                webcam: true/false (add this, optional parameter, if not present should default to course setting),
+                webcamTimes: [10000] (add this, optional parameter, array of numbers that override the default webcam times),
+                items: {
+                  elementID: {
+                    id: string, (should not be in there)
+                    name: string,
+                    index: number,
+                    type: string,
+                    content: string,
+                    ...other properties based on type
+                  },
+                  ...elements
+                }
+              },
+              ...sections
+            },
+          },
+          ...chapters
+        }
+      }
+    },
+
+    userData: {
+      userID: {      
+        accountData: {
+          (need to update these four)
+          fullAdmin: true/false, (optional, gives ability to view and edit user data and reports, edit user data, edit all courses, view charts)
+          courseAdmin: [courseIDs], (optional, gives ability to edit courses in the array, or all if set to all)
+          userAdmin: true/false, (optional, gives ability to view and edit user data and reports)
+          previewMode: true/false, (optional, ability to go through courses without completing sections)          
+          theme: string, (optional)
+          language: string, (optional)
+          data from input fields such as name, email, etc (created in checkout page)
+        },
+        The way it maybe should be structures
+        courses: {
+          courseID: {
+            enrolled: true/false,
+            complete: true/false,
+            certificate: url string,
+            sectionData: {
+              sectionID: {
+                complete: true/false,
+                completionTime: number,
+                webcamImages: [url strings],
+                responses: {
+                  elementID: {
+                    response: string,
+                    correct: true/false,
+                  },
+                  ...elements
+                }
+              },
+              ...sections
+            }
+          },
+          ...courses
+        }
+      }
+    },
+
+  }
+
 
 */
 // Misc Notes
@@ -221,6 +329,7 @@ function App() {
     // Loads the courses meta data on start
     useEffect(() => {   
       loadCoursesData()
+      logDB()
     }, [])
 
     // When the userID changes loads there data
@@ -269,6 +378,14 @@ function App() {
 
         }, 250)
       })    
+    }
+
+    function logDB(){
+      console.log("Entire DB")
+      onValue(ref(database, 'coursesApp'), (snapshot) => {
+        console.log(snapshot.val())
+
+      })
     }
 
   return (

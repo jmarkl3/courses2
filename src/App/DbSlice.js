@@ -106,7 +106,7 @@ const dbslice = createSlice({
         setCourseData (state, action) {        
             state.courseData = action.payload;
         },        
-
+        
         // #endregion  loading data
 
         // #region user data

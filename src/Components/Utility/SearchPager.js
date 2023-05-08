@@ -1,0 +1,87 @@
+import React, { useEffect, useRef, useState } from 'react'
+
+// The search key is the key of the objects in the data array that the search term will look at
+function SearchPager({dataObject, searchKey, searchKey2, objectSubsetKey, setFilteredDataArray}) {
+    const [pageRange, setPageRange] = useState([0, 10])
+    const [searchInput, setSearchInput] = useState()
+    const [filterdArrayLength, setFilterdArrayLength] = useState(0)
+    const searchInputRef = useRef()
+
+    useEffect(()=>{
+        filterUsers()
+    },[dataObject, pageRange, searchInput])
+
+    function filterUsers(){
+        // If there is no valid data object there is no need to filter it
+        if(!dataObject || typeof dataObject !== "object") return
+
+        // Search though each item in the object
+        let tempArray = []
+        Object.entries(dataObject).forEach((object, index) => {
+            // If index is outside the bounds of the page range, skip it
+            if(index < pageRange[0] || index > pageRange[1]) return
+
+            // Get the data from the object
+            let tempData = {}
+            // This is for when only a subsed of the object is needed
+            if(objectSubsetKey)
+                tempData = {...object[1][objectSubsetKey]}
+            // Else just add all of the data in the object
+            else
+                tempData = {...object[1]}
+
+            // Put the id in the data object that will go in the array 
+            tempData.id = dataObject[0]               
+
+            // Now filter it for a search term if there is one
+
+            // If there is no search input, or the search input is blank, or the user's name includes the search input, add them to the array
+            if(!searchInput || searchInput == "")
+                tempArray.push(tempData)
+            
+            // If the search intput is contained in the data object push it to the filtered array
+            else if(searchKey && tempData?.[searchKey]?.toLowerCase()?.includes(searchInput))
+                tempArray.push(tempData)
+
+            // If the search intput is contained in the data object push it to the filtered array
+            else if(searchKey2 && tempData?.[searchKey2]?.toLowerCase()?.includes(searchInput))
+                tempArray.push(tempData)
+
+        })
+
+        // This is a function that will bes sent from the parent component
+        setFilteredDataArray(tempArray)
+
+        // Length to display the page rage
+        setFilterdArrayLength(tempArray.length)
+    }
+    function search(){
+        setSearchInput(searchInputRef.current.value?.trim())
+    }
+    function pageUp(){
+        setPageRange([pageRange[0] + 10, pageRange[1] + 10])
+    }
+    function pageDown(){
+        if((pageRange[0] - 10) < 0) 
+            setPageRange([0, 10])
+        else
+            setPageRange([pageRange[0] - 10, pageRange[1] - 10])
+
+    }
+
+  return (
+    <div>
+        <div className='userSearchBar'>
+            <input ref={searchInputRef}></input>
+            <button onClick={search}>Search</button>
+            <div className='pageRangeBox'>
+                <div className='arrowButton' onClick={pageDown}>{"<"}</div>
+                {`${pageRange[0]} - ${pageRange[1]} of ${filterdArrayLength}`}
+                <div className='arrowButton' onClick={pageUp}>{">"}</div>
+            </div>
+        </div>
+    </div>
+  )
+}
+
+export default SearchPager

@@ -4,6 +4,7 @@ import { addCourse } from '../../App/DbSlice'
 import { objectToArray } from '../../App/functions'
 import "./Courses.css"
 import AdminCourseTile from './AdminCourseTile'
+import SearchPager from '../Utility/SearchPager'
 
 // Mapping the coursesData to CourseTile components
 function Courses() {
@@ -13,19 +14,24 @@ function Courses() {
 
     useEffect(() => {
         // Convert the object to an array
-        var tempArray = objectToArray(coursesData)
-        setCoursesDataArray(tempArray)
+        // var tempArray = objectToArray(coursesData)
+        // setCoursesDataArray(tempArray)
 
     }, [coursesData])
 
   return (
     <div>
-    <div className='cartCourse newCourseButton' onClick={()=>dispacher(addCourse())}>
-            New Course
-        </div>
-        {coursesDataArray.map(course => (
-            <AdminCourseTile course={course} key={course.id}></AdminCourseTile>
-        ))}
+      <div className='cartCourse newCourseButton' onClick={()=>dispacher(addCourse())}>
+        New Course
+      </div>
+      <SearchPager 
+        dataObject={coursesData} 
+        searchKey="name" 
+        setFilteredDataArray={setCoursesDataArray}
+      ></SearchPager>
+      {coursesDataArray.map(course => (
+          <AdminCourseTile course={course} key={course.id}></AdminCourseTile>
+      ))}
     </div>
   )
 }

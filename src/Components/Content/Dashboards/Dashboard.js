@@ -1,13 +1,16 @@
 import React, { useEffect } from 'react'
-import UserDash from './UserDash'
-import AdminDash from './AdminDash'
+import UserDash from './UserDash/UserDash'
+import AdminDash from './AaminDash/AdminDash'
 import { useDispatch, useSelector } from 'react-redux'
 import DisplayPage from '../DisplayPage'
 import { setSideNavOpen } from '../../../App/AppSlice'
 
 function Dashboard() {
-  const viewAsAdmin = useSelector(state => state.appslice.viewAsAdmin)
-  
+  // If they have any of these admin permissions, show the admin dash, else show the user dash
+  const isFullAdmin = useSelector(state => state.dbslice.userData?.accountData?.isFullAdmin)
+  const courseAdmin = useSelector(state => state.dbslice.userData?.accountData?.courseAdmin)
+  const userAdmin = useSelector(state => state.dbslice.userData?.accountData?.userAdmin)
+
   const dispacher = useDispatch()
   useEffect(()=>{
     dispacher(setSideNavOpen(false))
@@ -15,7 +18,7 @@ function Dashboard() {
 
     return (
     <DisplayPage>
-        {viewAsAdmin ?
+        {(isFullAdmin || courseAdmin || userAdmin) ?
             <AdminDash></AdminDash>
             :
             <UserDash></UserDash>
