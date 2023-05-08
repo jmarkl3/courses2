@@ -26,12 +26,16 @@ import Support from './Components/Menus/Support/Support';
   and also all of the places it is set and loaded from
 
   things to update
-    saveUserResponse
-      in the place where the user selects an answer (in the courses area)
-      in the place this information is displayed (in the courses area) 
     saveUserSectionData2,
+      save and display for each of these
+      when the section is completed 
+      time it took to complete the section
+      webcam images
     saveUserChapterData,
+      when the section is completed
     saveUserCourseData,
+      when the course is completed
+      when the certificate is created
 
   toggle is full admin button
   when full admin can see all users in a display in the dashboard

@@ -16,15 +16,10 @@ function ElementDisplayBlock({elementData}) {
     const selectedCourseID = useSelector(state => state.dbslice.selectedCourseID)
     const selectedChapterID = useSelector(state => state.dbslice.selectedChapterID)
     const selectedSectionID = useSelector(state => state.dbslice.selectedSectionID)
-    const locationString = "courses/"+selectedCourseID+"/chapterData/"+selectedChapterID+"/sectionData/"+selectedSectionID+"/responseData/"+elementData?.id
 
   useEffect(() => {
-
-    var userResponseData = getUserData(userData, locationString)
-    console.log("userData")
-    console.log(userData)
-    console.log("userResponseData")
-    console.log(userResponseData)
+    const responseDataLocationString = "courses/"+selectedCourseID+"/chapterData/"+selectedChapterID+"/sectionData/"+selectedSectionID+"/responseData/"+elementData?.id
+    var userResponseData = getUserData(userData, responseDataLocationString)
 
     if(!userResponseData)
         return
