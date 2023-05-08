@@ -61,18 +61,18 @@ function ElementDisplayBlock({elementData}) {
         response: response,
         elementData: elementData,
     }
-
-    console.log("saving response")
-    console.log(locationString)
-    console.log(responseData)
-
+    
+    
     // If there is no response then set the responseData to null (will remove that response from the database)
     if(isEmptyString(response))
         responseData = null    
+    
+    // This is where the data for the response is saved
+    let responseLocation = "coursesApp/userData/"+userID+"/courses/"+selectedCourseID+"/chapterData/"+selectedChapterID+"/sectionData/"+selectedSectionID+"/responseData/"+elementData?.id
 
     // Fetching from random API to see if there is an internet connection
     fetch("https://v2.jokeapi.dev/joke/Any").then(res => {
-        set(ref(database, locationString), responseData)  
+        set(ref(database, responseLocation), responseData)  
             // The save was successful
             .then(m => {
                 setSaveIndicatorMessage("Saved")

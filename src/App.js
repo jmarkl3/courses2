@@ -378,6 +378,8 @@ function App() {
       if(!userID) return
       onValue(ref(database, 'coursesApp/userData/'+userID), (snapshot) => {
         const data = snapshot.val();   
+        console.log("user data")
+        console.log(data)
         setTimeout(() => {
           dispatcher(setUserData(data))          
           // If the user is an admin default the view to admin          
