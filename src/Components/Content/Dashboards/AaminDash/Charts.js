@@ -87,8 +87,7 @@ function Charts() {
                 <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
             </AreaChart>
         </div>
-        <div className='chartContainer'>
-            <hr></hr>
+        <div className='chartContainer'>            
             New Spent
             <AreaChart
                 width={600}

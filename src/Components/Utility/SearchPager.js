@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 
 // The search key is the key of the objects in the data array that the search term will look at
-function SearchPager({dataObject, searchKey, searchKey2, objectSubsetKey, setFilteredDataArray}) {
+function SearchPager({dataObject, searchKey, searchKey2, objectSubsetKey, searchSubsetKey, setFilteredDataArray}) {
     const [pageRange, setPageRange] = useState([0, 10])
     const [searchInput, setSearchInput] = useState()
     const [filterdArrayLength, setFilterdArrayLength] = useState(0)
@@ -35,16 +35,38 @@ function SearchPager({dataObject, searchKey, searchKey2, objectSubsetKey, setFil
 
             // Now filter it for a search term if there is one
 
+            // The first value that will be checked agains the search term
+            let searchCheckValue = ""
+            if(searchKey){
+                if(searchSubsetKey)
+                    searchCheckValue += tempData?.[searchSubsetKey]?.[searchKey]
+                else
+                    searchCheckValue +=tempData?.[searchKey]
+                searchCheckValue = searchCheckValue.toLowerCase()
+                searchCheckValue = searchCheckValue.trim()
+            }
+
+            // The second value that will be checked agains the search term
+            let searchCheckValue2 = ""
+            if(searchKey2){
+                if(searchSubsetKey)
+                    searchCheckValue2 += tempData?.[searchSubsetKey]?.[searchKey]
+                else
+                    searchCheckValue2 +=tempData?.[searchKey]
+                searchCheckValue2 = searchCheckValue.toLowerCase()
+                searchCheckValue2 = searchCheckValue.trim()
+            }
+
             // If there is no search input, or the search input is blank, or the user's name includes the search input, add them to the array
             if(!searchInput || searchInput == "")
                 tempArray.push(tempData)
             
             // If the search intput is contained in the data object push it to the filtered array
-            else if(searchKey && tempData?.[searchKey]?.toLowerCase()?.includes(searchInput))
+            else if(searchKey && searchCheckValue.includes(searchInput))
                 tempArray.push(tempData)
 
             // If the search intput is contained in the data object push it to the filtered array
-            else if(searchKey2 && tempData?.[searchKey2]?.toLowerCase()?.includes(searchInput))
+            else if(searchKey2 && searchCheckValue2.includes(searchInput))
                 tempArray.push(tempData)
 
         })
@@ -56,7 +78,7 @@ function SearchPager({dataObject, searchKey, searchKey2, objectSubsetKey, setFil
         setFilterdArrayLength(tempArray.length)
     }
     function search(){
-        setSearchInput(searchInputRef.current.value?.trim())
+        setSearchInput(searchInputRef.current.value?.trim()?.toLowerCase())
     }
     function pageUp(){
         setPageRange([pageRange[0] + 10, pageRange[1] + 10])

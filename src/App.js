@@ -25,6 +25,11 @@ import Support from './Components/Menus/Support/Support';
   refactor db structure
   and also all of the places it is set and loaded from
 
+  toggle is full admin button
+  when full admin can see all users in a display in the dashboard
+  can click on user and see thier data as well as change their admin or preveiw status
+
+
   progress status on course
     when user completes a section it will save in their user data
     that data is used to show completion status on the course tile
@@ -33,6 +38,8 @@ import Support from './Components/Menus/Support/Support';
 
   dashboards
     user information  
+    edit user information option (maybe a gear or edit icon in the corner)
+    admin view and edit other user information window
     styling like the example site
     admin dashboard
       recharts

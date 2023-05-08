@@ -12,26 +12,21 @@ function Courses() {
     const [coursesDataArray, setCoursesDataArray] = useState([])
     const dispacher = useDispatch()
 
-    useEffect(() => {
-        // Convert the object to an array
-        // var tempArray = objectToArray(coursesData)
-        // setCoursesDataArray(tempArray)
-
-    }, [coursesData])
-
   return (
-    <div>
-      <div className='cartCourse newCourseButton' onClick={()=>dispacher(addCourse())}>
-        New Course
-      </div>
+    <div>    
+      <h3>Courses</h3>  
       <SearchPager 
         dataObject={coursesData} 
         searchKey="name" 
         setFilteredDataArray={setCoursesDataArray}
       ></SearchPager>
-      {coursesDataArray.map(course => (
-          <AdminCourseTile course={course} key={course.id}></AdminCourseTile>
+      {coursesDataArray.map((course, index) => (
+          <AdminCourseTile course={course} key={course.id +""+ index}></AdminCourseTile>
       ))}
+      <div className='cartCourse newCourseButton' onClick={()=>dispacher(addCourse())}>
+        New Course
+      </div>
+
     </div>
   )
 }
