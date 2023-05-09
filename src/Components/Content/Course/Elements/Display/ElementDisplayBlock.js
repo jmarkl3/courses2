@@ -57,6 +57,8 @@ function ElementDisplayBlock({elementData}) {
         elementData: elementData,
     }
     
+    console.log("saveUserResponseFunction ")
+    console.log(responseData)
     
     // If there is no response then set the responseData to null (will remove that response from the database)
     if(isEmptyString(response))
@@ -79,7 +81,8 @@ function ElementDisplayBlock({elementData}) {
                 setSaveIndicatorMessage("Save Error")
                 setSaveIndicatorMessageCount(saveIndicatorMessageCount+1)
     
-            })
+            }
+        )
 
     })
     // If there is no connection show save error indicator

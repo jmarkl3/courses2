@@ -16,7 +16,7 @@ function AdminDash() {
   return (
     <div>
       <div className='dashboardWelcomeMessage'>
-        {`Welcome ${userData?.accountData?.firstName}`}
+        {`Welcome Back ${userData?.accountData?.firstName}`}
       </div>
       { fullAdmin && 
         <>

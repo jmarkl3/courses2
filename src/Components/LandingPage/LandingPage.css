@@ -67,8 +67,8 @@
 }
 .landingPageText{
     white-space: pre-line;
-    width: 600px;
-    margin-left: calc( 50% - 300px);
+    width: 800px;
+    margin-left: calc( 50% - 400px);
     padding-top: 50px;
     padding-bottom: 50px;
     line-height: 20px;

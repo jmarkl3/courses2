@@ -12,6 +12,8 @@ function SidenavChapterRow({itemData}) {
   const [renaming, setRenaming] = useState()
   const [sectionRenaming, setSectionRenaming] = useState()
   const selectedChapterID = useSelector((state) => state.dbslice.selectedChapterID);
+  const selectedCourseID = useSelector((state) => state.dbslice.selectedCourseID);
+  const userData = useSelector((state) => state.dbslice.userData);
   const editMode = useSelector((state) => state.appslice.editMode);
   const dispatcher = useDispatch()
 
@@ -86,6 +88,30 @@ function SidenavChapterRow({itemData}) {
     dispatcher(selectFirst())
 
   }
+
+  function allSectionsComplete(){
+    // Check to make sure this chapeter has sections
+    if(!itemData.items || typeof itemData.items !== "object")
+      return
+
+    let sectionIDArray = Object.keys(itemData.items)
+    let totalSectionsCount = sectionIDArray.length
+    let completedSectionsCount = 0
+
+    // Get a list of all of the sections the user has completed
+    let userChapterSectionsData = userData?.courses[selectedCourseID]?.chapterData[itemData.id]?.sectionData
+    if(userChapterSectionsData && typeof userChapterSectionsData === "object"){
+      Object.entries(userChapterSectionsData).forEach((sectionID, sectionData) => {
+        if(sectionData?.complete)
+        completedSectionsCount++
+      })
+    }
+
+    // If they are return true
+    if(completedSectionsCount === totalSectionsCount)
+      return true
+  }
+
   return (
     <div 
       className='sidenavRowOuter noPaddingLeft'
@@ -117,7 +143,7 @@ function SidenavChapterRow({itemData}) {
           :
           itemData?.name
         }
-        {editMode &&
+        {editMode ?
           <HamburgerMenu>
             <div className='hamburgerMenuOption' onClick={()=>dispatcher(copyChapter(itemData))}>Copy</div>
             <div className='hamburgerMenuOption' onClick={editName}>Rename</div>
@@ -125,6 +151,8 @@ function SidenavChapterRow({itemData}) {
             <div className='hamburgerMenuOption' onClick={addChapterFunction}>Add Chapter</div>
             <div className='hamburgerMenuOption' onClick={addSectionFunction}>Add Section</div>
           </HamburgerMenu>
+          :
+          allSectionsComplete() && <div className='completeIndicator' title='Chapter Complete'>✔</div>
         }
 
       </div>

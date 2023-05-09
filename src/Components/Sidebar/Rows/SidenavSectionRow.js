@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { addElement, copySection, deleteSection, selectChapter, selectFirst, selectSection, selectSectionIfComplete, selectSectionIfValid, sidenavDragEnd, sidenavDragOver, sidenavDragStart, updateItemInfo } from '../../../App/DbSlice.js'
-import { dontClickThrough, objectToArray } from '../../../App/functions.js'
+import { dontClickThrough, getUserData, objectToArray } from '../../../App/functions.js'
 import ConfirmationBox from '../../../Utils/ConfirmationBox.js'
 import DragDropIndicatorBar from '../../../Utils/DragDropIndicatorBar.js'
 import HamburgerMenu from '../../../Utils/HamburgerMenu.js'
@@ -11,10 +11,18 @@ function SidenavSectionRow({itemData, chapterID, setSectionRenaming}) {
   const [confirmDeleteMessage, setConfirmDeleteMessage] = useState()
   const [renaming, setRenaming] = useState()
   const [elementRenaming, setElementRenaming] = useState()
+  const selectedCourseID = useSelector(state => state.dbslice.selectedCourseID)
+  const selectedChapterID = useSelector(state => state.dbslice.selectedChapterID)
   const selectedSectionID = useSelector((state) => state.dbslice.selectedSectionID);
+  const userData = useSelector((state) => state.dbslice.userData);
   const dragItemType = useSelector((state) => state.dbslice.dragItemType);
   const editMode = useSelector((state) => state.appslice.editMode);
-  const viewAsAdmin = useSelector(state => state.appslice.viewAsAdmin)
+  const fullAdmin = useSelector(state => state.dbslice.userData?.accountData?.fullAdmin)
+  
+
+  const userSectionDataLocationString = "courses/"+selectedCourseID+"/chapterData/"+selectedChapterID+"/sectionData/"+itemData.id
+  var userSectionData = getUserData(userData, userSectionDataLocationString)
+
 
   const dispatcher = useDispatch()
 
@@ -103,13 +111,13 @@ function SidenavSectionRow({itemData, chapterID, setSectionRenaming}) {
   }
 
   function selectSectionFunction(){    
-    if(editMode || viewAsAdmin)
+    if(editMode || fullAdmin)      
       dispatcher(selectFirst({chapterID: chapterID, sectionID: itemData?.id}))
     else
       dispatcher(selectSectionIfValid({sectionID: itemData?.id}))    
 
   }
-
+var testObj = {}
   return (
     <div 
       className='sidenavRowOuter' 
@@ -155,7 +163,12 @@ function SidenavSectionRow({itemData, chapterID, setSectionRenaming}) {
               <div className='hamburgerMenuOption' onClick={addElementFunction}>Add Element</div>
             </HamburgerMenu>
             :
-            <TimeDisplay sectionData={itemData} chapterID={chapterID}></TimeDisplay>
+            userSectionData?.complete ?              
+              // <span style={{color: "green"}}>✔</span>
+              <div className='completeIndicator' title='Section Complete'>✔</div>
+              :
+              <TimeDisplay sectionData={itemData} chapterID={chapterID}></TimeDisplay>
+            
           }
         </>
         

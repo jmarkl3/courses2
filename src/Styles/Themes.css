@@ -70,3 +70,6 @@
     box-shadow: 0 2px 8px rgba(0, 0, 5, 0.5) inset;
     border: none;
 }
+.darkTheme .timeDisplay{
+    background-color: #474444a6;
+}

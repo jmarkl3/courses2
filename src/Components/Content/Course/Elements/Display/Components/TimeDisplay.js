@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import "./ElementDisplayComponents.css"
-import { saveRemainingSectionTime, saveRemainingSectionTime2, saveUserSectionData } from '../../../../../../App/DbSlice'
+import { saveRemainingSectionTime, saveRemainingSectionTime2, saveUserSectionData, saveUserSectionData2 } from '../../../../../../App/DbSlice'
 import { getUserData } from '../../../../../../App/functions'
 
 function TimeDisplay({sectionData, chapterID, viewOnly, setRemainingTime}) {
@@ -125,7 +125,7 @@ function TimeDisplay({sectionData, chapterID, viewOnly, setRemainingTime}) {
         clearTimeout(timerTimeoutRef.current)
 
         // If the timer is active save the current remaining time in userData. Use the sectionData?.id and chapterID props because the selectedSectionID may not correspond ot this one                
-        dispacher(saveUserSectionData({sectionID: sectionData?.id, chapterID: chapterID, value: currentTimeRef.current, property: "sectionTime"}))
+        dispacher(saveUserSectionData2({sectionID: sectionData?.id, chapterID: chapterID, value: currentTimeRef.current, property: "sectionTime"}))
         
     }
 
@@ -178,6 +178,7 @@ function TimeDisplay({sectionData, chapterID, viewOnly, setRemainingTime}) {
 
         // If the time requirement has been met display this
         if(secondsRaw <= 0){
+            return ""
             return "✔"
         }
 

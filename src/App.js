@@ -27,8 +27,41 @@ import Support from './Components/Menus/Support/Support';
 
   things to update
     saveUserSectionData2,
-      save and display for each of these
       when the section is completed 
+        when clicking next section in the bottom left of the view course page
+          in SectionButtons dispatches selectNextSection which is in dbslice, this does not appear to save any info in the db
+          updated saveUserSectionData to saveUserSectionData2 in a few places becasue that is what was baing used to update completion status
+          in sectionbuttons nextSection it is retrieving userResponseData from the wrong location. updated this and it seems to be working
+          DONE save complete in the section data
+          DONE save complete in user data for section
+          DONE display complete status on the side menu
+          DONE display progress status on the course tile
+          DONE display complete status on the course tile
+            DONE need to know if a user is enrolled in the course
+            DONE need the number of sections to be saved in the course meta data
+              DONE when a section is added or removed in edit mode this number can be calculated
+            save complete status on the course when the course is complete in case the user completes it and the number of sections changes later
+          DONE check to see if all sections are complete in sidenav chapter row, if so display a green check
+
+          DONE when a user enrolls in a course save that data in the correct place
+          DONE display course tiles accordingly on the landing page
+
+        note
+        when clicking a section in the left menu
+          from the section row calls selectSectionIfValid which is in dbslice
+            selectSectionIfValid looks in user data to see if the section is complete, this needs to be updated
+            also the location where it is saving the completion data needs to be updated
+
+        DONE display enrolled courses in user dashboard
+
+        DONE 
+        user should be able to select the section after a completed section
+        TODO
+        and the chapter after a completed chapter
+        maybe auto save completion status when timer finishes and all questions are answered
+
+
+    save and display for each of these
       time it took to complete the section
       webcam images
     saveUserChapterData,
@@ -408,8 +441,8 @@ function App() {
     }
 
     function logDB(){
-      console.log("Entire DB")
       onValue(ref(database, 'coursesApp'), (snapshot) => {
+        console.log("Entire DB:")
         console.log(snapshot.val())
 
       })

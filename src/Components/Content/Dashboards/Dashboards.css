@@ -19,6 +19,7 @@
     border: 1px solid #cccccc73;
     text-align: left;
     border-radius: 3px;
+    box-sizing: border-box;
 }
 .userSearchBar input{
     width: calc(100% - 290px);    

@@ -96,6 +96,7 @@ function LandingPage({goto}) {
         let tempAvailableCourses = coursesArray?.filter(courseData => !userData?.enrolledCourses?.includes(courseData.id))
         if(Array.isArray(tempAvailableCourses))
             setAvailableCourses(tempAvailableCourses)
+        generateEnrolledCoursesArray()
     }, [coursesArray, userData])
 
     function scrollToAbout(){
@@ -107,6 +108,30 @@ function LandingPage({goto}) {
 
     }
 
+    const [enrolledCoursesArray, setEnrolledCoursesArray] = useState([])
+    /**
+     * Generates an array of courseIDs that the user is enrolled in 
+     */
+    function generateEnrolledCoursesArray(){
+        if(!userData || !userData?.courses || typeof userData?.courses !== "object") {            
+            setEnrolledCoursesArray([])
+            return
+        }
+
+        // Get an array of courseIDs that the user is enrolled in
+        let tempEnrolledCoursesArray = []
+        // Look through each course in their data
+        Object.entries(userData?.courses).forEach(course => {
+            // If there enrolled in it add the id to the array
+            if(course[1].enrolled)
+                tempEnrolledCoursesArray.push(course[0])
+        })
+
+        // Put the array in state to be displayed 
+        setEnrolledCoursesArray(tempEnrolledCoursesArray)
+        
+    }
+
   return (
 
     <div className='landingPage'>
@@ -116,7 +141,6 @@ function LandingPage({goto}) {
         <div>
             <div className='landingPageOver'>
                 <div className='landingPageTitleContainerOuter'>
-                    hey
                     <div className='landingPageTitleContainer'>
                         <div className='landingTitle'>
                             Online Courses
@@ -174,19 +198,21 @@ function LandingPage({goto}) {
                             <li>Automitacally generated certificate of completion</li>
                         </ul>
                     </div>
-                    {(userData?.enrolledCourses && Array.isArray(userData?.enrolledCourses) && userData?.enrolledCourses?.length > 0) &&
-                        <div className={"landingPageTextSection"} ref={coursesRef}>
-                            <h3 className='center'>
-                                Your Courses
-                            </h3>  
-                            <hr></hr>
-                            <div>
-                                {coursesArray.filter(courseData => userData?.enrolledCourses?.includes(courseData.id)).map(courseData => (
-                                    <CartCourse courseData={courseData} draggable={false} key={courseData.id}></CartCourse>
-                                ))}
-                            </div>
+                    <div className={"landingPageTextSection"} ref={coursesRef}>
+                        <h3 className='center'>
+                            Your Courses
+                        </h3>  
+                        <hr></hr>
+                        <div>
+                            {coursesArray.filter(courseData => enrolledCoursesArray.includes(courseData.id)).map(courseData => (
+                                <CartCourse courseData={courseData} draggable={false} key={courseData.id}></CartCourse>
+                            ))}
+                            {/* {coursesArray.filter(courseData => userData?.enrolledCourses?.includes(courseData.id)).map(courseData => (
+                                <CartCourse courseData={courseData} draggable={false} key={courseData.id}></CartCourse>
+                            ))} */}
                         </div>
-                    }
+                    </div>
+                    
                     {availableCourses.length > 0 ?                        
                         <div className={"landingPageTextSection"} ref={coursesRef}>
                             <h3 className='center'>
@@ -194,9 +220,9 @@ function LandingPage({goto}) {
                             </h3>  
                             <hr></hr>
                             <div>
-                                {coursesArray.filter(courseData => !userData?.enrolledCourses?.includes(courseData.id)).map(courseData => (
-                                    <CartCourse courseData={courseData} draggable={false} key={courseData.id}></CartCourse>
-                                ))}
+                            {coursesArray.filter(courseData => !enrolledCoursesArray.includes(courseData.id)).map(courseData => (
+                                <CartCourse courseData={courseData} draggable={false} key={courseData.id}></CartCourse>
+                            ))}
                             </div>
                         </div>
                         :

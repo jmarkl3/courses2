@@ -96,12 +96,8 @@ const dbslice = createSlice({
             if(typeof action.payload === "object"){
                 var tempArray = []
                 Object.entries(action.payload).forEach(([key, value]) => {
-                    console.log("parsing course")
-                    console.log(key, value)
                     var dataObject = {...value}
                     dataObject.id = key
-                    console.log("dataObject")
-                    console.log(dataObject)
                     tempArray.push(dataObject)
                 })
                 state.coursesArray = tempArray
@@ -180,7 +176,7 @@ const dbslice = createSlice({
         },
         // New: saveUserSectionData (for section complete, time it took to complete, image capture urls)
         saveUserSectionData2(state, action){
-            if(action.payload.kvPairs){
+            if(!action.payload.kvPairs || typeof action.payload.kvPairs !== "object"){
                 console.log("saveUserSectionData2 missing info")
                 return
             }
@@ -190,7 +186,10 @@ const dbslice = createSlice({
             "/courses/"+(action.payload.courseID || state.selectedCourseID)+
             "/chapterData/"+(action.payload.chapterID || state.selectedChapterID)+
             "/sectionData/"+(action.payload.sectionID || state.selectedSectionID)
-            
+            console.log("saving")
+            console.log(locationString)
+            console.log(action.payload.kvPairs)
+
             // Save the key value pair in the db
             update(ref(database, locationString), action.payload.kvPairs)
         },
@@ -440,11 +439,12 @@ const dbslice = createSlice({
         },
         selectSectionIfValid(state, action) {
             // Look into the userData to see if the specified section has the complted property set to true
-            var sectionIsCompleted = getUserData(state.userData, "responses/"+state.selectedCourseID+"/"+state.selectedChapterID+"/"+action.payload.sectionID+"/complete")
+            var sectionIsCompleted = getUserData(state.userData, "courses/"+state.selectedCourseID+"/chapterData/"+state.selectedChapterID+"/sectionData/"+action.payload.sectionID+"/complete")
 
             // If it is select it
-            if(sectionIsCompleted){
+            if(sectionIsCompleted == true){
                 state.selectedSectionID = action.payload.sectionID
+                return
             }
   
             // Get the array of sections
@@ -453,16 +453,20 @@ const dbslice = createSlice({
 
             // Check to see if the index is the one after the index of the last completed section
             var previousComplete = true            
-            sectionArray.forEach((section, index) => {
+            sectionArray.forEach(section => {
                 // If the previous section was completed and the section is found select it
                 if(section.id == action.payload.sectionID && previousComplete){     
                         state.selectedSectionID = action.payload.sectionID
                 }
+                // Get the user data for this section                
+                let userDataForThisSection = getUserData(state.userData, "courses/"+state.selectedCourseID+"/chapterData/"+state.selectedChapterID+"/sectionData/"+section?.id)
                 // Set the flag based on the section is completed property
-                if(getUserData(state.userData, "responses/"+state.selectedCourseID+"/"+state.selectedChapterID+"/"+section.id+"/complete"))
+                if(userDataForThisSection?.complete){                    
                     previousComplete = true
-                else 
+                }
+                else {                    
                     previousComplete = false                
+                }
             })
 
         },
@@ -654,10 +658,26 @@ const dbslice = createSlice({
         // #endregion chapter actions
        
         // #region section actions
-        // The section actions are actions pertaining to the section such as adding, deleting, or copying a chapter
-
+        // The section actions are actions pertaining to the section such as adding, deleting, or copying a chapter        
         addSection(state, action){
             if(!action.payload || !action.payload.chapterID) return
+
+            // Calculate the new number of sections
+            let chapters = state.courseData.items                      
+            if(chapters && typeof chapters === "object"){
+                let totalSections = 0                
+                Object.entries(chapters).forEach(([key, value]) => {
+                    totalSections += Object.entries(value?.items).length
+                })    
+    
+                // Save the new number of sections in the db
+                update(ref(database, 'coursesApp/coursesMetaData/'+state.selectedCourseID), {totalSections: totalSections+1})
+            }
+            // If there are no chapters or sections yet there will now be one section
+            else{
+                // Save the new number of sections in the db
+                update(ref(database, 'coursesApp/coursesMetaData/'+state.selectedCourseID), {totalSections: 1})
+            }
 
             // Get a ref to the places the new course data will be stored
             var newDbLocationRef = push(ref(database, 'coursesApp/coursesData/'+state.selectedCourseID+'/items/'+action.payload.chapterID+'/items'))
@@ -678,10 +698,49 @@ const dbslice = createSlice({
         },
         deleteSection(state, action){
             if(!action.payload || !action.payload.sectionID || !action.payload.chapterID) return            
-            set(ref(database, 'coursesApp/coursesData/'+state.selectedCourseID+'/items/'+action.payload.chapterID+"/items/"+action.payload.sectionID), null)
+
+            let foundSection = false
+
+            // Calculate the new number of sections
+            let chapters = state.courseData.items                      
+            if(chapters && typeof chapters === "object"){
+                let totalSections = 0                
+                Object.entries(chapters).forEach(([key, value]) => {
+                    Object.entries(value?.items).forEach(([sectionID, sectionData]) => {                        
+                        // Check to see if this is the section being deleted
+                        if(sectionID === action.payload.sectionID)
+                            foundSection = true
+                        // Increment the total sections count if this section is not being deleted
+                        else
+                            totalSections = totalSections + 1                                                    
+                    })
+                })    
+    
+                // Save the new number of sections in the db (if it changed)
+                if(foundSection)
+                    update(ref(database, 'coursesApp/coursesMetaData/'+state.selectedCourseID), {totalSections: totalSections})
+            }
+
+            // Delete the section from the db (if it is there)
+            if(foundSection)
+                set(ref(database, 'coursesApp/coursesData/'+state.selectedCourseID+'/items/'+action.payload.chapterID+"/items/"+action.payload.sectionID), null)
+
+            
         },
         copySection(state, action){
             if(!action.payload || !action.payload.sectionToCopy || !action.payload.chapterID) return            
+
+            // Calculate the new number of sections
+            let chapters = state.courseData.items                      
+            if(chapters && typeof chapters === "object"){
+                let totalSections = 0                
+                Object.entries(chapters).forEach(([key, value]) => {
+                    totalSections += Object.entries(value?.items).length
+                })    
+    
+                // Save the new number of sections in the db
+                update(ref(database, 'coursesApp/coursesMetaData/'+state.selectedCourseID), {totalSections: totalSections+1})
+            }
 
             // Updaet the IDs of the section and all of its children           
             var sectionWithNewIDs = newIDsObject(action.payload.sectionToCopy)
