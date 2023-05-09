@@ -479,12 +479,15 @@ const dbslice = createSlice({
             // Look for the section after the currently selected section
             var nextSection = getNextItem(chapterSections, sectionID)
 
-            // If there is no next section, get the first section in the next chapter
+            // If there is no next section, get the first section in the next chapter. Also mark chapter as complete (if all sections are complete)
             if(!nextSection){
                 var nextChapter = getNextItem(state.courseData.items, chapterID)
                 // If there is no next chapter the course is complete
-                if(!nextChapter)
+                if(!nextChapter){
+                    // Mark the course as complete
+                    update(ref(database, 'coursesApp/userData/'+state.userID+'/courses/'+state.selectedCourseID), {complete: true})
                     return
+                }
                 // Look for the first section in the next chapter
                 nextSection = getFirstItem(nextChapter.items)
             }

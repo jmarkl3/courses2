@@ -57,8 +57,18 @@ import Support from './Components/Menus/Support/Support';
         DONE 
         user should be able to select the section after a completed section
         TODO
-        and the chapter after a completed chapter
-        maybe auto save completion status when timer finishes and all questions are answered
+        user should be able to select completed chapters and the chapter after a completed chapter        
+
+        TODO
+        save chapter complete status when all sections are complete
+        look at selectNextSection in dbslice
+
+        TODO
+        when last section in last chapter is completed take an action
+        look at selectNextSection in dbslice
+        set course complete in user data
+        generate and display certificate        
+        
 
 
     save and display for each of these
