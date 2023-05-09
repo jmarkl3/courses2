@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import "./Cart.css"
 import CartCourse from '../../CourseTile/CartCourse'
-import { priceString } from '../../../App/functions'
+import { getEnrolledCourses, priceString } from '../../../App/functions'
 import { useDispatch, useSelector } from 'react-redux'
 import { loadCartCourses, selectCartCourse, setShowCart } from '../../../App/AppSlice'
 import { useNavigate } from 'react-router-dom'
@@ -42,12 +42,19 @@ function Cart() {
     },[selectedCourses])
 
     useEffect(() => {
+        // An array of all course IDs
         let tempAvailableCourses = coursesArray
-        if(userData?.enrolledCourses && Array.isArray(userData?.enrolledCourses))
-            tempAvailableCourses = coursesArray?.filter(courseData => !userData?.enrolledCourses?.includes(courseData.id))
-        if(selectedCourseIDs && Array.isArray(selectedCourseIDs))
-         tempAvailableCourses = tempAvailableCourses?.filter(courseData => !selectedCourseIDs.includes(courseData.id))
+        // An array of the course IDs that the user is enrolled in
+        let enrolledCourses = getEnrolledCourses(userData)        
+        // An array of the courses IDs that the user has already selected
+        let selectedCourseIDs = selectedCourses.map(courseData => courseData.id)
+
+        // Filter out the ones the user is already enrolled in and the ones that are already selected
+        tempAvailableCourses = tempAvailableCourses?.filter(courseData => (!enrolledCourses.includes(courseData.id) && !selectedCourseIDs.includes(courseData.id)))
+
+        // Set the available courses state
         setAvailableCourses(tempAvailableCourses)
+
     }, [coursesArray, userData, selectedCourseIDs])
 
     function close(){

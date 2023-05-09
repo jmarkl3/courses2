@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setCheckingOut, setShowCart, setShowSupportMenu, toggleShowAuthMenu } from '../../App/AppSlice'
 import CartCourse from '../CourseTile/CartCourse'
 import { toggleLanguage } from '../../App/DbSlice'
+import { getEnrolledCourses } from '../../App/functions'
 /*    
 
     page content
@@ -79,6 +80,7 @@ function LandingPage({goto}) {
     const coursesArray = useSelector(state => state.dbslice.coursesArray)
     const userData = useSelector(state => state.dbslice.userData)
     const [availableCourses, setAvailableCourses] = useState([])
+    const [enrolledCoursesArray, setEnrolledCoursesArray] = useState([])
     const aboutRef = useRef()
     const coursesRef = useRef()
     const dispatcher = useDispatch()
@@ -96,7 +98,7 @@ function LandingPage({goto}) {
         let tempAvailableCourses = coursesArray?.filter(courseData => !userData?.enrolledCourses?.includes(courseData.id))
         if(Array.isArray(tempAvailableCourses))
             setAvailableCourses(tempAvailableCourses)
-        generateEnrolledCoursesArray()
+        setEnrolledCoursesArray(getEnrolledCourses(userData))
     }, [coursesArray, userData])
 
     function scrollToAbout(){
@@ -106,30 +108,6 @@ function LandingPage({goto}) {
     function scrollToCourses(){
         coursesRef.current.scrollIntoView({behavior: 'smooth'})
 
-    }
-
-    const [enrolledCoursesArray, setEnrolledCoursesArray] = useState([])
-    /**
-     * Generates an array of courseIDs that the user is enrolled in 
-     */
-    function generateEnrolledCoursesArray(){
-        if(!userData || !userData?.courses || typeof userData?.courses !== "object") {            
-            setEnrolledCoursesArray([])
-            return
-        }
-
-        // Get an array of courseIDs that the user is enrolled in
-        let tempEnrolledCoursesArray = []
-        // Look through each course in their data
-        Object.entries(userData?.courses).forEach(course => {
-            // If there enrolled in it add the id to the array
-            if(course[1].enrolled)
-                tempEnrolledCoursesArray.push(course[0])
-        })
-
-        // Put the array in state to be displayed 
-        setEnrolledCoursesArray(tempEnrolledCoursesArray)
-        
     }
 
   return (

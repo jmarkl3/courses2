@@ -118,12 +118,8 @@ function CartCourse({courseData, selected, draggable, readOnly}) {
         </div>
         <div className='cartCourseButtons'>
         {isEnrolledInCourse?
-            <>
-                {courseCompletionString ===  "✔"?
-                    <button>View Certificate</button>
-                    :
-                    <button onClick={()=>navigate("/Course/"+courseData.id)}>Go To Course</button>
-                }
+            <>                
+                <button onClick={()=>navigate("/Course/"+courseData.id)}>{courseCompletionString ? "View Certificate":"Go To Course"}</button>
                 <button onClick={()=>setShowMoreInfo(true)}>More Info</button>
             </>
             :

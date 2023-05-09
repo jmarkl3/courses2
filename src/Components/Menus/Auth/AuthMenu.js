@@ -118,6 +118,9 @@ function AuthMenu() {
                                 <button onClick={()=>dispatcher(setViewAsAdmin(!viewAsAdmin))}>{`View As ${viewAsAdmin ? "User": "Admin"}`}</button>                            
                               </>
                             } */}
+                            <button onClick={goToDashboard}>Your Courses / Dashboard</button>                            
+                            <button onClick={()=>dispatcher(toggleTheme())}>{theme === "lightTheme" ? "Dark Theme" : "Light Theme"}</button>                                                                                
+                            <button onClick={signOutUser}>Log Out</button>
                             {true &&
                               <>
                                 <button onClick={()=>dispatcher(clearEnrolledCourses())}>Clear Courses</button>                                                        
@@ -125,9 +128,6 @@ function AuthMenu() {
                                 <button onClick={()=>dispatcher(clearAllUserData())}>Clear all user data</button>                                                                                                               
                               </>
                             }
-                            <button onClick={goToDashboard}>Your Courses / Dashboard</button>                            
-                            <button onClick={()=>dispatcher(toggleTheme())}>{theme === "lightTheme" ? "Dark Theme" : "Light Theme"}</button>                                                                                
-                            <button onClick={signOutUser}>Log Out</button>
                         </>
                         :
                         <>
