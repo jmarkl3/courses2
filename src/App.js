@@ -19,78 +19,13 @@ import Support from './Components/Menus/Support/Support';
 /*      
 
   send judge email
-  check on pm email
+  send pm email
+  resume
+  email person
   law  
 
-  refactor db structure
-  and also all of the places it is set and loaded from
-
-  things to update
-    saveUserSectionData2,
-      when the section is completed 
-        when clicking next section in the bottom left of the view course page
-          in SectionButtons dispatches selectNextSection which is in dbslice, this does not appear to save any info in the db
-          updated saveUserSectionData to saveUserSectionData2 in a few places becasue that is what was baing used to update completion status
-          in sectionbuttons nextSection it is retrieving userResponseData from the wrong location. updated this and it seems to be working
-          DONE save complete in the section data
-          DONE save complete in user data for section
-          DONE display complete status on the side menu
-          DONE display progress status on the course tile
-          DONE display complete status on the course tile
-            DONE need to know if a user is enrolled in the course
-            DONE need the number of sections to be saved in the course meta data
-              DONE when a section is added or removed in edit mode this number can be calculated
-            save complete status on the course when the course is complete in case the user completes it and the number of sections changes later
-          DONE check to see if all sections are complete in sidenav chapter row, if so display a green check
-
-          DONE when a user enrolls in a course save that data in the correct place
-          DONE display course tiles accordingly on the landing page
-
-        note
-        when clicking a section in the left menu
-          from the section row calls selectSectionIfValid which is in dbslice
-            selectSectionIfValid looks in user data to see if the section is complete, this needs to be updated
-            also the location where it is saving the completion data needs to be updated
-
-        DONE display enrolled courses in user dashboard
-
-        DONE 
-        user should be able to select the section after a completed section
-        TODO
-        user should be able to select completed chapters and the chapter after a completed chapter        
-
-        TODO
-        save chapter complete status when all sections are complete
-        look at selectNextSection in dbslice
-
-        TODO
-        when last section in last chapter is completed take an action
-        look at selectNextSection in dbslice
-        set course complete in user data
-        generate and display certificate        
-        
-
-
-    save and display for each of these
-      time it took to complete the section
-      webcam images
-    saveUserChapterData,
-      when the section is completed
-    saveUserCourseData,
-      when the course is completed
-      when the certificate is created
-
-  toggle is full admin button
-  when full admin can see all users in a display in the dashboard
-  can click on user and see thier data as well as change their admin or preveiw status
-
-
-  progress status on course
-    when user completes a section it will save in their user data
-    that data is used to show completion status on the course tile
-    when complete shows a check mark and on click shows the certificate. Hover title shows "View Certificate of Completion"
-    button says view certificate instead of go to course when course is complete
-
+  user should be able to select completed chapters and the chapter after a completed chapter        
+ 
   dashboards
     user information  
     edit user information option (maybe a gear or edit icon in the corner)
@@ -104,7 +39,9 @@ import Support from './Components/Menus/Support/Support';
         completion status 
         certificate if complete        
         full course report with all user info prompts, answers, time on each section, webcam images                                 
-
+        save and display for each of these
+        time it took to complete the section
+        webcam images    
   view as admin button
     admin state stays but another variable is set to show the admin view
     edit rights are a seperate variable
@@ -118,28 +55,28 @@ import Support from './Components/Menus/Support/Support';
     firebase rules so only a user can update their own data
     or an admin
 
-  generate completion certificate
-  
   email 
-    auto email certificate to address based on user data
-    their email and maybe another one based on selection
-    email when they sign up to give them a link to their dashboard
-    also for course signup information
+    auto email certificate to address based on user data and maybe another one based on selection    
+    email when they sign up to give them a link to their dashboard and corse info
     support page input sends an email to the support email address
+
+  support page
+    input for name, email, phone, message
+    send email to support email address
+    maybe have a chat bot
+    phone number and email address
 
   auth
     forgot password button
 
-  Style changes
-  checkoutInputThird and Half style changes on screen resize 
-  mobile view
+  Style
+    checkoutInputThird and Half style changes on screen resize 
+    mobile view
 
   ________________________________________________________________________________
   Bugs
 
-  time component 
-  restes sometimes
-  background color from theme. Currently its clear and the title in the sidemenu can overlap
+  time component resets sometimes
 
 */
 // DB Structure
@@ -252,6 +189,11 @@ import Support from './Components/Menus/Support/Support';
 /*
   ________________________________________________________________________________
   Misc notes
+        
+  when clicking a section in the left menu
+    from the section row calls selectSectionIfValid which is in dbslice
+      selectSectionIfValid looks in user data to see if the section is complete, this needs to be updated
+      also the location where it is saving the completion data needs to be updated
 
   can have multiple custom domanes that point to this app
   based on the domain it can display different images and courses

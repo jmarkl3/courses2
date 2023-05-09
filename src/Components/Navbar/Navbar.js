@@ -18,8 +18,8 @@ function Navbar() {
                 727-500-5075
             </div>
             <div className='bottom left'>
-                <button  onClick={()=>navigate("/Dashboard")}>Dashboard</button>
-                <button onClick={()=>navigate("/About")}>About</button>
+                <button  onClick={()=>navigate("/Dashboard")} title="Go to your Courses and Dashboard">Dashboard</button>
+                <button onClick={()=>navigate("/About")} title="View the about section on the Home Page">About</button>
             </div>
             <div className='navbarCenter'>
                 <img src={starIcon}></img>
@@ -28,8 +28,8 @@ function Navbar() {
                 {language === "English" ? "Español" : "English"}
             </div>
             <div className='bottom right'>
-                <button onClick={()=>dispatcher(setShowSupportMenu(true))}>Support</button>
-                <button onClick={()=>dispatcher(toggleShowAuthMenu())}>Account</button>
+                <button onClick={()=>dispatcher(setShowSupportMenu(true))} title="Open the Support menu">Support</button>
+                <button onClick={()=>dispatcher(toggleShowAuthMenu())} title="Open Account Options Menu">Account</button>
             </div>
         </div>
     </div>

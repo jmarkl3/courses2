@@ -2,7 +2,7 @@ import { set } from 'firebase/database'
 import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { addChapter, addSection, copyChapter, deleteChapter, selectChapter, selectFirst, sidenavDragEnd, sidenavDragOver, sidenavDragStart, updateItemInfo } from '../../../App/DbSlice.js'
-import { dontClickThrough, objectToArray } from '../../../App/functions.js'
+import { dontClickThrough, getUserData, objectToArray } from '../../../App/functions.js'
 import ConfirmationBox from '../../../Utils/ConfirmationBox.js'
 import DragDropIndicatorBar from '../../../Utils/DragDropIndicatorBar.js'
 import HamburgerMenu from '../../../Utils/HamburgerMenu.js'
@@ -16,6 +16,9 @@ function SidenavChapterRow({itemData}) {
   const userData = useSelector((state) => state.dbslice.userData);
   const editMode = useSelector((state) => state.appslice.editMode);
   const dispatcher = useDispatch()
+
+  const userChapterDataLocationString = "courses/"+selectedCourseID+"/chapterData/"+itemData.id
+  var userChapterData = getUserData(userData, userChapterDataLocationString)
 
   // Determines if the items are shown or hidden
   const [expanded, setExpanded] = useState(false)
@@ -152,7 +155,7 @@ function SidenavChapterRow({itemData}) {
             <div className='hamburgerMenuOption' onClick={addSectionFunction}>Add Section</div>
           </HamburgerMenu>
           :
-          allSectionsComplete() && <div className='completeIndicator' title='Chapter Complete'>✔</div>
+          userChapterData.complete && <div className='completeIndicator' title='Chapter Complete'>✔</div>
         }
 
       </div>

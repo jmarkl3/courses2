@@ -40,13 +40,11 @@ function confirmDelete(){
 }
 
 function viewCourseFunction(){    
-    // dispatcher(selectCourse(course.id))
     dispatcher(setEditMode(false))    
     navigate("/course/"+course.id)
 
 }
 function editCourseFunction(){
-    // dispatcher(selectCourse(course.id))
     dispatcher(setEditMode(true))
     navigate("/course/"+course.id)
 
@@ -61,7 +59,7 @@ function editCourseFunction(){
                     <div className="hamburgerMenuOption" onClick={editCourseFunction}>Edit Course</div>
                     <div className="hamburgerMenuOption" onClick={viewCourseFunction}>View Course</div>                            
                     <div className="hamburgerMenuOption" onClick={()=>dispatcher(copyCourse(course.id))}>Copy</div>                            
-                    <div className="hamburgerMenuOption" onClick={confirmDelete}>Delete</div>                            
+                    {fullAdmin && <div className="hamburgerMenuOption" onClick={confirmDelete}>Delete</div>}
                 </HamburgerMenu>            
             }
             <div className='cartCourseImage'>

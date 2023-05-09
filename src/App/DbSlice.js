@@ -481,6 +481,8 @@ const dbslice = createSlice({
 
             // If there is no next section, get the first section in the next chapter. Also mark chapter as complete (if all sections are complete)
             if(!nextSection){
+                // Set the chapter as complete
+                update(ref(database, 'coursesApp/userData/'+state.userID+'/courses/'+state.selectedCourseID+"/chapterData/"+state.selectedChapterID), {complete: true})
                 var nextChapter = getNextItem(state.courseData.items, chapterID)
                 // If there is no next chapter the course is complete
                 if(!nextChapter){
