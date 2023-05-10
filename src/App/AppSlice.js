@@ -70,6 +70,7 @@ const appSlice = createSlice({
         checkingOut: false,
         showCart: false,
         viewAsAdmin: false,
+        userDataOverride: null,
     },
     reducers: {
         // ================================================================================
@@ -121,6 +122,9 @@ const appSlice = createSlice({
         },
         setShowCart(state, action) {
             state.showCart = action.payload;
+        },
+        setUserDataOverride(state, action) {
+            state.userDataOverride = action.payload;
         },
         setViewAsAdmin(state, action) {
             state.viewAsAdmin = action.payload
@@ -193,5 +197,5 @@ export const {setEditMode, toggleMinimizeAll, togglePreviewMode} = appSlice.acti
 // Geranl App State
 export const {setShowSupportMenu, setViewAsAdmin, setCheckingOut, setLoading, setShowAuthMenu, toggleShowAuthMenu, setTheme, setPage} = appSlice.actions;
 // Cart
-export const {loadCartCourses, setShowCart, clearCartCourses, selectCartCourse, removeCartCourse, setDraggingCourse} = appSlice.actions;
+export const {loadCartCourses, setShowCart, setUserDataOverride, clearCartCourses, selectCartCourse, removeCartCourse, setDraggingCourse} = appSlice.actions;
 // #endregion Exports

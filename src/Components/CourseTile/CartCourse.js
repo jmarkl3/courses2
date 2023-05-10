@@ -1,17 +1,17 @@
 import React, { useEffect, useRef, useState } from 'react'
 import "./CartCourse.css"
-import { getUserData, priceString } from '../../App/functions'
+import { priceString } from '../../App/functions'
 import { useDispatch, useSelector } from 'react-redux'
 import { removeCartCourse, selectCartCourse, setDraggingCourse, setShowCart} from '../../App/AppSlice'
 import { useNavigate } from 'react-router-dom'
 import CartCourseMoreInfo from './CartCourseMoreInfo'
-import { type } from '@testing-library/user-event/dist/type'
+import HamburgerMenu from '../../Utils/HamburgerMenu'
+import { unEnrollUserInCourses2 } from '../../App/DbSlice'
 
-function CartCourse({courseData, selected, draggable, readOnly}) {
-    const selectedCourseID = useSelector(state => state.dbslice.selectedCourseID)
+function CartCourse({courseData, selected, draggable, readOnly, userDataOverride}) {
     const userData = useSelector(state => state.dbslice.userData)
     const [showMoreInfo, setShowMoreInfo] = useState(false)
-    const dispacher = useDispatch()    
+    const dispatcher = useDispatch()    
     const navigate = useNavigate()
 
     useEffect(()=>{
@@ -20,8 +20,8 @@ function CartCourse({courseData, selected, draggable, readOnly}) {
     }, [userData])
 
     function selectCourse(){
-        dispacher(setShowCart(true))
-        dispacher(selectCartCourse(courseData.id))
+        dispatcher(setShowCart(true))
+        dispatcher(selectCartCourse(courseData.id))
     }
 
     const [isEnrolledInCourse, setIsEnrolledInCourse] = useState(false)
@@ -90,11 +90,88 @@ function CartCourse({courseData, selected, draggable, readOnly}) {
         
     }
 
+    function buttonsDisplay(){
+        // This is for when the course is in the admin dash un a users menu 
+        if(userDataOverride){
+            return(
+                <button onClick={()=>setShowMoreInfo(true)}>View User Data</button>
+            )
+        }
+        // When a user is enrolled in the course
+        else if(isEnrolledInCourse){
+            return (
+                <>
+                    <button onClick={()=>navigate("/Course/"+courseData.id)}>{courseCompletionString ? "View Certificate":"Go To Course"}</button>
+                    <button onClick={()=>setShowMoreInfo(true)}>More Info</button>
+                </>
+            )
+        }
+        // When the user is not enrolled in the course
+        else{
+            // When the course is selected into the cart
+            if(selected){
+                // If in checkout it will be read only (meaning the user can't remove it)
+                if(readOnly){
+                    return(
+                        <button onClick={()=>dispatcher(removeCartCourse(courseData.id))}>Remove</button>
+                    )
+                }
+                // If not in checkout it will be editable (meaning the user can remove it)    
+                else{
+                    return(
+                        <>
+                            <button onClick={()=>dispatcher(removeCartCourse(courseData.id))}>Remove</button>
+                            <button onClick={()=>setShowMoreInfo(true)}>More Info</button>
+                        </>                            
+                    )
+                }    
+            }
+            else{
+                return (
+                    <>
+                        <button onClick={selectCourse}>Add To Cart</button>
+                        <button onClick={()=>setShowMoreInfo(true)}>More Info</button>
+                    </>
+                )
+            }
+        }
+    }
+
+    function courseStatus(){
+        if(userDataOverride){
+            return(
+                <>                
+                    <HamburgerMenu>
+                        <div className="hamburgerMenuOption" onClick={()=>dispatcher(unEnrollUserInCourses2({userID: userDataOverride.id ,courseIDArray: [courseData.id]}))}>Un-Enroll User</div>
+                        <div className="hamburgerMenuOption" >View User Course Data</div>      
+                    </HamburgerMenu>
+                    <div className='priceBox priceText priceBoxAdmin'>
+                        {priceString(courseData?.price)}
+                    </div>
+                </>
+            )
+        }else{
+            if(isEnrolledInCourse){
+                return(
+                    <div className='priceBox' title={courseCompletionTitleString} style={{cursor: "pointer"}}>
+                        {courseCompletionString}
+                    </div>
+                )
+            }else{
+                return(
+                    <div className='priceBox priceText'>
+                        {priceString(courseData?.price)}
+                    </div>
+                )
+            }
+        }
+    }
+
   return (
     <div 
         className={'cartCourse ' + (draggable ? "draggable":"")} 
         draggable={!selected && draggable} 
-        onDragStart={()=>dispacher(setDraggingCourse(courseData.id))}
+        onDragStart={()=>dispatcher(setDraggingCourse(courseData.id))}
     >
         <div className='cartCourseImage'>
             <img src={courseData?.image}></img>
@@ -106,39 +183,10 @@ function CartCourse({courseData, selected, draggable, readOnly}) {
             <div className='cartCourseDescription'>
                 {courseData?.description}
             </div>
-            {isEnrolledInCourse ?
-                <div className='priceBox' title={courseCompletionTitleString} style={{cursor: "pointer"}}>
-                    {courseCompletionString}
-                </div>
-                :           
-                <div className='priceBox priceText'>
-                    {priceString(courseData?.price)}
-                </div>
-            }
+            {courseStatus()}
         </div>
         <div className='cartCourseButtons'>
-        {isEnrolledInCourse?
-            <>                
-                <button onClick={()=>navigate("/Course/"+courseData.id)}>{courseCompletionString ? "View Certificate":"Go To Course"}</button>
-                <button onClick={()=>setShowMoreInfo(true)}>More Info</button>
-            </>
-            :
-            <>
-                {selected ?
-                    <>
-                        {!readOnly &&
-                            <button onClick={()=>dispacher(removeCartCourse(courseData.id))}>Remove</button>
-                        }
-                        <button onClick={()=>setShowMoreInfo(true)}>More Info</button>
-                    </>
-                    :
-                    <>
-                        <button onClick={selectCourse}>Add To Cart</button>
-                        <button onClick={()=>setShowMoreInfo(true)}>More Info</button>
-                    </>
-                }
-            </>
-        }        
+        {buttonsDisplay()}
         </div>
         {showMoreInfo &&
             <CartCourseMoreInfo courseData={courseData} close={()=>setShowMoreInfo(false)}></CartCourseMoreInfo>

@@ -2,7 +2,8 @@ import { onValue, ref } from 'firebase/database'
 import React, { useEffect, useRef, useState } from 'react'
 import { database } from '../../../../App/DbSlice'
 import HamburgerMenu from '../../../../Utils/HamburgerMenu'
-import SearchPager from '../../../Utility/SearchPager'
+import SearchPager from '../../../../Utils/SearchPager'
+import AdminUserTile from './AdminUserTile'
 
 function AdminUsers() {
     const [usersData, setUsersData] = useState({})
@@ -34,13 +35,7 @@ function AdminUsers() {
             setFilteredDataArray={setFilteredUserArray}
         ></SearchPager>
         {filteredUserArray.map((userData, index) => (
-            <div className='userTile' key={userData.id+""+index}>
-                <HamburgerMenu>
-                    <div className="hamburgerMenuOption" >Edit User Privilages</div>
-                    <div className="hamburgerMenuOption" >View Course Data</div>                        
-                </HamburgerMenu>
-                {userData?.accountData?.firstName}
-            </div>
+            <AdminUserTile  key={userData.id+""+index} userData={userData}></AdminUserTile>
         ))}
     </div>
   )

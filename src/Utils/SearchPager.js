@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-
+import "./Utils.css"
 // The search key is the key of the objects in the data array that the search term will look at
 function SearchPager({dataObject, searchKey, searchKey2, objectSubsetKey, searchSubsetKey, setFilteredDataArray}) {
     const [pageRange, setPageRange] = useState([0, 10])

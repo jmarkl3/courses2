@@ -2,17 +2,17 @@ import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import CartCourse from '../../../CourseTile/CartCourse'
 
-function UserCourses() {
+function UserCourses({userDataOverride}) {
     const coursesArray = useSelector(state => state.dbslice.coursesArray)
     const userData = useSelector(state => state.dbslice.userData)
   
     useEffect(() => {
       generateEnrolledCoursesArray()
-    }, [userData, coursesArray])
+    }, [userData, coursesArray, userDataOverride])
 
     const [enrolledCoursesArray, setEnrolledCoursesArray] = useState([])
     function generateEnrolledCoursesArray(){
-      if(!userData || !userData?.courses || typeof userData?.courses !== "object") {            
+      if((!userData || !userData?.courses || typeof userData?.courses !== "object") && !userDataOverride) {            
           setEnrolledCoursesArray([])
           return
       }
@@ -20,7 +20,7 @@ function UserCourses() {
       // Get an array of courseIDs that the user is enrolled in
       let tempEnrolledCoursesArray = []
       // Look through each course in their data
-      Object.entries(userData?.courses).forEach(course => {
+      Object.entries((userDataOverride?.courses || userData?.courses)).forEach(course => {
           // If there enrolled in it add the id to the array
           if(course[1].enrolled)
               tempEnrolledCoursesArray.push(course[0])
@@ -34,7 +34,7 @@ function UserCourses() {
   return (
     <>
         {coursesArray.filter(courseData => enrolledCoursesArray.includes(courseData.id)).map(courseData => (
-            <CartCourse courseData={courseData} draggable={false} key={courseData.id}></CartCourse>
+            <CartCourse courseData={courseData} draggable={false} key={courseData.id} adminInfoMode userDataOverride={userDataOverride}></CartCourse>
         ))}
     </>
   )

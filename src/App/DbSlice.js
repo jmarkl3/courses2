@@ -114,7 +114,7 @@ const dbslice = createSlice({
         setUserID(state, action){
             state.userID = action.payload;
         },   
-        // action.payload = userData
+        // action.payload = userData from the db
         setUserData(state, action){
 
             // Save the user data in state
@@ -215,7 +215,7 @@ const dbslice = createSlice({
 
 
 
-        // New action.payload.kvPairs = ex:{property: "isAdmin", value: true}
+        // New action.payload.kvPairs = ex:{property: "isAdmin", value: true} optional userID value in the payload
         saveUserAccountData(state, action){            
             if(action.payload.kvPairs == undefined){
                 console.log("Error: saveUserAccountData: missing data")
@@ -282,6 +282,19 @@ const dbslice = createSlice({
             action.payload.courseIDArray.forEach(courseID => {
                 // Update the enrolled state to true
                 update(ref(database, "coursesApp/userData/"+action.payload.userID+"/courses/"+courseID), {enrolled: true})
+
+            })
+
+        },
+        unEnrollUserInCourses2(state, action){
+            if(!action.payload || !action.payload.userID || !Array.isArray(action.payload.courseIDArray)) {
+                console.log("Error: enrollUserInCourses: missing data")
+                return
+            }
+            // For each course ID in the array
+            action.payload.courseIDArray.forEach(courseID => {
+                // Update the enrolled state to true
+                update(ref(database, "coursesApp/userData/"+action.payload.userID+"/courses/"+courseID), {enrolled: false})
 
             })
 
@@ -1092,7 +1105,7 @@ export const dbsliceReducer = dbslice.reducer;
 // Loading actions
 export const {setCourseData, setCoursesData} = dbslice.actions;
 // User Data actions
-export const {toggleLanguage, toggleTheme, enrollUserInCourses, enrollUserInCourses2, clearEnrolledCourses, setUserID, setUserData, saveUserSectionData, saveUserAccountData} = dbslice.actions;
+export const {toggleLanguage, toggleTheme, enrollUserInCourses, enrollUserInCourses2, unEnrollUserInCourses2, clearEnrolledCourses, setUserID, setUserData, saveUserSectionData, saveUserAccountData} = dbslice.actions;
 // New User Data actions
 export const {
     saveUserCourseData,

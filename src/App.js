@@ -18,11 +18,11 @@ import Support from './Components/Menus/Support/Support';
 // TODO
 /*      
 
-  send judge email
-  send pm email
-  resume
-  email person
-  law  
+  submit resume and email person about it
+  get mail key, hopefully packages are there
+  find, con law  
+  look for people and make plans
+  keep an eye out for email from the cli
 
   user should be able to select completed chapters and the chapter after a completed chapter        
  
@@ -339,7 +339,7 @@ function App() {
     // Loads the courses meta data on start
     useEffect(() => {   
       loadCoursesData()
-      logDB()
+      //logDB()
     }, [])
 
     // When the userID changes loads there data
@@ -367,8 +367,6 @@ function App() {
       if(!userID) return
       onValue(ref(database, 'coursesApp/userData/'+userID), (snapshot) => {
         const data = snapshot.val();   
-        console.log("user data")
-        console.log(data)
         setTimeout(() => {
           dispatcher(setUserData(data))          
           // If the user is an admin default the view to admin          

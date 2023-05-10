@@ -36,7 +36,7 @@ function CheckOutPage() {
   const name1Input = useRef()
   const name2Input = useRef()
   const caseNInput = useRef()
-  const hearAboutInput = useRef()
+  const heardAboutInput = useRef()
   const addressInput = useRef()
   const address2Input = useRef()
   const emailInput = useRef()
@@ -151,7 +151,7 @@ function CheckOutPage() {
     let address1 = addressInput.current.value
     let address2 = address2Input.current.value
     let caseNumber = caseNInput.current.value
-    let hearAbout  = hearAboutInput .current.value
+    let heardAbout  = heardAboutInput .current.value
     
     var returnObject = {}
     if(firstName)
@@ -164,8 +164,8 @@ function CheckOutPage() {
       returnObject.address2 = address2
     if(caseNumber)
       returnObject.caseNumber = caseNumber
-    if(hearAbout)
-      returnObject.hearAbout = hearAbout
+    if(heardAbout)
+      returnObject.heardAbout = heardAbout
 
     return returnObject
 
@@ -225,7 +225,7 @@ function CheckOutPage() {
             </div>   
             <div className='checkoutInput'>
                 How did you hear about us? (optional)
-                <input ref={hearAboutInput}></input>
+                <input ref={heardAboutInput}></input>
             </div>  
             <div className='checkoutInput checkoutInputW100'>
                 Address

@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux'
 import UserCourses from '../UserDash/UserCourses'
 import Charts from './Charts'
 import AdminUsers from './AdminUsers'
+import './AdminDash.css'
 
 function AdminDash() {
     const userData = useSelector(state => state.dbslice.userData)

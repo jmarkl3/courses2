@@ -4,7 +4,7 @@ import { addCourse } from '../../App/DbSlice'
 import { objectToArray } from '../../App/functions'
 import "./Courses.css"
 import AdminCourseTile from './AdminCourseTile'
-import SearchPager from '../Utility/SearchPager'
+import SearchPager from '../../Utils/SearchPager'
 
 // Mapping the coursesData to CourseTile components
 function Courses() {

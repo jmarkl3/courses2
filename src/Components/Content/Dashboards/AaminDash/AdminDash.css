@@ -1,0 +1,45 @@
+.userTile{
+    display: inline-block;
+    margin: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 200px;
+    height: 200px;
+    text-align: center;
+    cursor: pointer;
+    vertical-align: top;
+    position: relative;    
+}
+.chartContainer{
+    display: inline-block;
+}
+.adminUserMenu{
+    height: calc(95vh - 80px);
+    width: 90vw;
+    position: fixed;
+    top: 80px;
+    left: 5vw;    
+    z-index: 4;
+    overflow-y: auto;
+    cursor: default;
+    padding-bottom: 40px;
+}
+.inputArea{
+    display: inline-block;    
+    margin: 5px;
+}
+.inputArea textarea{    
+    height: 100px;
+    max-width: 100%;
+    min-width: 100%;
+}
+.whole{    
+    width: calc(100% - 10px);    
+}
+.half{    
+    width: calc(50% - 10px);    
+}
+.third{    
+    width: calc(33% - 15px);    
+}

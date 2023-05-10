@@ -89,3 +89,32 @@
   background-color: #e0a7a7;
   box-shadow: 0 0 6px #e09d9d;
 }
+.userSearchBar{
+  padding: 10px;
+  border: 1px solid #cccccc73;
+  text-align: left;
+  border-radius: 3px;
+  box-sizing: border-box;
+}
+.userSearchBar input{
+  width: calc(100% - 290px);    
+}
+.userSearchBar button{
+  width: 120px;    
+}
+.pageRangeBox{   
+  display: inline-block;
+  user-select: none;
+}
+.arrowButton{
+  display: inline-block;
+  padding: 0 10px;
+  cursor: pointer;
+}
+.dashboardWelcomeMessage{
+  text-align: center;    
+  font-size: 20px;
+  font-weight: bold;
+  margin-top: -20px;
+  margin-bottom: 20px;
+}

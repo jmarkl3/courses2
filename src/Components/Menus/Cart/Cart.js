@@ -3,8 +3,9 @@ import "./Cart.css"
 import CartCourse from '../../CourseTile/CartCourse'
 import { getEnrolledCourses, priceString } from '../../../App/functions'
 import { useDispatch, useSelector } from 'react-redux'
-import { loadCartCourses, selectCartCourse, setShowCart } from '../../../App/AppSlice'
+import { clearCartCourses, loadCartCourses, selectCartCourse, setShowCart, setUserDataOverride } from '../../../App/AppSlice'
 import { useNavigate } from 'react-router-dom'
+import { enrollUserInCourses2 } from '../../../App/DbSlice'
 
 function Cart() {
     const selectedCourseIDs = useSelector(state => state.appslice.selectedCourseIDs)
@@ -18,7 +19,9 @@ function Cart() {
     const [selectedCourses, setSelectedCourses] = useState([])
     const [viewAvailable, setViewAvailable] = useState()
     const [cartTotal, setCartTotal] = useState(0)
-    const userData =useSelector(state => state.dbslice.userData)
+    const userData = useSelector(state => state.dbslice.userData)
+    const userDataOverride = useSelector(state => state.appslice.userDataOverride)
+    // The list of courses the user is not enrolled in and has not selected 
     const [availableCourses, setAvailableCourses] = useState([])
 
     const navigate = useNavigate();
@@ -42,10 +45,17 @@ function Cart() {
     },[selectedCourses])
 
     useEffect(() => {
+        checkAvailableCourses()
+    }, [coursesArray, userData, userDataOverride, selectedCourseIDs, selectedCourses])
+
+    function checkAvailableCourses(){
         // An array of all course IDs
         let tempAvailableCourses = coursesArray
         // An array of the course IDs that the user is enrolled in
-        let enrolledCourses = getEnrolledCourses(userData)        
+        let enrolledCourses = getEnrolledCourses((userDataOverride || userData))        
+        console.log(enrolledCourses)
+        console.log("enrolledCourses")
+        
         // An array of the courses IDs that the user has already selected
         let selectedCourseIDs = selectedCourses.map(courseData => courseData.id)
 
@@ -54,11 +64,12 @@ function Cart() {
 
         // Set the available courses state
         setAvailableCourses(tempAvailableCourses)
-
-    }, [coursesArray, userData, selectedCourseIDs])
+    }
 
     function close(){
         dispatcher(setShowCart(false))
+        dispatcher(setUserDataOverride(null))
+
     }
 
     // Filter the sample courses to only include the selected courses
@@ -88,12 +99,43 @@ function Cart() {
     function dragDropCourse(e){
         dispatcher(selectCartCourse(draggingCourseID))
     }
-    function openCheckOut(){        
-        if(checkingOut)    
-            close()
-        if(selectedCourses.length > 0)
-            navigate("/Checkout")
+    function openCheckOutOrEnroll(){        
+        if(userDataOverride){
+            // enroll the user in the selected courses (code for that is in CheckoutPage.js)
+            dispatcher(enrollUserInCourses2({userID: userDataOverride.id, courseIDArray: selectedCourseIDs}))   
+            dispatcher(clearCartCourses())          
 
+        }
+        else{
+            if(checkingOut)    
+                close()
+            if(selectedCourses.length > 0)
+                navigate("/Checkout")
+        }
+
+    }
+    function checkoutButtonText(){
+        if(userDataOverride){
+            return (
+                <div>Enroll User</div>
+            )
+        }
+        else if(selectedCourses.length > 0){
+            return(
+                <>
+                    <span>
+                        {`${checkingOut ? "Return to Check Out":"Check Out"}  `}
+                    </span>                    
+                    <div className='checkoutButtonPrice priceText'>{" (Total: " + cartTotal + ")"}</div> 
+                </>
+            )
+        }else{
+            return(
+                <div className='smallButtonText'>
+                    Drag up a course from below or click 'Add To Cart'
+                </div>
+            )
+        }
     }
 
 
@@ -104,7 +146,7 @@ function Cart() {
                 <div className='cartMenu' style={{opacity: opacityStyle}}>        
                     <div className='closeButton' onClick={close}>x</div>
                     <div className={'cartSection yourCart ' + ((viewAvailable || selectedCourseIDs.length < 1) ? "":"cartSectionTall")} onDragOver={(e)=>e.preventDefault()} onDrop={dragDropCourse}>
-                        <div className='cartMenuTitle'>Your Cart</div>
+                        <div className='cartMenuTitle'>{`${userDataOverride ? userDataOverride?.accountData?.firstName+"'s":"Your" }`} Cart</div>
                         <div className='yourCartButtons'>
                             <button className='checkoutButton checkoutButtonSize checkoutButtonBlue' onClick={()=>setViewAvailable(!viewAvailable)}>
                                 {selectedCourses.length > 0 ? 
@@ -124,19 +166,8 @@ function Cart() {
                                     </div>
                                 }                  
                             </button>
-                            <button className='checkoutButton checkoutButtonSize checkoutButtonBlue' onClick={openCheckOut}>
-                                {selectedCourses.length > 0 ? 
-                                    <>
-                                        <span>
-                                            {`${checkingOut ? "Return to Check Out":"Check Out"}  `}
-                                        </span>                    
-                                        <div className='checkoutButtonPrice priceText'>{" (Total: " + cartTotal + ")"}</div>    
-                                    </>
-                                    :
-                                    <div className='smallButtonText'>
-                                        Drag up a course from below or click 'Add To Cart'
-                                    </div>
-                                }
+                            <button className='checkoutButton checkoutButtonSize checkoutButtonBlue' onClick={openCheckOutOrEnroll}>
+                                {checkoutButtonText()}
                             </button>
                         
                             </div>
