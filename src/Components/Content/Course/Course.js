@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { setLoading, setSideNavOpen } from '../../../App/AppSlice'
-import Sidebar from '../../Sidebar/SideNav'
+import SideNav from '../../Sidebar/SideNav'
 import ElementMapper from './Elements/ElementMapper'
 import DisplayPage from '../DisplayPage'
 import { useParams } from 'react-router-dom'
 import { selectCourse } from '../../../App/DbSlice'
 import "./Course.css"
 import certificateImage from "../../../Images/certificateNoName.jpg"
+import Certificate from './Elements/Display/Components/Certificate'
 
 function Course() {
   const userData = useSelector(state => state.dbslice.userData)
+  const userDataOverride = useSelector(state => state.dbslice.userDataOverride)
   const [courseComplete, setCourseComplete] = useState()
   const [displayCertificate, setDisplayCertificate] = useState()
   const dispatcher = useDispatch()
@@ -36,23 +38,24 @@ function Course() {
     dispatcher(setSideNavOpen(false))
   }
 
+  function certificateName(){
+    let firstName = (userDataOverride?.accountData?.firstName || userData?.accountData?.firstName)
+    let lastName = (userDataOverride?.accountData?.lastName || userData?.accountData?.lastName)
+    return firstName+" "+lastName
+  }
+
   return (
     <DisplayPage>
         {displayCertificate ? 
           <>
-            <div className='certificate'>
-              <div className='certificateName'>
-                {userData?.accountData?.firstName+" "} {" "+userData?.accountData?.lastName}
-              </div>
-              <img src={certificateImage}></img>
-            </div>
+            <Certificate></Certificate>
             <div>
               <button onClick={()=>{setDisplayCertificate(false)}}>View Course</button>
             </div>
           </>  
           :
           <>
-            <Sidebar></Sidebar>
+            <SideNav></SideNav>
             <div className='course'>
               {courseComplete &&
                 <button onClick={()=>{showCertificate(true)}}>View Certificate</button>

@@ -53,9 +53,7 @@ function Cart() {
         let tempAvailableCourses = coursesArray
         // An array of the course IDs that the user is enrolled in
         let enrolledCourses = getEnrolledCourses((userDataOverride || userData))        
-        console.log(enrolledCourses)
-        console.log("enrolledCourses")
-        
+
         // An array of the courses IDs that the user has already selected
         let selectedCourseIDs = selectedCourses.map(courseData => courseData.id)
 

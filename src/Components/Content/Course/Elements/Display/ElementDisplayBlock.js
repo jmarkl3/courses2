@@ -9,9 +9,10 @@ import SaveIndicator from './Components/SaveIndicator'
 import { ref, set } from 'firebase/database'
 import FadeMessage from './Components/FadeMessage'
 
-function ElementDisplayBlock({elementData}) {
+function ElementDisplayBlock({elementData, userDataOverride}) {
   
     const userData = useSelector(state => state.dbslice.userData)
+    // const userDataOverride = useSelector(state => state.appslice.userDataOverride)
     const [userResponse, setUserResponse] = useState()
     const selectedCourseID = useSelector(state => state.dbslice.selectedCourseID)
     const selectedChapterID = useSelector(state => state.dbslice.selectedChapterID)
@@ -19,14 +20,21 @@ function ElementDisplayBlock({elementData}) {
 
   useEffect(() => {
     const responseDataLocationString = "courses/"+selectedCourseID+"/chapterData/"+selectedChapterID+"/sectionData/"+selectedSectionID+"/responseData/"+elementData?.id
-    var userResponseData = getUserData(userData, responseDataLocationString)
+    var userResponseData = getUserData((userDataOverride || userData), responseDataLocationString)
 
     if(!userResponseData)
         return
 
+    console.log("elementData")
+    console.log(elementData.content)
+    if(elementData?.content?.includes("Name")){
+        console.log("userResponseData")
+        console.log(userResponseData)
+    }
+
     setUserResponse(userResponseData.response)
 
-  }, [userData, selectedSectionID])
+  }, [userData, userDataOverride, selectedSectionID])
 
   // After 500ms of inactivity after typing into the response box save the result
   const responseSaveTimeoutRef = useRef()
@@ -45,20 +53,13 @@ function ElementDisplayBlock({elementData}) {
   // So the comoonent will rerender if if the message is the same
   const [saveIndicatorMessageCount, setSaveIndicatorMessageCount] = useState(0)
   function saveUserResponseFunction(response){
-    //dispatcher(saveUserResponse({elementData: elementData, response: response}))
-    // var locationString = 'coursesApp/userData/'+userID+'/courses/'+
-    //     selectedCourseID+
-    //     '/chapterData/'+selectedChapterID+
-    //     '/sectionData/'+selectedSectionID+
-    //     '/responseData/'+elementData.id
-
+    // If this is being viewed for another person don't change the response
+    if(userDataOverride)
+        return
     var responseData = {
         response: response,
         elementData: elementData,
     }
-    
-    console.log("saveUserResponseFunction ")
-    console.log(responseData)
     
     // If there is no response then set the responseData to null (will remove that response from the database)
     if(isEmptyString(response))

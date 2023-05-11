@@ -21,9 +21,15 @@
     top: 80px;
     left: 5vw;    
     z-index: 4;
-    overflow-y: auto;
+    
     cursor: default;
     padding-bottom: 40px;
+}
+.adminUserMenuInner{
+    height: calc(95vh - 120px);
+    overflow-y: auto;
+    margin-top: 20px;
+    margin-right: -3px;
 }
 .inputArea{
     display: inline-block;    
@@ -42,4 +48,18 @@
 }
 .third{    
     width: calc(33% - 15px);    
+}
+.courseReport{
+    position: fixed;
+    left: 5vw;
+    z-index: 5;
+    height: calc(95vh - 60px);
+    top: 60px;
+    width: 90vw;
+    z-index: 5;
+    text-align: center;
+}
+.courseReportInner{
+    height: calc(90vh - 100px);
+    overflow-y: auto;
 }

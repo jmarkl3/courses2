@@ -7,10 +7,12 @@ import { useNavigate } from 'react-router-dom'
 import CartCourseMoreInfo from './CartCourseMoreInfo'
 import HamburgerMenu from '../../Utils/HamburgerMenu'
 import { unEnrollUserInCourses2 } from '../../App/DbSlice'
+import CourseReport from '../Content/Dashboards/AaminDash/DashMenus/CourseReport'
 
 function CartCourse({courseData, selected, draggable, readOnly, userDataOverride}) {
     const userData = useSelector(state => state.dbslice.userData)
     const [showMoreInfo, setShowMoreInfo] = useState(false)
+    const [showCourseReport, setShowCourseReport] = useState(false)
     const dispatcher = useDispatch()    
     const navigate = useNavigate()
 
@@ -94,7 +96,7 @@ function CartCourse({courseData, selected, draggable, readOnly, userDataOverride
         // This is for when the course is in the admin dash un a users menu 
         if(userDataOverride){
             return(
-                <button onClick={()=>setShowMoreInfo(true)}>View User Data</button>
+                <button onClick={()=>setShowCourseReport(true)}>View Course Report</button>
             )
         }
         // When a user is enrolled in the course
@@ -186,10 +188,13 @@ function CartCourse({courseData, selected, draggable, readOnly, userDataOverride
             {courseStatus()}
         </div>
         <div className='cartCourseButtons'>
-        {buttonsDisplay()}
+            {buttonsDisplay()}
         </div>
         {showMoreInfo &&
             <CartCourseMoreInfo courseData={courseData} close={()=>setShowMoreInfo(false)}></CartCourseMoreInfo>
+        }
+        {showCourseReport &&
+            <CourseReport userData={userData} courseData={courseData} close={()=>setShowCourseReport(false)}></CourseReport>
         }
     </div>
   )

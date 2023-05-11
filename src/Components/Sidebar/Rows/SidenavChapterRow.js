@@ -155,7 +155,7 @@ function SidenavChapterRow({itemData}) {
             <div className='hamburgerMenuOption' onClick={addSectionFunction}>Add Section</div>
           </HamburgerMenu>
           :
-          userChapterData.complete && <div className='completeIndicator' title='Chapter Complete'>✔</div>
+          userChapterData?.complete && <div className='completeIndicator' title='Chapter Complete'>✔</div>
         }
 
       </div>

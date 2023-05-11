@@ -18,12 +18,10 @@ import Support from './Components/Menus/Support/Support';
 // TODO
 /*      
 
-  submit resume and email person about it
-  get mail key, hopefully packages are there
-  find, con law  
-  look for people and make plans
-  keep an eye out for email from the cli
+  con law
+  contact person about position
 
+  
   user should be able to select completed chapters and the chapter after a completed chapter        
  
   dashboards
@@ -77,6 +75,8 @@ import Support from './Components/Menus/Support/Support';
   Bugs
 
   time component resets sometimes
+  cart items go to available after user enrolls (only shows in admin view)
+    cart component could use some cleanup
 
 */
 // DB Structure

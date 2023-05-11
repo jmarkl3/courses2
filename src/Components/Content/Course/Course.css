@@ -88,21 +88,3 @@
     display: inline-block;
     margin: 10px;
 }
-.certificate{
-    height: 600px;
-    width: 850px;
-    display: inline-block;
-    position: relative;
-}
-.certificate img{
-    height: 100%;
-    width: 100%;
-}
-.certificateName{
-    position: absolute;
-    top: 260px;
-    width: 100%;
-    text-align: center;
-    color: black;
-    font-size: 50px;
-}

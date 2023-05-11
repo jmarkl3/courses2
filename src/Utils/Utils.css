@@ -80,7 +80,7 @@
   user-select: none;
   border-radius: 3px;
   transition: 500ms;
-  z-index: 10;
+  z-index: inherit;
   display: flex;
   align-items: center;
   justify-content: center;
