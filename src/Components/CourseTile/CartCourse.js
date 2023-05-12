@@ -145,7 +145,7 @@ function CartCourse({courseData, selected, draggable, readOnly, userDataOverride
                 <>                
                     <HamburgerMenu>
                         <div className="hamburgerMenuOption" onClick={()=>dispatcher(unEnrollUserInCourses2({userID: userDataOverride.id ,courseIDArray: [courseData.id]}))}>Un-Enroll User</div>
-                        <div className="hamburgerMenuOption" >View User Course Data</div>      
+                        <div className="hamburgerMenuOption" >View Course Report</div>      
                     </HamburgerMenu>
                     <div className='priceBox priceText priceBoxAdmin'>
                         {priceString(courseData?.price)}

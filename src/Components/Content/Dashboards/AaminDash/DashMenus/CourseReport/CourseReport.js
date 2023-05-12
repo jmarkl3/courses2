@@ -11,7 +11,7 @@ import { set } from 'firebase/database'
 import CourseReportChapter from './CourseReportChapter'
 
 function CourseReport({userData, courseData, close}) {
-    // Display completion on in progress status
+  // Display completion on in progress status
     // Display certificate if there is one
     // Organize by section
     // Display all of the questions and answers for a course
@@ -24,23 +24,26 @@ function CourseReport({userData, courseData, close}) {
       See note in Course.js
 
       want to display:
+        DONE
         all of thr chapters and sections, even the ones the user has not started
+        DONE
         the completion status of each chapter and section
-        the resopnse data for each element
+        DONE
+        the resopnse data for each element      
+        the required time for each chapter and section
+        the time spend in each chapter and section
+        webcam images for the sections with timestapms
       
-      options:
-        downlad the course data when the course report is opened
-        save this data in the user data when the enroll in, and are working on the course
-          when they enroll and the course is opened for the first time the relivant course data into the user data
-            to do this put a flag in the db (savedCourseData set to false) saying they have not loaded the initial course date into their user data yet
-            when the course opens and the course data loads check this value, if it is not true load the initial data
-              to see if the correct corresponding course data has been loaded check the course ID to the course ID in the url params
-          when they complete a section, update the course data for that section in the user data          
+        generate a markdown file for all of this data, maybe in pdf form
+        file downlads when admin clicks a button
 
     */
-    const [chaptersArray, setChaptersArray] = useState([])
-    const dispatcher = useDispatch()
+  const [chaptersArray, setChaptersArray] = useState([])
+  const [viewMarkdown, setViewMarkdown] = useState(false)
+  const [markdownArray, setMarkdownArray] = useState(false)
+  const dispatcher = useDispatch()
 
+  // Unused
   useEffect(()=>{
     // Set userDataOverride to the user data passed in
     //dispatcher(setUserDataOverride(userData))
@@ -54,9 +57,15 @@ function CourseReport({userData, courseData, close}) {
 
   },[])
 
+  // Generate the chapters report object do be displayed
   useEffect(() => {
     generateChaptersReportObject()
   },[userData])
+
+  // Converting the chapters array into markdown
+  useEffect(() => {
+    chaptersArrayToMarkdown()
+  },[chaptersArray])
 
   // Create an array of chapter objects with the chapter data and and array of section data objects
   function generateChaptersReportObject(){
@@ -113,9 +122,46 @@ function CourseReport({userData, courseData, close}) {
       tempChapters.push(chapterObject)
       
     })
-    console.log("tempChapters")
-    console.log(tempChapters)
+    
     setChaptersArray(tempChapters)
+  }
+
+  // Convert the chapters array into a markdown json
+  function chaptersArrayToMarkdown(){
+    console.log("chaptersArrayToMarkdown")
+    if(!chaptersArray)
+      return
+    console.log("chaptersArray")
+    console.log(chaptersArray)
+    let tempMarkdownArray = []
+    chaptersArray.forEach(chapter => {
+      // The base chapter object
+      let chapterObject = {
+        h1: chapter.name + (chapter.complete ? " ✔":"Incomplete"),        
+      }
+      tempMarkdownArray.push(chapterObject)
+
+      // Generate the section data markdown json if there is any and push it to the markdown array
+      if(chapter.sectionsArray){
+        // chapterObject.sectionsArray = []
+        chapter.sectionsArray.forEach(section => {
+          let sectionObject = {
+            h2: section.name +" "+ (section.complete ? "✔":(section.responseCount + " / "+section.numberOfInputElements)),
+            // p: []
+          }
+          // section.responsesArray.forEach(response => {
+          //   sectionObject.p.push(response)
+          // })
+          tempMarkdownArray.push(sectionObject)
+        })
+      }
+
+
+    })
+
+    console.log("tempMarkdownArray")
+    console.log(tempMarkdownArray)
+    setMarkdownArray(tempMarkdownArray)
   }
 
   return (
@@ -124,7 +170,9 @@ function CourseReport({userData, courseData, close}) {
 
       <div className='closeButton' onClick={close}>x</div>
       <div className='courseReportInner'>
-        <button>Generate Course Markdown File</button>
+        <button className='third' onClick={()=>setViewMarkdown(!viewMarkdown)}>View {(viewMarkdown ? "React":"Markdown")}</button>
+        <button className='third'>Download Markdown File</button>
+        <button className='third'>Download PDF</button>
         <h3>{courseData?.courseName}</h3>
         <div>          
           {chaptersArray.map(chapterDataObject => (
