@@ -6,6 +6,8 @@ import ElementMapper from '../../../Course/Elements/ElementMapper'
 import "../AdminDash.css"
 import ElementDisplayBlock from '../../../Course/Elements/Display/ElementDisplayBlock'
 import { objectToArray } from '../../../../../App/functions'
+import { type } from '@testing-library/user-event/dist/type'
+import { set } from 'firebase/database'
 
 function CourseReport({userData, courseData, close}) {
     // Display completion on in progress status
@@ -42,7 +44,6 @@ function CourseReport({userData, courseData, close}) {
     // Set userDataOverride to the user data passed in
     //dispatcher(setUserDataOverride(userData))
 
-    generateCourseDataObject()
     // For when component dismountes 
     return () => {
       // Set userDataOverride back to null
@@ -53,53 +54,61 @@ function CourseReport({userData, courseData, close}) {
   },[])
 
   useEffect(() => {
-    //generateChaptersArray()
+    generateChaptersReportObject()
   },[userData])
 
-  function generateCourseDataObject(){
-    console.log(courseData)
-  }
+  // Create an array of chapter objects with the chapter data and and array of section data objects
+  function generateChaptersReportObject(){
+    console.log("userData")
+    console.log(userData)
 
-  function generateChaptersArray(){
-
-
-
-    let chaptersData = userData?.courses[courseData.id]?.chapterData
-    if(!chaptersData)
+    // Make sure there is a valid courseData object
+    if (!userData?.courses || !userData?.courses[courseData?.id] || typeof userData?.courses[courseData?.id].chapterData !== "object") 
       return
 
-    let tempChaptersArray = []
-    if(userData?.courses[courseData.id]?.chapterData && typeof userData?.courses[courseData.id]?.chapterData === "object"){
+    // Add each chapter data object to the array
+    let tempChapters = []
+    Object.entries(userData?.courses[courseData?.id]?.chapterData).forEach(([chapterKey, chapterData]) => {
+      // The base chapter data object
+      let chapterObject = {
+        name: chapterData?.name,
+        complete: chapterData?.complete,
+        sectionsArray: []
+      }
       
-      Object.entries(chaptersData).forEach(([chapterID, chapterDataObject]) => {
-        let tempChapter = {...chapterDataObject}
-        tempChapter.id = chapterID
-        tempChapter.sectionsArray = generateSectionsArray(chapterDataObject?.sectionData)
-        tempChaptersArray.push(tempChapter)
-      })
-    }
+      // Add each section data object to the array
+      let sectionData = chapterData?.sectionData
+      if(sectionData && typeof sectionData === "object"){
+        console.log("there is section data")
+        Object.entries(sectionData).forEach(([sectionKey, sectionData]) => {
+          let tempSectionData = {
+            name: sectionData?.name,
+            complete: sectionData?.complete,
+            responsesArray: []
+          }
+          
+          let tempResponsesArray = []
+          let responseData = sectionData.responseData
+          if(responseData && typeof responseData === "object"){
+            Object.entries(sectionData.responseData).forEach(([responseKey, responseDataObject]) => {
+              tempResponsesArray.push(responseDataObject)
+            })       
+            tempSectionData.responsesArray = tempResponsesArray  
+          }
 
-    console.log("tempChaptersArray")
-    console.log(tempChaptersArray)
-    setChaptersArray(tempChaptersArray)
+          // All of the section data will be added to the array
+          chapterObject.sectionsArray.push(tempSectionData)
 
-  }
-  function generateSectionsArray(sectionData){
-    if(!sectionData || typeof sectionData !== "object")
-      return []
+        })
+      }
 
-    let tempSectionsArray = objectToArray(sectionData)
-    tempSectionsArray.forEach((sectionDataObject, index) => {
-      tempSectionsArray[index].elementsArray = objectToArray(sectionDataObject?.responseData)
+      // Add the completed chapter object to the array
+      tempChapters.push(chapterObject)
+      console.log("chapterObject")
+      console.log(chapterObject)
+      // setChaptersArray(chapterObject)
+
     })
-    // Object.entries(sectionData).forEach(([sectionID, sectionDataObject]) => {
-    //   let tempSection = {...sectionDataObject}
-    //   tempSection.id = sectionID
-    //   tempSection.elementsArray = objectToArray(sectionDataObject?.responseData)
-    //   tempSectionsArray.push(tempSection)
-    // })
-
-    return tempSectionsArray
   }
 
   return (
@@ -124,10 +133,10 @@ function CourseReport({userData, courseData, close}) {
                     {"Section "}
                     {"Complete: "+sectionDataObject?.complete}
                   </div>
-                  {sectionDataObject?.elementsArray?.map(elementDataObject => (
+                  {sectionDataObject?.responsesArray?.map(responseDataObject => (
                     <>
                       {/* <div>Element</div> */}
-                      <ElementDisplayBlock elementData={elementDataObject.elementData} userDataOverride={userData}></ElementDisplayBlock>
+                      <ElementDisplayBlock elementData={responseDataObject.elementData} responseDataOverride={responseDataObject.response} userDataOverride={userData}></ElementDisplayBlock>
                     </>
                   ))}
                 </div>
