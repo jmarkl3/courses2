@@ -58,8 +58,26 @@
     width: 90vw;
     z-index: 5;
     text-align: center;
+    user-select: none;
 }
 .courseReportInner{
-    height: calc(90vh - 100px);
+    margin-top: 20px;
+    height: calc(90vh - 60px);
     overflow-y: auto;
+}
+.courseReportSection{  
+    border: 1px solid rgba(128, 128, 128, 0.411);
+    padding: 10px 0;    
+    box-sizing: border-box;
+}
+.courseReportInfo{
+    padding-bottom: 10px;
+}
+.courseReportInfoInner{
+    display: inline-block;
+    margin: 0 10px 5px 10px;
+}
+.courseReportResponsesSection{
+    padding: 10px;
+    box-sizing: border-box;
 }

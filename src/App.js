@@ -74,6 +74,8 @@ import Support from './Components/Menus/Support/Support';
   ________________________________________________________________________________
   Bugs
 
+  the course is showing view certificate even though the course is not complete
+
   time component resets sometimes
   cart items go to available after user enrolls (only shows in admin view)
     cart component could use some cleanup
@@ -190,6 +192,10 @@ import Support from './Components/Menus/Support/Support';
   ________________________________________________________________________________
   Misc notes
         
+  account creation data
+  last active date set when user logs in
+  users in admin dash are sorted by last active date
+
   when clicking a section in the left menu
     from the section row calls selectSectionIfValid which is in dbslice
       selectSectionIfValid looks in user data to see if the section is complete, this needs to be updated

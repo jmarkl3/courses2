@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom'
 import CartCourseMoreInfo from './CartCourseMoreInfo'
 import HamburgerMenu from '../../Utils/HamburgerMenu'
 import { unEnrollUserInCourses2 } from '../../App/DbSlice'
-import CourseReport from '../Content/Dashboards/AaminDash/DashMenus/CourseReport'
+import CourseReport from '../Content/Dashboards/AaminDash/DashMenus/CourseReport/CourseReport'
 
 function CartCourse({courseData, selected, draggable, readOnly, userDataOverride}) {
     const userData = useSelector(state => state.dbslice.userData)

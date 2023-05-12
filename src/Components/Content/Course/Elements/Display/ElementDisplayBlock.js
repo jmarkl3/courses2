@@ -9,32 +9,30 @@ import SaveIndicator from './Components/SaveIndicator'
 import { ref, set } from 'firebase/database'
 import FadeMessage from './Components/FadeMessage'
 
-function ElementDisplayBlock({elementData, userDataOverride}) {
+function ElementDisplayBlock({elementDataProp, responseDataOverride}) {
   
     const userData = useSelector(state => state.dbslice.userData)
     // const userDataOverride = useSelector(state => state.appslice.userDataOverride)
     const [userResponse, setUserResponse] = useState()
+    const [elementData, setElementData] = useState()
     const selectedCourseID = useSelector(state => state.dbslice.selectedCourseID)
     const selectedChapterID = useSelector(state => state.dbslice.selectedChapterID)
     const selectedSectionID = useSelector(state => state.dbslice.selectedSectionID)
 
   useEffect(() => {
-    const responseDataLocationString = "courses/"+selectedCourseID+"/chapterData/"+selectedChapterID+"/sectionData/"+selectedSectionID+"/responseData/"+elementData?.id
-    var userResponseData = getUserData((userDataOverride || userData), responseDataLocationString)
-
-    if(!userResponseData)
-        return
-
-    console.log("elementData")
-    console.log(elementData.content)
-    if(elementData?.content?.includes("Name")){
-        console.log("userResponseData")
-        console.log(userResponseData)
+    if(responseDataOverride){
+        setUserResponse(responseDataOverride.response)        
+        setElementData(responseDataOverride.elementData)
+    }
+    else{
+        setElementData(elementDataProp)
+        const responseDataLocationString = "courses/"+selectedCourseID+"/chapterData/"+selectedChapterID+"/sectionData/"+selectedSectionID+"/responseData/"+elementData?.id
+        var userResponseData = getUserData(userData, responseDataLocationString)
+        if(userResponseData)
+            setUserResponse(userResponseData.response)
     }
 
-    setUserResponse(userResponseData.response)
-
-  }, [userData, userDataOverride, selectedSectionID])
+  }, [userData, selectedSectionID, responseDataOverride, elementData])
 
   // After 500ms of inactivity after typing into the response box save the result
   const responseSaveTimeoutRef = useRef()
@@ -50,11 +48,11 @@ function ElementDisplayBlock({elementData, userDataOverride}) {
   const responseSelectRef = useRef()
   const userID = useSelector(state => state.dbslice.userID)
   const [saveIndicatorMessage, setSaveIndicatorMessage] = useState()
-  // So the comoonent will rerender if if the message is the same
+  // So the save comoonent will rerender if the message is the same
   const [saveIndicatorMessageCount, setSaveIndicatorMessageCount] = useState(0)
   function saveUserResponseFunction(response){
-    // If this is being viewed for another person don't change the response
-    if(userDataOverride)
+    // If this is being viewed in the admin dash for another person don't change the response
+    if(responseDataOverride)
         return
     var responseData = {
         response: response,
@@ -98,7 +96,7 @@ function ElementDisplayBlock({elementData, userDataOverride}) {
 
   
   function displayContent(){
-    
+
     if(elementData?.type === "Text"){
         return (
             <div className='elementViewDisplay'>
@@ -200,8 +198,9 @@ function ElementDisplayBlock({elementData, userDataOverride}) {
   // if elementData.type === "Input Field" just <> else <div className='elementViewDisplay'> because the input field needs to display inline and the element innerHtml needs an outer width
   return (
     <>   
+        
         {elementData?.type === "Input Field" ?
-            <>
+            <>                
                 {displayContent()}
                 <div className='bottomLeftFadeMessage'> 
                     <FadeMessage 
@@ -212,7 +211,7 @@ function ElementDisplayBlock({elementData, userDataOverride}) {
                 </div>
             </>
             :
-            <div className='element'>
+            <div className='element'>                
                 {displayContent()}
                 <div className='bottomLeftFadeMessage'> 
                     <FadeMessage 
