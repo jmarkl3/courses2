@@ -16,7 +16,7 @@ function CourseReportSection({sectionUserData}) {
                 {sectionUserData?.name}
             </div>
             <div className='courseReportInfoInner'>
-                {sectionUserData?.complete ? "✔": (sectionUserData.responseCount + " / " + sectionUserData.numberOfInputElements)}
+                {sectionUserData.complete ? "✔":((sectionUserData.numberOfInputElements > 0) ? "("+sectionUserData.responseCount + " / "+sectionUserData.numberOfInputElements+")" :"(Incomplete)")}
             </div>
         </div>
         {expaneded && sectionUserData?.responsesArray?.map((responseData)=>(

@@ -9,6 +9,8 @@ import { objectToArray } from '../../../../../../App/functions'
 import { type } from '@testing-library/user-event/dist/type'
 import { set } from 'firebase/database'
 import CourseReportChapter from './CourseReportChapter'
+import json2md from 'json2md'
+import Markdown from 'markdown-to-jsx'
 
 function CourseReport({userData, courseData, close}) {
   // Display completion on in progress status
@@ -40,7 +42,7 @@ function CourseReport({userData, courseData, close}) {
     */
   const [chaptersArray, setChaptersArray] = useState([])
   const [viewMarkdown, setViewMarkdown] = useState(false)
-  const [markdownArray, setMarkdownArray] = useState(false)
+  const [markdownString, setMarkdownString] = useState(false)
   const dispatcher = useDispatch()
 
   // Unused
@@ -128,31 +130,37 @@ function CourseReport({userData, courseData, close}) {
 
   // Convert the chapters array into a markdown json
   function chaptersArrayToMarkdown(){
-    console.log("chaptersArrayToMarkdown")
     if(!chaptersArray)
       return
+
     console.log("chaptersArray")
     console.log(chaptersArray)
+
+    // This will be an array of markdown objects that will be converted with json2md
     let tempMarkdownArray = []
     chaptersArray.forEach(chapter => {
-      // The base chapter object
+      // The chapter title with competion status
       let chapterObject = {
-        h1: chapter.name + (chapter.complete ? " ✔":"Incomplete"),        
+        h2: chapter.name + " " + (chapter.complete ? "✔":"(Incomplete)"),        
       }
       tempMarkdownArray.push(chapterObject)
 
       // Generate the section data markdown json if there is any and push it to the markdown array
-      if(chapter.sectionsArray){
-        // chapterObject.sectionsArray = []
+      if(chapter.sectionsArray){        
         chapter.sectionsArray.forEach(section => {
+          // The section title with competion status
           let sectionObject = {
-            h2: section.name +" "+ (section.complete ? "✔":(section.responseCount + " / "+section.numberOfInputElements)),
-            // p: []
+            h3: section.name + " " + (section.complete ? "✔":((section.numberOfInputElements > 0) ? "("+section.responseCount + " / "+section.numberOfInputElements+")" :"(Incomplete)")),
           }
-          // section.responsesArray.forEach(response => {
-          //   sectionObject.p.push(response)
-          // })
           tempMarkdownArray.push(sectionObject)
+
+        //   // Generate markdown json for each response and push it to the markdown array
+          if(section.responsesArray){
+            section.responsesArray.forEach(response => {
+              tempMarkdownArray.push(elementToMarkdown(response))
+            })
+          }
+
         })
       }
 
@@ -161,7 +169,41 @@ function CourseReport({userData, courseData, close}) {
 
     console.log("tempMarkdownArray")
     console.log(tempMarkdownArray)
-    setMarkdownArray(tempMarkdownArray)
+
+    var tempMarkdownString = json2md(tempMarkdownArray)
+    console.log("tempMarkdownString")
+    console.log(tempMarkdownString)
+
+    setMarkdownString(tempMarkdownString)
+    createDownloadMarkdownURL(tempMarkdownString)
+    createDownloadPDFURL(tempMarkdownString)
+  }
+
+  function elementToMarkdown(elementUserData){
+    return {p: elementUserData?.elementData?.name + ": " + elementUserData?.response}
+  }
+
+  const [markdownDownloadUrl, setMarkdownDownloadUrl] = useState("")
+  const [markDownFile, setMarkdownFile] = useState("")
+  function createDownloadMarkdownURL(mdString){
+    if(!mdString)
+      return
+    var markDownFileTemp = new Blob([mdString], {type: 'text/plain'});
+    var url = URL.createObjectURL(markDownFileTemp);
+    
+    setMarkdownDownloadUrl(url)
+    //setMarkdownFile(markDownFileTemp)
+  }
+  function openMarkdown(){
+    window.open(markdownDownloadUrl)
+
+  }
+  const [pdfDownloadUrl, setPdfDownloadUrl] = useState("")
+  function createDownloadPDFURL(mdString){
+    // create the pdf file
+    // generate a url for it
+    // put the url in state so when the user clicks the link it will donwload
+
   }
 
   return (
@@ -171,14 +213,23 @@ function CourseReport({userData, courseData, close}) {
       <div className='closeButton' onClick={close}>x</div>
       <div className='courseReportInner'>
         <button className='third' onClick={()=>setViewMarkdown(!viewMarkdown)}>View {(viewMarkdown ? "React":"Markdown")}</button>
-        <button className='third'>Download Markdown File</button>
-        <button className='third'>Download PDF</button>
-        <h3>{courseData?.courseName}</h3>
-        <div>          
-          {chaptersArray.map(chapterDataObject => (
-            <CourseReportChapter chapterUserData={chapterDataObject}></CourseReportChapter>
-          ))}
-        </div>
+        <a className='third button' download={"testfile.md"} href={markdownDownloadUrl}>Download Markdown File</a>
+        <a className='third button' download={"testfile.pdf"} href={pdfDownloadUrl}>Download PDF</a>
+        {/* <button className='third' onClick={downloadMarkdown}>Download Markdown</button> */}        
+        {viewMarkdown? 
+          <>
+            <Markdown>{markdownString}</Markdown>
+          </>
+          :
+          <>
+            <h3>{courseData?.courseName}</h3>
+            <div>          
+              {chaptersArray.map(chapterDataObject => (
+                <CourseReportChapter chapterUserData={chapterDataObject}></CourseReportChapter>
+              ))}
+            </div>
+          </>
+        }
       </div>
 
     </div>
