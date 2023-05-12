@@ -20,6 +20,9 @@ function UserCourses({userDataOverride}) {
       // Get an array of courseIDs that the user is enrolled in
       let tempEnrolledCoursesArray = []
       // Look through each course in their data
+      if(!userDataOverride || typeof userDataOverride?.courses !== "object")
+        return
+         
       Object.entries((userDataOverride?.courses || userData?.courses)).forEach(course => {
           // If there enrolled in it add the id to the array
           if(course[1].enrolled)

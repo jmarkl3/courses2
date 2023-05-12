@@ -355,7 +355,7 @@ function App() {
     // Loads the meta data so all of the course tiles can be displayed
     function loadCoursesData(){
       onValue(ref(database, 'coursesApp/coursesMetaData'), (snapshot) => {
-        const data = snapshot.val();      
+        const data = snapshot.val();   
         setTimeout(() => {
           dispatcher(setCoursesData(data))
         }, 250)
@@ -382,6 +382,8 @@ function App() {
       if(!courseID || courseID === "") return
       onValue(ref(database, 'coursesApp/coursesData/'+courseID), (snapshot) => {
         const data = snapshot.val();   
+        // Ensure an accurate course ID
+        data.id = snapshot.key   
         setTimeout(() => {
           dispatcher(setCourseData(data))
           dispatcher(setLoading(false))

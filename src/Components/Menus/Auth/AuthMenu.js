@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setShowAuthMenu, toggleShowAuthMenu} from '../../../App/AppSlice'
 import "../../../Styles/Themes.css"
 import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth'
-import { auth, clearAllUserData, clearEnrolledCourses, enrollUserInCourses, saveUserAccountData, setUserData, setUserID, toggleTheme } from '../../../App/DbSlice'
+import { auth, clearAllCourseData, clearAllUserData, clearEnrolledCourses, enrollUserInCourses, saveUserAccountData, setUserData, setUserID, toggleTheme } from '../../../App/DbSlice'
 import { useNavigate } from 'react-router-dom'
 
 function AuthMenu() {
@@ -123,7 +123,7 @@ function AuthMenu() {
                             <button onClick={signOutUser}>Log Out</button>
                             {true &&
                               <>
-                                <button onClick={()=>dispatcher(clearEnrolledCourses())}>Clear Courses</button>                                                        
+                                <button onClick={()=>dispatcher(clearAllCourseData())}>Clear Courses</button>                                                        
                                 <button onClick={()=>dispatcher(saveUserAccountData({kvPairs: {fullAdmin: !fullAdmin}}))}>Toggle fullAdmin {" "+fullAdmin}</button>                                                                                                               
                                 <button onClick={()=>dispatcher(clearAllUserData())}>Clear all user data</button>                                                                                                               
                               </>

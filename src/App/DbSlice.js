@@ -294,7 +294,7 @@ const dbslice = createSlice({
             // For each course ID in the array
             action.payload.courseIDArray.forEach(courseID => {
                 // Update the enrolled state to true
-                update(ref(database, "coursesApp/userData/"+action.payload.userID+"/courses/"+courseID), {enrolled: false})
+                update(ref(database, "coursesApp/userData/"+action.payload.userID+"/courses/"+courseID), {enrolled: false, savedCourseData: false})
 
             })
 
@@ -325,9 +325,7 @@ const dbslice = createSlice({
         },
         // New: Clears all course data for the given user
         clearAllCourseData(state, action){
-            if(!action.payload || !action.payload.userID)
-                return
-            set(ref(database, "coursesApp/userData/"+action.payload.userID+"/courses"), null)
+            set(ref(database, "coursesApp/userData/"+(action.payload?.userID || state.userID)+"/courses"), null)
 
         },
         // New: Clears all user data for the given user
@@ -1105,7 +1103,7 @@ export const dbsliceReducer = dbslice.reducer;
 // Loading actions
 export const {setCourseData, setCoursesData} = dbslice.actions;
 // User Data actions
-export const {toggleLanguage, toggleTheme, enrollUserInCourses, enrollUserInCourses2, unEnrollUserInCourses2, clearEnrolledCourses, setUserID, setUserData, saveUserSectionData, saveUserAccountData} = dbslice.actions;
+export const {toggleLanguage, toggleTheme, enrollUserInCourses, enrollUserInCourses2, unEnrollUserInCourses2, clearEnrolledCourses, clearAllCourseData, setUserID, setUserData, saveUserSectionData, saveUserAccountData} = dbslice.actions;
 // New User Data actions
 export const {
     saveUserCourseData,
