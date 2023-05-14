@@ -1,16 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import Course from '../../../../Course/Course'
 import { useDispatch } from 'react-redux'
-import { setUserDataOverride } from '../../../../../../App/AppSlice'
-import ElementMapper from '../../../../Course/Elements/ElementMapper'
 import "../../AdminDash.css"
-import ElementDisplayBlock from '../../../../Course/Elements/Display/ElementDisplayBlock'
-import { objectToArray } from '../../../../../../App/functions'
-import { type } from '@testing-library/user-event/dist/type'
-import { set } from 'firebase/database'
 import CourseReportChapter from './CourseReportChapter'
 import json2md from 'json2md'
 import Markdown from 'markdown-to-jsx'
+import jsPDF from 'jspdf'
+import topImage from "../../../../../../Images/topImage.jpg"
+import { saveUserAccountData } from '../../../../../../App/DbSlice'
 
 function CourseReport({userData, courseData, close}) {
   // Display completion on in progress status
@@ -41,7 +37,9 @@ function CourseReport({userData, courseData, close}) {
 
     */
   const [chaptersArray, setChaptersArray] = useState([])
+  const [markdownArray, setMarkdownArray] = useState([])
   const [viewMarkdown, setViewMarkdown] = useState(false)
+  const [viewPDF, setViewPDF] = useState(false)
   const [markdownString, setMarkdownString] = useState(false)
   const dispatcher = useDispatch()
 
@@ -58,6 +56,10 @@ function CourseReport({userData, courseData, close}) {
 
 
   },[])
+  useEffect(()=>{
+    if(!pdfDoc && markdownArray.length > 0)
+      generatePDF(markdownArray)
+  },[markdownArray])
 
   // Generate the chapters report object do be displayed
   useEffect(() => {
@@ -169,6 +171,8 @@ function CourseReport({userData, courseData, close}) {
 
     console.log("tempMarkdownArray")
     console.log(tempMarkdownArray)
+    setMarkdownArray(tempMarkdownArray)
+    generatePDF(tempMarkdownArray)
 
     var tempMarkdownString = json2md(tempMarkdownArray)
     console.log("tempMarkdownString")
@@ -176,7 +180,6 @@ function CourseReport({userData, courseData, close}) {
 
     setMarkdownString(tempMarkdownString)
     createDownloadMarkdownURL(tempMarkdownString)
-    createDownloadPDFURL(tempMarkdownString)
   }
 
   function elementToMarkdown(elementUserData){
@@ -191,6 +194,7 @@ function CourseReport({userData, courseData, close}) {
     var markDownFileTemp = new Blob([mdString], {type: 'text/plain'});
     var url = URL.createObjectURL(markDownFileTemp);
     
+    createDownloadPDFURL(url)
     setMarkdownDownloadUrl(url)
     //setMarkdownFile(markDownFileTemp)
   }
@@ -199,11 +203,74 @@ function CourseReport({userData, courseData, close}) {
 
   }
   const [pdfDownloadUrl, setPdfDownloadUrl] = useState("")
-  function createDownloadPDFURL(mdString){
-    // create the pdf file
-    // generate a url for it
-    // put the url in state so when the user clicks the link it will donwload
+  async function createDownloadPDFURL(markdownDownloadUrl){
 
+
+    
+    // // create the pdf file
+    // const pdf = await mdToPdf({ path: markdownDownloadUrl }).catch(console.error);
+    // console.log("pdf")
+    // console.log(pdf)
+    // // generate a blob then a url to the blob for it
+    // var pdfFileTemp = new Blob([mdString], {type: 'text/plain'});
+    // var url = URL.createObjectURL(pdfFileTemp);
+    
+    // // put the url in state so when the user clicks the link it will donwload
+    // setPdfDownloadUrl(url)
+
+  }
+
+  const [pdfDoc, setPdfDoc] = useState()
+  const [pdfDocUrl, setPdfDocUrl] = useState()
+  function generatePDF(markdownArray){
+    // searched react locally generate a pdf from markdown in react app
+    // How to create PDF files using React.js
+    // https://morioh.com/p/eb466cddaa7e
+    // https://www.npmjs.com/package/jspdf
+
+    // Displaying it (and downlading)
+    // https://www.npmjs.com/package/react-pdf
+    // https://www.youtube.com/watch?v=JU7rfAMpbZA
+    // another one https://www.npmjs.com/package/pdf-viewer-reactjs
+
+    // Can generate this from markdownArray and save it in state
+    // Admin can view it with a pdf viewer and download it with a button
+    // Could also create it from the json and not have to use markdown at all
+    // need to be able to add images to it too
+
+    // safe and sound
+    // just came to say hello
+    // sweet caroline    
+    // bohemian rhapsody
+
+    // using a url didn't work
+    //doc.addImage(topImage, 'JPEG', 15, 40, 180, 160);
+    const doc = new jsPDF();
+    doc.text("Hello world!", 10, 10);
+    let yOffset = 10
+    markdownArray.forEach(markdownObject => {
+      Object.values(markdownObject).forEach(markdownText => {
+        doc.text(markdownText, 10, yOffset+=10);
+      })
+    })
+    setPdfDoc(doc)
+  let pdfUrl = URL.createObjectURL(doc.output("blob"))
+  console.log("pdfUrl")  
+  console.log(pdfUrl)  
+  setPdfDocUrl(pdfUrl)
+  }
+  function downloadPDF(){
+    if(typeof pdfDoc !== "object")
+      return
+    pdfDoc?.save(userData.accountData?.firstName+"_"+userData.accountData?.lastName+"_CourseReport.pdf");
+
+  }
+
+  const [numPages, setNumPages] = useState(null);
+  const [pageNumber, setPageNumber] = useState(1);
+
+  function onDocumentLoadSuccess({ numPages }) {
+    setNumPages(numPages);
   }
 
   return (
@@ -212,13 +279,15 @@ function CourseReport({userData, courseData, close}) {
 
       <div className='closeButton' onClick={close}>x</div>
       <div className='courseReportInner'>
-        <button className='third' onClick={()=>setViewMarkdown(!viewMarkdown)}>View {(viewMarkdown ? "React":"Markdown")}</button>
-        <a className='third button' download={"testfile.md"} href={markdownDownloadUrl}>Download Markdown File</a>
+        <button className='third' onClick={()=>setViewPDF(!viewPDF)}>View {(viewPDF ? "React":"PDF")}</button>
+        <button className='third' onClick={()=>downloadPDF()}>Download PDF</button>
+        {/* <a className='third button' download={"testfile.md"} href={markdownDownloadUrl}>Download Markdown File</a>
         <a className='third button' download={"testfile.pdf"} href={pdfDownloadUrl}>Download PDF</a>
-        {/* <button className='third' onClick={downloadMarkdown}>Download Markdown</button> */}        
-        {viewMarkdown? 
+        <button className='third' onClick={downloadPDF}>Download PDF</button>         */}
+        {viewPDF? 
           <>
-            <Markdown>{markdownString}</Markdown>
+            {/* <Markdown>{markdownString}</Markdown> */}
+            <iframe className='pdfIframe' src={pdfDocUrl}></iframe>
           </>
           :
           <>

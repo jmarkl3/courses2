@@ -81,3 +81,8 @@
     padding: 10px;
     box-sizing: border-box;
 }
+.pdfIframe{
+    margin-top: 40px;
+    height: calc(100% - 80px);
+    width: calc(100% - 20px);
+}
