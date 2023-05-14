@@ -66,9 +66,18 @@
     overflow-y: auto;
 }
 .courseReportSection{  
-    border: 1px solid rgba(128, 128, 128, 0.411);
+    /* border: 1px solid rgba(128, 128, 128, 0.411); */
     padding: 10px 0;    
     box-sizing: border-box;
+}
+.courseReportChapterTitle{
+    font-size: 26px;
+    font-weight: bold;
+    padding-top: 40px;
+}
+.courseReportSectionTitle{
+    font-size: 20px;
+    font-weight: bold;
 }
 .courseReportInfo{
     padding-bottom: 10px;

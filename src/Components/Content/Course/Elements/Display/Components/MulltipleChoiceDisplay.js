@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux'
 import { objectToArray } from '../../../../../../App/functions'
 // import { itemsArray, saveUserResponse } from '../../../../../App/DBSlice'
 
-function MulltipleChoiceDisplay({elementData, userResponse, saveUserResponseFunction}) {
+function MulltipleChoiceDisplay({elementData, userResponse, saveUserResponseFunction, responseDataOverride}) {
     const [questionFeedback, setQustionFeedback] = useState()
     const [questionCorrect, setQuetionCorrect] = useState()
     const [selectedAnswerChoices, setselectedAnswerChoices] = useState()
@@ -90,12 +90,16 @@ function MulltipleChoiceDisplay({elementData, userResponse, saveUserResponseFunc
                 key={answerChoice.id} 
                 className={'answerChoiceDisplay '+selectedAnswerClass(answerChoice.id)} 
             >
-                <input 
-                    type="radio" 
-                    name={"question"+elementData.id} 
-                    onChange={()=>selectedAnswer(answerChoice)} 
-                    checked={answerIsSelected(answerChoice.id)
-                }></input>
+                {responseDataOverride ? 
+                    <></>
+                    :
+                    <input 
+                        type="radio" 
+                        name={"question"+elementData.id} 
+                        onChange={()=>selectedAnswer(answerChoice)} 
+                        checked={answerIsSelected(answerChoice.id)}
+                    ></input>
+                }
                 <div className='answerChoiceDisplayText'>
                     {answerChoice.content}
                 </div>

@@ -136,12 +136,16 @@ function ElementDisplayBlock({elementDataProp, responseDataOverride}) {
                 <div className='textInputDisplayPrompt'>
                     {elementData?.content}
                 </div>
-                <textarea 
-                    placeholder='Type your answer here' 
-                    ref={responseInputRef} 
-                    onChange={responseNeedsSave} 
-                    defaultValue={userResponse}
-                ></textarea>
+                {responseDataOverride ?
+                    <>{userResponse}</>
+                    :    
+                    <textarea 
+                        placeholder='Type your answer here' 
+                        ref={responseInputRef} 
+                        onChange={responseNeedsSave} 
+                        defaultValue={userResponse}
+                    ></textarea>
+                }
             </div>
         )
     else if(elementData?.type === "Input Field")
@@ -182,6 +186,7 @@ function ElementDisplayBlock({elementDataProp, responseDataOverride}) {
                 <MulltipleChoiceDisplay 
                     elementData={elementData} 
                     userResponse={userResponse}
+                    responseDataOverride={responseDataOverride}
                     saveUserResponseFunction={saveUserResponseFunction}
                 ></MulltipleChoiceDisplay>
             </>

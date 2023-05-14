@@ -7,7 +7,37 @@ import Markdown from 'markdown-to-jsx'
 import jsPDF from 'jspdf'
 import topImage from "../../../../../../Images/topImage.jpg"
 import { saveUserAccountData } from '../../../../../../App/DbSlice'
+import { Conv2DBackpropFilter } from '@tensorflow/tfjs'
+import ElementDisplayBlock from '../../../../Course/Elements/Display/ElementDisplayBlock'
+import html2canvas from 'html2canvas'
+/*
+  when user data changes generateChaptersReportObject is called from a useEffect
+  this generates the chapters array which is saved in state
 
+  when the chapters array changes chaptersArrayToMarkdown is called from a useEffect
+  this generates the markdown array which is saved in state
+  it also calls generatePDF(markdownArray) which generates the pdf and saves it in state
+  it also generates the markdown string which is saved in state. This was used to display the markdown in the browser but it is not used anymore
+
+  generatePDF also generates a blob url for the pdf which is saved in state
+
+  when viewPDF state is true the pdf file is displayed in an iframe from the blob url
+
+  when the user clicks the download button the pdf is downloaded with pdfDoc?.save(filename)
+
+  TODO
+  the elements should be saved into the markdown array as well
+  and this should be added to the pdf
+  formatting should be saved from the markdown array to the pdf
+    https://stackoverflow.com/questions/25703431/how-to-keep-some-formatting-and-paragraphs-when-using-jspdf
+    pdf.addHTML()  
+      ex: var pdf = new jsPDF('p', 'pt', 'letter');
+          pdf.addHTML($('#NameOfTheElementYouWantToConvertToPdf')[0], function () {
+              pdf.save('Test.pdf');
+          });
+    another option pdf.fromHTML()
+
+*/
 function CourseReport({userData, courseData, close}) {
   // Display completion on in progress status
     // Display certificate if there is one
@@ -56,9 +86,10 @@ function CourseReport({userData, courseData, close}) {
 
 
   },[])
+  
   useEffect(()=>{
-    if(!pdfDoc && markdownArray.length > 0)
-      generatePDF(markdownArray)
+    //if(!pdfDoc && markdownArray.length > 0)
+      //generatePDF(markdownArray)
   },[markdownArray])
 
   // Generate the chapters report object do be displayed
@@ -68,7 +99,10 @@ function CourseReport({userData, courseData, close}) {
 
   // Converting the chapters array into markdown
   useEffect(() => {
-    chaptersArrayToMarkdown()
+    //chaptersArrayToMarkdown()
+    console.log("chaptersArray")
+    console.log(chaptersArray)
+    generatePDF3()
   },[chaptersArray])
 
   // Create an array of chapter objects with the chapter data and and array of section data objects
@@ -86,6 +120,7 @@ function CourseReport({userData, courseData, close}) {
       // The base chapter data object
       let chapterObject = {
         name: chapterData?.name,
+        id: chapterKey,
         complete: chapterData?.complete,
         sectionsArray: []
       }
@@ -97,6 +132,7 @@ function CourseReport({userData, courseData, close}) {
         Object.entries(sectionData).forEach(([sectionKey, sectionData]) => {
           let tempSectionData = {
             name: sectionData?.name,
+            id: sectionKey,
             complete: sectionData?.complete,
             index: sectionData?.index,
             responsesArray: [],
@@ -109,7 +145,9 @@ function CourseReport({userData, courseData, close}) {
           let responseData = sectionData.responseData
           if(responseData && typeof responseData === "object"){
             Object.entries(sectionData.responseData).forEach(([responseKey, responseDataObject]) => {
-              tempResponsesArray.push(responseDataObject)
+              let tempResponseDataObject = {...responseDataObject}
+              tempResponseDataObject.id = responseKey
+              tempResponsesArray.push(tempResponseDataObject)
               responseCount++
             })       
             tempSectionData.responsesArray = tempResponsesArray  
@@ -123,10 +161,16 @@ function CourseReport({userData, courseData, close}) {
       }
 
       // Add the completed chapter object to the array
+      // tempChapters.push(chapterObject)
+      // tempChapters.push(chapterObject)
+      // tempChapters.push(chapterObject)
       tempChapters.push(chapterObject)
       
     })
     
+    console.log("tempChapters")
+    console.log(tempChapters)
+
     setChaptersArray(tempChapters)
   }
 
@@ -143,7 +187,7 @@ function CourseReport({userData, courseData, close}) {
     chaptersArray.forEach(chapter => {
       // The chapter title with competion status
       let chapterObject = {
-        h2: chapter.name + " " + (chapter.complete ? "✔":"(Incomplete)"),        
+        h2: chapter.name + " " + (chapter.complete ? "(Complete) ✔":"(Incomplete)"),        
       }
       tempMarkdownArray.push(chapterObject)
 
@@ -152,7 +196,7 @@ function CourseReport({userData, courseData, close}) {
         chapter.sectionsArray.forEach(section => {
           // The section title with competion status
           let sectionObject = {
-            h3: section.name + " " + (section.complete ? "✔":((section.numberOfInputElements > 0) ? "("+section.responseCount + " / "+section.numberOfInputElements+")" :"(Incomplete)")),
+            h3: section.name + " " + (section.complete ? "(Complete) ✔":((section.numberOfInputElements > 0) ? "("+section.responseCount + " / "+section.numberOfInputElements+")" :"(Incomplete)")),
           }
           tempMarkdownArray.push(sectionObject)
 
@@ -173,6 +217,12 @@ function CourseReport({userData, courseData, close}) {
     console.log(tempMarkdownArray)
     setMarkdownArray(tempMarkdownArray)
     generatePDF(tempMarkdownArray)
+    // Give it half a second to render that, then generate the pdf from the html
+    setTimeout(() => {
+
+      generatePDF2()
+      
+    }, 250);
 
     var tempMarkdownString = json2md(tempMarkdownArray)
     console.log("tempMarkdownString")
@@ -194,32 +244,15 @@ function CourseReport({userData, courseData, close}) {
     var markDownFileTemp = new Blob([mdString], {type: 'text/plain'});
     var url = URL.createObjectURL(markDownFileTemp);
     
-    createDownloadPDFURL(url)
     setMarkdownDownloadUrl(url)
     //setMarkdownFile(markDownFileTemp)
   }
+
+  // This may download the markdown file
   function openMarkdown(){
     window.open(markdownDownloadUrl)
 
   }
-  const [pdfDownloadUrl, setPdfDownloadUrl] = useState("")
-  async function createDownloadPDFURL(markdownDownloadUrl){
-
-
-    
-    // // create the pdf file
-    // const pdf = await mdToPdf({ path: markdownDownloadUrl }).catch(console.error);
-    // console.log("pdf")
-    // console.log(pdf)
-    // // generate a blob then a url to the blob for it
-    // var pdfFileTemp = new Blob([mdString], {type: 'text/plain'});
-    // var url = URL.createObjectURL(pdfFileTemp);
-    
-    // // put the url in state so when the user clicks the link it will donwload
-    // setPdfDownloadUrl(url)
-
-  }
-
   const [pdfDoc, setPdfDoc] = useState()
   const [pdfDocUrl, setPdfDocUrl] = useState()
   function generatePDF(markdownArray){
@@ -243,21 +276,26 @@ function CourseReport({userData, courseData, close}) {
     // sweet caroline    
     // bohemian rhapsody
 
-    // using a url didn't work
+    // using a url didn't work, this does though
     //doc.addImage(topImage, 'JPEG', 15, 40, 180, 160);
+
+    // Create a pdf with jsPDF node package
     const doc = new jsPDF();
-    doc.text("Hello world!", 10, 10);
-    let yOffset = 10
+
+    // Add each line from the markdown object into the pdf
+    let yOffset = 0
     markdownArray.forEach(markdownObject => {
+      // They are formatted like {h2: "text"} so we just want the text part
       Object.values(markdownObject).forEach(markdownText => {
+        // Adding the text line
         doc.text(markdownText, 10, yOffset+=10);
       })
     })
     setPdfDoc(doc)
-  let pdfUrl = URL.createObjectURL(doc.output("blob"))
-  console.log("pdfUrl")  
-  console.log(pdfUrl)  
-  setPdfDocUrl(pdfUrl)
+
+    // Generate a local blob url so the pdf can be displayed in an iframe
+    let pdfUrl = URL.createObjectURL(doc.output("blob"))
+    setPdfDocUrl(pdfUrl)
   }
   function downloadPDF(){
     if(typeof pdfDoc !== "object")
@@ -266,11 +304,119 @@ function CourseReport({userData, courseData, close}) {
 
   }
 
-  const [numPages, setNumPages] = useState(null);
-  const [pageNumber, setPageNumber] = useState(1);
+  // This is ok but it chages based on the screen width when the images is captured
+  // May be better to do it manually
+  const [pdfDoc2, setPdfDoc2] = useState()
+  const [pdfDoc2URL, setPdfDoc2URL] = useState()
+  function generatePDF2(){
+    const doc = new jsPDF();
+  
+    let courseReportElement = document.getElementById("courseReportHTML")
+    console.log("courseReportElement")
+    console.log(courseReportElement)
 
-  function onDocumentLoadSuccess({ numPages }) {
-    setNumPages(numPages);
+    // Create a canvas image from the html
+    html2canvas(courseReportElement).then(canvas => {
+
+      // var imgData = canvas.toDataURL('image/png');
+
+      var pageHeight = 295; 
+      var heightLeft = canvas.height / 6;
+      var position = 10;
+  
+      // For some reason its adding the first page with a large reverse margin at the top
+      doc.addImage(canvas, 'JPG', 10, 10, canvas.width/6, canvas.height/6);
+      heightLeft -= pageHeight;
+      position -= pageHeight + 2;
+      // adding 2 to the subtract value will move it up by 2
+      // can add an image that is just a cover for the bottom and move it by the corresponding amount so there is a bottom margin
+
+      while (heightLeft >= 0) {
+        // Add it to the pdf the type can be anything JPG, PNG, CANVAS, etc
+        doc.addPage();
+        doc.addImage(canvas, 'CANVAS', 10, position, canvas.width/6, canvas.height/6);
+        heightLeft -= pageHeight;
+        position -= pageHeight + 2;
+      }
+
+      
+      // How to save it on multiple pages
+      // https://stackoverflow.com/questions/24069124/how-to-save-a-image-in-multiple-pages-of-pdf-using-jspdf
+
+      // Save the pdf for the saving function
+      setPdfDoc2(doc)
+
+      // Create and save a local blob url for display in the iframe
+      let pdfurl2 = URL.createObjectURL(doc.output("blob"))
+      setPdfDoc2URL(pdfurl2)
+    });
+
+    // Doing it without the html2canvas package
+    // doc.html(courseReportElement, {html2canvas: {scale: 0.15}}).then(() => {
+    // // //doc.addH(courseReportElement, {html2canvas: {scale: 0.15}}).then(() => {
+    // //   html2canvas
+    //   console.log("doc callback")
+    //   // doc.html
+    //   setPdfDoc2(doc)
+    //   let pdfurl2 = URL.createObjectURL(doc.output("blob"))
+    //   setPdfDoc2URL(pdfurl2)
+    // });
+    
+  }
+  function downloadPDF2(){
+    pdfDoc2?.save(userData.accountData?.firstName+"_"+userData.accountData?.lastName+"_CourseReport.pdf");
+
+  }
+  // This one will generate the pdf directly from the JSON
+  function generatePDF3(){
+    console.log("generatePDF3")
+    console.log(chaptersArray)
+    if(!Array.isArray(chaptersArray) || chaptersArray.length <= 0){
+      console.log("no chapters array")
+      return
+    }
+    const doc = new jsPDF();
+    let heightOffset = 10
+    let lineCount = 0
+    doc.text("Course report for "+userData.accountData.firstName+" "+userData.accountData.lastName, 10, heightOffset+=10);
+    let date = new Date()
+    doc.text("Generated "+date.getFullYear()+"/"+date.getMonth()+"/"+date.getDate(), 10, heightOffset+=10);
+    for(let i=0; i<20; i++){
+      chaptersArray.forEach(chapter => {
+        // setting text formating: https://codepen.io/AndreKelling/pen/BaoLWao
+        doc.setFontSize(30)
+        doc.text(" ", 10, heightOffset+=10);
+        lineCount++
+        doc.text(chapter.name, 10, heightOffset+=10);
+        lineCount++
+        if(lineCount>=22){
+          doc.addPage()
+          lineCount = 0
+          heightOffset = 10
+        }
+        console.log("chapter.sectionsArray")
+        console.log(chapter.sectionsArray)
+        if(Array.isArray(chapter.sectionsArray) && chapter.sectionsArray.length > 0){
+          chapter.sectionsArray.forEach(section => {
+            doc.setFontSize(20)
+            //doc.setTextColor("green")
+            doc.text("    "+section.name, 10, heightOffset+=10);
+            lineCount++
+            if(lineCount>=22){
+              doc.addPage()
+              lineCount = 0
+              heightOffset = 10
+            }
+          })
+        }
+      })
+
+    }
+
+    setPdfDoc(doc)
+    setPdfDocUrl(URL.createObjectURL(doc.output("blob")))
+
+    // Will need to know when to add a new page. Calc based on number of lines, type of line, length of line
   }
 
   return (
@@ -279,11 +425,10 @@ function CourseReport({userData, courseData, close}) {
 
       <div className='closeButton' onClick={close}>x</div>
       <div className='courseReportInner'>
-        <button className='third' onClick={()=>setViewPDF(!viewPDF)}>View {(viewPDF ? "React":"PDF")}</button>
+        <button className='third' onClick={()=>setViewPDF(!viewPDF)}>View {(viewPDF ? "Report":"PDF Preview")}</button>
+        {/* <button className='third' onClick={()=>downloadPDF()}>Download PDF</button>
+        <button className='third' onClick={()=>generatePDF2()}>Generate PDF 2</button> */}
         <button className='third' onClick={()=>downloadPDF()}>Download PDF</button>
-        {/* <a className='third button' download={"testfile.md"} href={markdownDownloadUrl}>Download Markdown File</a>
-        <a className='third button' download={"testfile.pdf"} href={pdfDownloadUrl}>Download PDF</a>
-        <button className='third' onClick={downloadPDF}>Download PDF</button>         */}
         {viewPDF? 
           <>
             {/* <Markdown>{markdownString}</Markdown> */}
@@ -292,10 +437,40 @@ function CourseReport({userData, courseData, close}) {
           :
           <>
             <h3>{courseData?.courseName}</h3>
-            <div>          
+            <div id='courseReportHTML'>          
               {chaptersArray.map(chapterDataObject => (
-                <CourseReportChapter chapterUserData={chapterDataObject}></CourseReportChapter>
+                <CourseReportChapter chapterUserData={chapterDataObject} id={chapterDataObject.id}></CourseReportChapter>
               ))}
+              {/* {chaptersArray.map(chapterDataObject => (
+                <div className='courseReportSection'>
+                  <div className='courseReportInfo'>
+                      <div className='courseReportInfoInner courseReportChapterTitle'>
+                          {"Chapter: "+chapterDataObject?.name}
+                      </div>
+                      <div className='courseReportInfoInner'>
+                          {chapterDataObject?.complete ? "(Complete)":"(Incomplete)"}
+                      </div>
+                  </div>
+                  {chapterDataObject?.sectionsArray?.map((sectionUserData)=>(
+                      <div className='courseReportSection'>
+                        <div className='courseReportInfo'>
+                            <div className='courseReportInfoInner courseReportSectionTitle'>
+                                {"Section: "+sectionUserData?.name}
+                            </div>
+                            <div className='courseReportInfoInner'>
+                                {sectionUserData.complete ? "(Complete)":((sectionUserData.numberOfInputElements > 0) ? "("+sectionUserData.responseCount + " / "+sectionUserData.numberOfInputElements+")" :"(Incomplete)")}
+                            </div>
+                        </div>
+                        {sectionUserData?.responsesArray?.map((responseData)=>(
+                            <div className='courseReportResponsesSection'>
+                                <ElementDisplayBlock responseDataOverride={responseData}></ElementDisplayBlock>
+                            </div>            
+                        ))}
+                    </div>
+                  ))}
+              </div>
+              ))} */}
+
             </div>
           </>
         }
