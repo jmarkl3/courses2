@@ -376,9 +376,27 @@ function CourseReport({userData, courseData, close}) {
     }   
 
     // Check to see if multiple lines need to be added based on font size and text length
+    if(typeof text == "string" && text.length > 100){
+      let leadingSpaces = text.length - text.trimStart().length
+      let startString = ""
+      for(let i = 0; i<leadingSpaces; i++) {
+        startString += " "
+      }
+      let linePosition = 0
+      let maxLineLength = 150
+      while(linePosition < text.length){
+        if(linePosition == 0)
+          doc.text(text.substring(linePosition, linePosition + maxLineLength), 10, docHeightOffset.current += 5);
+        else
+          doc.text(startString+text.substring(linePosition, linePosition + maxLineLength), 10, docHeightOffset.current += 5);
 
-    // Add the line
-    doc.text(text, 10, docHeightOffset.current += heightOffset);
+        linePosition += maxLineLength
+      }
+    }else{
+      // Add the line normally
+      doc.text(text, 10, docHeightOffset.current += heightOffset);
+
+    }
  
   }
 
