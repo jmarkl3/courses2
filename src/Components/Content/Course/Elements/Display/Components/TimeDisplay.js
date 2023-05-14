@@ -142,8 +142,6 @@ function TimeDisplay({sectionData, chapterID, viewOnly, setRemainingTime}) {
         incrementTime()
     }
 
-    // TODO: check to see if the time is being saved in the correct place in the db
-    // TODO: the required time should be saved in the userData also
     /**
      * Saves the current time in userData and clears the current timer
      */
@@ -156,19 +154,9 @@ function TimeDisplay({sectionData, chapterID, viewOnly, setRemainingTime}) {
         if(currentTimeRef.current == 0)
             return  
 
-        // This is still being called when the section is not selected, maybe it pauses on start
-        // console.log("=============================")
-        // console.log("syncing time")
-        // console.log("sectionData?.id")
-        // console.log(sectionData?.id)
-        // console.log("selectedCourseID")
-        // console.log(selectedSectionID)
-
         // Only save the data if the section is selected
         if(selectedSectionIDRef.current !== sectionData?.id)
             return
-        // console.log("=============================")
-        // console.log("saving for "+sectionData?.id)
 
         // Clear this so the timer doesn't keep incrementing
         clearTimeout(timerTimeoutRef.current)
@@ -218,7 +206,6 @@ function TimeDisplay({sectionData, chapterID, viewOnly, setRemainingTime}) {
 
   return (
     <div className='timeDisplay'>
-        {sectionData.id}
         {countdownTimeString(currentTime)}
     </div>
   )

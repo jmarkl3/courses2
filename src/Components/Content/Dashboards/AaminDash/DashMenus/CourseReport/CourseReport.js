@@ -21,6 +21,7 @@ function CourseReport({userData, courseData, close}) {
   const [viewMarkdown, setViewMarkdown] = useState(false)
   const [viewPDF, setViewPDF] = useState(false)
   const [markdownString, setMarkdownString] = useState(false)
+  const [webcamImageUrls, setWebcamImageUrls] = useState([])
 
   // Generate the chapters report object do be displayed
   useEffect(() => {
@@ -62,10 +63,11 @@ function CourseReport({userData, courseData, close}) {
             complete: sectionData?.complete,
             requiredTime: sectionData?.requiredTime,
             userTime: sectionData?.userTime,
+            webcamImages: sectionData?.webcamImages,
             index: sectionData?.index,
             responsesArray: [],
             responseCount: 0,
-            numberOfInputElements: sectionData.numberOfInputElements
+            numberOfInputElements: sectionData.numberOfInputElements,
           }
           
           let tempResponsesArray = []
@@ -286,7 +288,7 @@ function CourseReport({userData, courseData, close}) {
 
   }
   // This one will generate the pdf directly from the JSON
-  function generatePDF3(){
+  async function generatePDF3(){
     if(!Array.isArray(chaptersArray) || chaptersArray.length <= 0){      
       return
     }
@@ -309,14 +311,21 @@ function CourseReport({userData, courseData, close}) {
 
       // Add each section
       if(Array.isArray(chapter.sectionsArray) && chapter.sectionsArray.length > 0){
-        chapter.sectionsArray.forEach(section => {
+        chapter.sectionsArray.forEach(async (section) => {
           doc.setFontSize(10)
 
           // Add the section name, completion status, time spent, and webcam images 
           addLineToDoc(doc, "    Section: "+section.name + " " + (section.complete ? "(Complete)":""), 12, 8)
           addLineToDoc(doc, "          Time Spent in Section: "+timeString(section.userTime)+"    Required Time: "+timeString(section.requiredTime), 8, 5)
           addLineToDoc(doc, "          Webcam Images: ", 8, 5)
-      
+          // If there are webcam imagse add them
+          if(section.webcamImages && Array.isArray(section.webcamImages) && section.webcamImages.length > 0){
+            console.log("ther are images to add")
+            // await addWebcamImageToDoc(doc, section.webcamImages[0])
+            setWebcamImageUrls(section.webcamImages)
+
+          }
+
           // Add text for each user response
           if(Array.isArray(section.responsesArray) && section.responsesArray.length > 0){
             addLineToDoc(doc, "          User Responses: ", 8, 8)
@@ -400,13 +409,41 @@ function CourseReport({userData, courseData, close}) {
  
   }
 
+  async function addWebcamImageToDoc(doc, imageURL){
+    console.log("in addWebcamImageToDoc")
+    console.log("imageURL")
+    console.log(imageURL)
+    // Add the image to the doc
+    let imageFile = await dataUrlToFile(imageURL)
+    console.log("adding file:")
+    console.log(imageFile)
+    doc.addImage(imageFile, 'JPEG', 15, docHeightOffset.current+=60, 60, 40);
+    docHeightOffset.current += 160
+
+  }
+
+  async function dataUrlToFile(dataUrl, fileName) {
+    console.log("in dataUrlToFile")
+    const res = await fetch(dataUrl);
+    console.log("res")
+    console.log(res)
+    const blob = await res.blob();
+    const file = new File([blob], fileName, { type: 'image/png' });
+    console.log("dataUrlToFile file:")
+    console.log(file)
+    return file
+}
+
   return (
 
     <div className='box courseReport'>
       <div className='closeButton' onClick={close}>x</div>
       <div className='courseReportInner'>
         <button className='third' onClick={()=>downloadPDF()}>Download {userData.accountData.firstName+"'s Course Report "} PDF</button>        
-        <iframe className='pdfIframe' src={pdfDocUrl}></iframe>        
+        <iframe className='pdfIframe' src={pdfDocUrl}></iframe>     
+        {webcamImageUrls.map(imageURL => (
+          <img className="webcamImage" src={imageURL}></img>
+        ))}   
       </div>
 
     </div>

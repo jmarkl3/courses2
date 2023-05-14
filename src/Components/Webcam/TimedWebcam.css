@@ -21,6 +21,8 @@
     bottom: 10px;
     width: 300px;
     text-align: center;
+    user-select: none;
+    cursor: pointer;
 }
 .fadeIn{
     opacity: 1;

@@ -71,7 +71,7 @@ function ElementMapper() {
                 </>
 
             }
-            {/* <TimedWebcam sectionData={sectionData}></TimedWebcam> */}
+            {!editMode && <TimedWebcam sectionData={sectionData}></TimedWebcam>}
         </>
     )
 }

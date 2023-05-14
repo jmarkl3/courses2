@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import {initializeApp} from "firebase/app";
 import { getAuth } from "firebase/auth";
+import { getStorage } from "firebase/storage";
 import { get, getDatabase, push, ref, remove, runTransaction, set, update } from "firebase/database";
 import { gePreviousItem, getFirstItem, getItem, getLastItemID, getNextItem, getUserData, insertItem, newIDsObject, nItemsInObject, objectToArray, removeItem, removeUndefined } from "./functions";
 import { act } from "react-dom/test-utils";
@@ -25,6 +26,8 @@ const app = initializeApp(firebaseConfig)
 export const auth = getAuth(app)
 // Database Object
 export const database = getDatabase(app)
+
+export const storage = getStorage();
 
 // #endregion  firebase config
 
@@ -176,9 +179,7 @@ const dbslice = createSlice({
         },
         // New: saveUserSectionData (for section complete, time it took to complete, image capture urls)
         saveUserSectionData2(state, action){
-            console.log("saveUserSectionData2")
-            console.log(action.payload)
-            
+           
             if(!action.payload.kvPairs || typeof action.payload.kvPairs !== "object"){
                 console.log("saveUserSectionData2 missing info")
                 return
@@ -195,6 +196,34 @@ const dbslice = createSlice({
 
             // Save the key value pair in the db
             update(ref(database, locationString), action.payload.kvPairs)
+        },
+        // ex: action.payload = {arrayName: "webcamImages", valueArray: [imageUrl1, imageUrl2]}
+        pushToUserSectionData2(state, action){
+            console.log("pushToUserSectionData2")
+            if(!action.payload?.arrayName || !action.payload?.valueArray){
+                console.log("pushToUserSectionData2 missing info")
+                return
+            }
+            
+            // This is the location that the key value pair will be stored
+            var locationString = "coursesApp/userData/"+state.userID+
+            "/courses/"+(action.payload.courseID || state.selectedCourseID)+
+            "/chapterData/"+(action.payload.chapterID || state.selectedChapterID)+
+            "/sectionData/"+(action.payload.sectionID || state.selectedSectionID)
+
+            console.log("pushing to "+locationString)
+
+            // Save the key value pair in the db
+            //update(ref(database, locationString), action.payload.kvPairs)
+            runTransaction(ref(database, locationString), item => {
+                if(!item)
+                    item = {}
+                if(!item[action.payload?.arrayName]){
+                    item[action.payload?.arrayName] = []
+                }
+                item[action.payload?.arrayName].push(...action.payload.valueArray)
+                return item
+            })
         },
 
         // New: saveUserResponse (for answered questions)
@@ -1106,7 +1135,7 @@ export const dbsliceReducer = dbslice.reducer;
 // Loading actions
 export const {setCourseData, setCoursesData} = dbslice.actions;
 // User Data actions
-export const {toggleLanguage, toggleTheme, enrollUserInCourses, enrollUserInCourses2, unEnrollUserInCourses2, clearEnrolledCourses, clearAllCourseData, setUserID, setUserData, saveUserSectionData, saveUserAccountData} = dbslice.actions;
+export const {pushToUserSectionData2, toggleLanguage, toggleTheme, enrollUserInCourses, enrollUserInCourses2, unEnrollUserInCourses2, clearEnrolledCourses, clearAllCourseData, setUserID, setUserData, saveUserSectionData, saveUserAccountData} = dbslice.actions;
 // New User Data actions
 export const {
     saveUserCourseData,

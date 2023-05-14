@@ -19,7 +19,18 @@ function SectionEditOptions() {
         var sectionData = getItem(courseData, selectedChapterID, selectedSectionID)
         setSectionData(sectionData)
     
+        console.log("sectionData?.camTimes")
+        console.log(sectionData?.camTimes)
+
     }, [courseData, selectedChapterID, selectedSectionID])
+
+    // Have to manually set this, for some reason it doesnt update when the section data changes
+    useEffect(() => {
+        if(sectionData?.camTimes)
+            sectionWebcamTimesInputRef.current.value = sectionData?.camTimes
+        else
+            sectionWebcamTimesInputRef.current.value = ""
+    }, [sectionData])
 
     const sectionNameChangeTimer = useRef(null)
     const sectionNameInputRef = useRef()
@@ -50,7 +61,15 @@ function SectionEditOptions() {
         dispacher(addElement({chapterID: selectedChapterID, sectionID: selectedSectionID, afterID: -1}))
 
     }
-
+ 
+    const sectionWebcamChangeTimer = useRef(null)
+    const sectionWebcamTimesInputRef = useRef()
+    function sectionWebcamTimesChange(){
+        clearTimeout(sectionWebcamChangeTimer.current)
+        sectionWebcamChangeTimer.current = setTimeout(() => {
+            dispacher(updateItemInfo({chapterID: selectedChapterID, sectionID: selectedSectionID, type: "camTimes", value: sectionWebcamTimesInputRef.current?.value}))
+        }, 500);
+    }
   return (
     <>
         <div className='elementDisplay bottomPadding5' key={selectedSectionID}>
@@ -79,6 +98,14 @@ function SectionEditOptions() {
                     ref={sectionTimeInputRef}
                     onChange={sectionTimeChange}
                     key={selectedSectionID}
+                ></input>
+                <input 
+                    placeholder='Webcam Times' 
+                    title='The times in seconds that the webcam will take pictures of users'
+                    defaultValue={sectionData?.camTimes}                    
+                    ref={sectionWebcamTimesInputRef}
+                    onChange={sectionWebcamTimesChange}    
+                    key={selectedSectionID}                
                 ></input>
             </div>
 

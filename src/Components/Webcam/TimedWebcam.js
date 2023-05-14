@@ -1,23 +1,43 @@
 import React, { useEffect, useRef, useState } from 'react'
 import Webcam from 'react-webcam'
 import "./TimedWebcam.css"
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { pushToUserSectionData2, saveUserSectionData2, storage } from '../../App/DbSlice';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+/*
 
+    timeArrayRef keeps track of the times that a webcame image should be taken
+    the default value is [25, 70] (25 seconds and 70 seconds)
+    it is paresd from a string and set in useEffect when section data changes: timeArrayRef.current = sectionData.camTimes
+
+    inrementTime is called in useEffect
+    it increments the time then calls timeActions to check if there are any actions that should be taken at that time
+
+    when the time is a number of seconds from the image time the webcam fades in slowly with showWebcamFunction
+    and when it is a number of seconds from the image time the webcam fades out slowly with hideWebcamFunction
+    at the image time it calls saveImage
+
+    TODO
+    save the images to user data
+    display them in the course report
+*/
 function TimedWebcam({sectionData}) {
     
     // ================================================================================
     // #region variables
-    const webcamRef = useRef()
-    const webcamOuterRef = useRef()
-    const timeRef = useRef(0)
-    const timeOffset = useRef(0)
-    const timeArrayRef = useRef([25, 70])
-    const [showWebcam, setShowWebcam] = useState(false)
-    const showWebcamRef = useRef(false)
-    const [showImage, setShowImage] = useState(false)
-    const [message, setMessage] = useState("Take Image")
-    const [currentScreenshot, setCurrentScreenshot] = useState()
     const selectedSectionID = useSelector((state) => state.dbslice.selectedSectionID);
+    const userID = useSelector((state) => state.dbslice.userID);
+    const [currentScreenshot, setCurrentScreenshot] = useState()
+    const [message, setMessage] = useState("Take Image")
+    const [showWebcam, setShowWebcam] = useState(false)
+    const [showImage, setShowImage] = useState(false)
+    const timeArrayRef = useRef([25, 70])
+    const showWebcamRef = useRef(false)
+    const webcamOuterRef = useRef()
+    const timeOffset = useRef(0)
+    const webcamRef = useRef()
+    const timeRef = useRef(0)
+    const dispatcher = useDispatch()
     // #endregion variables
 
     // ================================================================================
@@ -25,13 +45,18 @@ function TimedWebcam({sectionData}) {
     // Start the timer
     useEffect(() => {
         incrementTimer()
+        return () => {
+            clearTimeout(timerRef.current)
+        }
     },[])
 
     // Update the section data times
     useEffect(() => {
         // If there are times, set the time array ref (else will default to [25, 70])
         if(sectionData?.camTimes){
-            timeArrayRef.current = sectionData.camTimes
+            // Split the array into an array of numbers and set the ref
+            let parsedCamTimes = sectionData.camTimes.split(",").map(Number)
+            timeArrayRef.current = parsedCamTimes
         }
     },[sectionData])
 
@@ -69,9 +94,11 @@ function TimedWebcam({sectionData}) {
      * Given the number of seconds the user has been on the section, take appropriate actions
      */
     function timeActions(seconds){
+
+        console.log("timeActions: ", seconds)
+
         // Make sure there is an array of times
         if(!timeArrayRef.current || !Array.isArray(timeArrayRef.current) || timeArrayRef.current.length == 0) {
-            console.log("No times set")
             return
         }
         // For each time in the array perform the appropriate action
@@ -136,9 +163,54 @@ function TimedWebcam({sectionData}) {
      */
     function saveImage(){
         if(!webcamRef.current) return
+        // This is retrning a base64 encoded string of the image: https://www.npmjs.com/package/react-webcam
         const imageSrc = webcamRef.current.getScreenshot()
+        
+        // Save the image to state to be displayed
         setCurrentScreenshot(imageSrc)
         setShowImage(true)
+
+        // Converting the base 64 string to a blob so it can be converted to a file and uploaded to storage: https://stackoverflow.com/questions/35940290/how-to-convert-base64-string-to-javascript-file-object-like-as-from-file-input-f        
+        fetch(imageSrc).then(res => res.blob()).then(
+            blob => {
+
+                // Create a file name 
+                let date = new Date()
+                let fileName = userID+"_timedWebcamImage_"+timeOffset.current+"_"+date.getFullYear()+"_"+date.getMonth()+"_"+date.getDate()+"_"+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds()
+                
+                // Create a file from the blob
+                let file = new File([blob], fileName, {type: "image/png"})                
+                
+                // Define the path and name for the webcam image
+                let imageNamePath = 'courseWebcamImages/'+fileName        
+                
+                // Upload the image to storage                
+                const webcamImageRef = ref(storage, imageNamePath);
+                uploadBytes(webcamImageRef, file).then((snapshot) => {
+        
+                    // Get the download url
+                    console.log("getting download url:")       
+                    getDownloadURL(snapshot.ref).then((url) => {
+                        console.log("url: ", url)
+                        // Push the image download url to the array of webcam images in userData for this section
+            
+                        // Doing this for now to test before creating the db action 
+                        dispatcher(pushToUserSectionData2({sectionID: sectionData?.id, arrayName: "webcamImages", valueArray: [url]}))
+
+                    })   
+                
+                });
+                
+
+            }
+            
+        )
+        // let blobImage = imageSrc.blob()
+        // console.log(blobImage)
+        
+
+        
+        
     }
     /**
      * Alternates between showing the webcam and taking a new image
