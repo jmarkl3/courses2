@@ -455,7 +455,7 @@ function CourseReport({userData, courseData, close}) {
     // Check to see if multiple lines need to be added based on font size and text length
 
     doc.text(text, 10, docHeightOffset.current += heightOffset);
-    if(docHeightOffset.current >= 250){
+    if(docHeightOffset.current >= 280){
       doc.addPage()
       docHeightOffset.current = 10
     }    
