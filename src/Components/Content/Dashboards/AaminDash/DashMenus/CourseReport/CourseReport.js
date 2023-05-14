@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import "../../AdminDash.css"
 import CourseReportChapter from './CourseReportChapter'
@@ -379,67 +379,59 @@ function CourseReport({userData, courseData, close}) {
     let heightOffset = 10
     // Instead of using line count can use height count so it will be more accurate. Each type of thing will have different heights and they can be larger if the text is multiple lines
     let lineCount = 0
-    doc.text("Course report for "+userData.accountData.firstName+" "+userData.accountData.lastName, 10, heightOffset+=10);
-    let date = new Date()
-    doc.text("Course: "+courseData.name, 10, heightOffset+=10);
-    doc.text("Generated "+date.getFullYear()+" / "+date.getMonth()+" / "+date.getDate(), 10, heightOffset+=10);
-    doc.text("    ", 10, heightOffset+=10);
+    addLineToDoc(doc, "Course report for "+userData.accountData.firstName+" "+userData.accountData.lastName, 10, 10)
+    addLineToDoc(doc, "Course: "+courseData.name, 10, 5)
+    let date = new Date()    
+    addLineToDoc(doc, "Generated "+date.getFullYear()+" / "+date.getMonth()+" / "+date.getDate(), 10, 5)
+
+    //doc.text("Course report for "+userData.accountData.firstName+" "+userData.accountData.lastName, 10, heightOffset+=10);
+    // doc.text("Course: "+courseData.name, 10, heightOffset+=10);
+    // doc.text("Generated "+date.getFullYear()+" / "+date.getMonth()+" / "+date.getDate(), 10, heightOffset+=10);
+    // doc.text("    ", 10, heightOffset+=10);
     for(let i=0; i<20; i++){
       chaptersArray.forEach(chapter => {
         // setting text formating: https://codepen.io/AndreKelling/pen/BaoLWao
-        doc.setFontSize(20)
+        //doc.setFontSize(20)
         // doc.text(" ", 10, heightOffset+=10);
         // lineCount++
-        doc.text("Chapter: "+chapter.name + " " + (chapter.complete ? "(Complete)":""), 10, heightOffset+=10);
-        lineCount++
-        if(lineCount>=22){
-          doc.addPage()
-          lineCount = 0
-          heightOffset = 10
-        }
-        console.log("chapter.sectionsArray")
-        console.log(chapter.sectionsArray)
+        // Height offset would actually be a better way to determine when a new page is needed
+        //doc.text("Chapter: "+chapter.name + " " + (chapter.complete ? "(Complete)":""), 10, heightOffset+=10);
+        addLineToDoc(doc, "Chapter: "+chapter.name + " " + (chapter.complete ? "(Complete)":""), 14, 10)
+        // lineCount++
+        
+        // if(heightOffset>=300){
+        //   doc.addPage()
+        //   lineCount = 0
+        //   heightOffset = 10
+        // }
+        // console.log("chapter.sectionsArray")
+        // console.log(chapter.sectionsArray)
         if(Array.isArray(chapter.sectionsArray) && chapter.sectionsArray.length > 0){
           chapter.sectionsArray.forEach(section => {
             doc.setFontSize(10)
             //doc.setTextColor("green")
-            doc.text("    "+"Section: "+section.name + " " + (section.complete ? "(Complete)":""), 10, heightOffset+=10);
-            doc.setFontSize(8)
-            doc.text("        Time Spent in Section: "+"    Required Time: ", 10, heightOffset+=10);          
-            doc.text("        Webcam Images: ", 10, heightOffset+=10);
-            lineCount+=3
-            if(lineCount>=22){
-              doc.addPage()
-              lineCount = 0
-              heightOffset = 10
-            }
+            // doc.text("    Section: "+section.name + " " + (section.complete ? "(Complete)":""), 10, heightOffset+=8);
+            // doc.setFontSize(8)
+            // doc.text("        Time Spent in Section: "+"    Required Time: ", 10, heightOffset+=5);          
+            // doc.text("        Webcam Images: ", 10, heightOffset+=5);
+
+            addLineToDoc(doc, "    Section: "+section.name + " " + (section.complete ? "(Complete)":""), 12, 8)
+            addLineToDoc(doc, "          Time Spent in Section: "+"    Required Time: ", 8, 5)
+            addLineToDoc(doc, "          Webcam Images: ", 8, 5)
+
+            // lineCount+=3
+            // if(heightOffset>=300){
+            //   doc.addPage()
+            //   lineCount = 0
+            //   heightOffset = 10
+            // }
             if(Array.isArray(section.responsesArray) && section.responsesArray.length > 0){
-              doc.setFontSize(8)
+              addLineToDoc(doc, "          User Responses: ", 8, 8)
               section.responsesArray.forEach(response => {
                 if(response.elementData.type === "Text Input"){
-                  // doc.text("      ", 10, heightOffset+=10);
-                  // lineCount++
-                  // if(lineCount>=22){
-                  //   doc.addPage()
-                  //   lineCount = 0
-                  //   heightOffset = 10
-                  // }
-                  // Can have a function that checks the length of the text and adds a new line if it is too long
-                  doc.text("        "+response.elementData.content, 10, heightOffset+=10);
-                  // Can have a function that checks and sets these values. Maybe they can be in refs
-                  lineCount++
-                  if(lineCount>=22){
-                    doc.addPage()
-                    lineCount = 0
-                    heightOffset = 10
-                  }
-                  doc.text("        "+response.response, 10, heightOffset+=10);
-                  lineCount++
-                  if(lineCount>=22){
-                    doc.addPage()
-                    lineCount = 0
-                    heightOffset = 10
-                  }
+                  addLineToDoc(doc, "          "+response.elementData.content, 8, 8)
+                  addLineToDoc(doc, "              "+response.response, 8, 5)
+
                 }
                 
               })
@@ -456,17 +448,30 @@ function CourseReport({userData, courseData, close}) {
     // Will need to know when to add a new page. Calc based on number of lines, type of line, length of line
   }
 
+  const docHeightOffset = useRef(0)
+  function addLineToDoc(doc, text, fontSize, heightOffset){
+    doc.setFontSize(fontSize)
+
+    // Check to see if multiple lines need to be added based on font size and text length
+
+    doc.text(text, 10, docHeightOffset.current += heightOffset);
+    if(docHeightOffset.current >= 250){
+      doc.addPage()
+      docHeightOffset.current = 10
+    }    
+  }
+
   return (
 
     <div className='box courseReport'>
 
       <div className='closeButton' onClick={close}>x</div>
       <div className='courseReportInner'>
-        <button className='third' onClick={()=>setViewPDF(!viewPDF)}>View {(viewPDF ? "Report":"PDF Preview")}</button>
+        {/* <button className='third' onClick={()=>setViewPDF(!viewPDF)}>View {(viewPDF ? "Report":"PDF Preview")}</button> */}
         {/* <button className='third' onClick={()=>downloadPDF()}>Download PDF</button>
         <button className='third' onClick={()=>generatePDF2()}>Generate PDF 2</button> */}
-        <button className='third' onClick={()=>downloadPDF()}>Download PDF</button>
-        {viewPDF? 
+        <button className='third' onClick={()=>downloadPDF()}>Download {userData.accountData.firstName+"'s Course Report "} PDF</button>
+        {true? 
           <>
             {/* <Markdown>{markdownString}</Markdown> */}
             <iframe className='pdfIframe' src={pdfDocUrl}></iframe>

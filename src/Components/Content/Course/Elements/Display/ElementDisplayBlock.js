@@ -9,23 +9,22 @@ import SaveIndicator from './Components/SaveIndicator'
 import { ref, set } from 'firebase/database'
 import FadeMessage from './Components/FadeMessage'
 
-function ElementDisplayBlock({elementDataProp, responseDataOverride}) {
+function ElementDisplayBlock({elementData, responseDataOverride}) {
   
     const userData = useSelector(state => state.dbslice.userData)
     // const userDataOverride = useSelector(state => state.appslice.userDataOverride)
     const [userResponse, setUserResponse] = useState()
-    const [elementData, setElementData] = useState()
     const selectedCourseID = useSelector(state => state.dbslice.selectedCourseID)
     const selectedChapterID = useSelector(state => state.dbslice.selectedChapterID)
     const selectedSectionID = useSelector(state => state.dbslice.selectedSectionID)
 
   useEffect(() => {
     if(responseDataOverride){
-        setUserResponse(responseDataOverride.response)        
-        setElementData(responseDataOverride.elementData)
-    }
-    else{
-        setElementData(elementDataProp)
+        setUserResponse(responseDataOverride.response)
+        elementData = responseDataOverride.elementData
+        console.log("elementData")
+        console.log(elementData)
+    }else{
         const responseDataLocationString = "courses/"+selectedCourseID+"/chapterData/"+selectedChapterID+"/sectionData/"+selectedSectionID+"/responseData/"+elementData?.id
         var userResponseData = getUserData(userData, responseDataLocationString)
         if(userResponseData)
@@ -96,7 +95,7 @@ function ElementDisplayBlock({elementDataProp, responseDataOverride}) {
 
   
   function displayContent(){
-
+    
     if(elementData?.type === "Text"){
         return (
             <div className='elementViewDisplay'>
@@ -136,16 +135,12 @@ function ElementDisplayBlock({elementDataProp, responseDataOverride}) {
                 <div className='textInputDisplayPrompt'>
                     {elementData?.content}
                 </div>
-                {responseDataOverride ?
-                    <>{userResponse}</>
-                    :    
-                    <textarea 
-                        placeholder='Type your answer here' 
-                        ref={responseInputRef} 
-                        onChange={responseNeedsSave} 
-                        defaultValue={userResponse}
-                    ></textarea>
-                }
+                <textarea 
+                    placeholder='Type your answer here' 
+                    ref={responseInputRef} 
+                    onChange={responseNeedsSave} 
+                    defaultValue={userResponse}
+                ></textarea>
             </div>
         )
     else if(elementData?.type === "Input Field")
@@ -186,7 +181,6 @@ function ElementDisplayBlock({elementDataProp, responseDataOverride}) {
                 <MulltipleChoiceDisplay 
                     elementData={elementData} 
                     userResponse={userResponse}
-                    responseDataOverride={responseDataOverride}
                     saveUserResponseFunction={saveUserResponseFunction}
                 ></MulltipleChoiceDisplay>
             </>
