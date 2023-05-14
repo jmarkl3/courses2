@@ -41,7 +41,6 @@ function CartCourse({courseData, selected, draggable, readOnly, userDataOverride
         })
 
         if(isEnrolled){
-            console.log("user is enrolled in "+courseData.name)
             setIsEnrolledInCourse(true)
         }
         else    

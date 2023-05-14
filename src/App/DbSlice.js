@@ -176,6 +176,9 @@ const dbslice = createSlice({
         },
         // New: saveUserSectionData (for section complete, time it took to complete, image capture urls)
         saveUserSectionData2(state, action){
+            console.log("saveUserSectionData2")
+            console.log(action.payload)
+            
             if(!action.payload.kvPairs || typeof action.payload.kvPairs !== "object"){
                 console.log("saveUserSectionData2 missing info")
                 return

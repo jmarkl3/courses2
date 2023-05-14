@@ -25,7 +25,41 @@ export function arrayToObject(array){
     })
     return tempObject
 }
+export function timeString(secondsRaw){
+    // Calcluate the parts of the time string
+    var seconds = secondsRaw % 60
+    var minutes = Math.floor(secondsRaw / 60) % 60
+    var hours = Math.floor(secondsRaw / 3600)
 
+    // If the time requirement has been met display this
+    if(secondsRaw <= 0){
+        return ""
+        return "✔"
+    }
+
+    // If there are seconds but no minutes or hours, return the unpadded seconds
+    if(seconds >= 0 && minutes == 0 && hours == 0){
+        return seconds
+    }
+    // If there are seconds and minutes but no hours, return m:ss
+    else if(seconds >= 0 && minutes > 0 && hours == 0){
+        return minutes + ":" + pad(seconds)
+    }
+    // If there are seconds, minutes and hours, return h:mm:ss
+    else{
+        return hours + ":" + pad(minutes) + ":" + pad(seconds)
+    }
+}
+function pad(number){
+    // return number
+    if(!number || number == 0)
+        return "00"
+    if(number < 10) {
+        return "0"+number
+    }
+    else 
+        return number
+}
 // #endregion conversion functions
 
 // #region getter functions

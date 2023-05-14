@@ -1,107 +1,34 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { useDispatch } from 'react-redux'
 import "../../AdminDash.css"
-import CourseReportChapter from './CourseReportChapter'
 import json2md from 'json2md'
 import Markdown from 'markdown-to-jsx'
 import jsPDF from 'jspdf'
 import topImage from "../../../../../../Images/topImage.jpg"
-import { saveUserAccountData } from '../../../../../../App/DbSlice'
-import { Conv2DBackpropFilter } from '@tensorflow/tfjs'
-import ElementDisplayBlock from '../../../../Course/Elements/Display/ElementDisplayBlock'
 import html2canvas from 'html2canvas'
+import { timeString } from '../../../../../../App/functions'
 /*
-  when user data changes generateChaptersReportObject is called from a useEffect
-  this generates the chapters array which is saved in state
+  When user data changes generateChaptersReportObject is called from a useEffect
+  This generates the chapters array which is saved in state
 
-  when the chapters array changes chaptersArrayToMarkdown is called from a useEffect
-  this generates the markdown array which is saved in state
-  it also calls generatePDF(markdownArray) which generates the pdf and saves it in state
-  it also generates the markdown string which is saved in state. This was used to display the markdown in the browser but it is not used anymore
-
-  generatePDF also generates a blob url for the pdf which is saved in state
-
-  when viewPDF state is true the pdf file is displayed in an iframe from the blob url
-
-  when the user clicks the download button the pdf is downloaded with pdfDoc?.save(filename)
-
-  TODO
-  the elements should be saved into the markdown array as well
-  and this should be added to the pdf
-  formatting should be saved from the markdown array to the pdf
-    https://stackoverflow.com/questions/25703431/how-to-keep-some-formatting-and-paragraphs-when-using-jspdf
-    pdf.addHTML()  
-      ex: var pdf = new jsPDF('p', 'pt', 'letter');
-          pdf.addHTML($('#NameOfTheElementYouWantToConvertToPdf')[0], function () {
-              pdf.save('Test.pdf');
-          });
-    another option pdf.fromHTML()
+  When the chapters array changes generatePDF3 is called from a useEffect
+  This generates a PDF with jsPDF which is saved in state and used to download the pdf with the appropriate name
+  It also generates a blob url for the pdf which is saved in state and displayed in an iframe
 
 */
 function CourseReport({userData, courseData, close}) {
-  // Display completion on in progress status
-    // Display certificate if there is one
-    // Organize by section
-    // Display all of the questions and answers for a course
-    // Display webcam image catures
-    // Display section times
-
-
-    /*
-
-      See note in Course.js
-
-      want to display:
-        DONE
-        all of thr chapters and sections, even the ones the user has not started
-        DONE
-        the completion status of each chapter and section
-        DONE
-        the resopnse data for each element      
-        the required time for each chapter and section
-        the time spend in each chapter and section
-        webcam images for the sections with timestapms
-      
-        generate a markdown file for all of this data, maybe in pdf form
-        file downlads when admin clicks a button
-
-    */
   const [chaptersArray, setChaptersArray] = useState([])
   const [markdownArray, setMarkdownArray] = useState([])
   const [viewMarkdown, setViewMarkdown] = useState(false)
   const [viewPDF, setViewPDF] = useState(false)
   const [markdownString, setMarkdownString] = useState(false)
-  const dispatcher = useDispatch()
-
-  // Unused
-  useEffect(()=>{
-    // Set userDataOverride to the user data passed in
-    //dispatcher(setUserDataOverride(userData))
-
-    // For when component dismountes 
-    return () => {
-      // Set userDataOverride back to null
-      //dispatcher(setUserDataOverride(null))
-    } 
-
-
-  },[])
-  
-  useEffect(()=>{
-    //if(!pdfDoc && markdownArray.length > 0)
-      //generatePDF(markdownArray)
-  },[markdownArray])
 
   // Generate the chapters report object do be displayed
   useEffect(() => {
     generateChaptersReportObject()
   },[userData])
 
-  // Converting the chapters array into markdown
+  // Converting the chapters array into a PDF
   useEffect(() => {
-    //chaptersArrayToMarkdown()
-    console.log("chaptersArray")
-    console.log(chaptersArray)
     generatePDF3()
   },[chaptersArray])
 
@@ -127,13 +54,14 @@ function CourseReport({userData, courseData, close}) {
       
       // Add each section data object to the array
       let sectionData = chapterData?.sectionData
-      if(sectionData && typeof sectionData === "object"){
-        console.log("there is section data")
+      if(sectionData && typeof sectionData === "object"){        
         Object.entries(sectionData).forEach(([sectionKey, sectionData]) => {
           let tempSectionData = {
             name: sectionData?.name,
             id: sectionKey,
             complete: sectionData?.complete,
+            requiredTime: sectionData?.requiredTime,
+            userTime: sectionData?.userTime,
             index: sectionData?.index,
             responsesArray: [],
             responseCount: 0,
@@ -167,10 +95,9 @@ function CourseReport({userData, courseData, close}) {
       tempChapters.push(chapterObject)
       
     })
-    
+
     console.log("tempChapters")
     console.log(tempChapters)
-
     setChaptersArray(tempChapters)
   }
 
@@ -178,9 +105,6 @@ function CourseReport({userData, courseData, close}) {
   function chaptersArrayToMarkdown(){
     if(!chaptersArray)
       return
-
-    console.log("chaptersArray")
-    console.log(chaptersArray)
 
     // This will be an array of markdown objects that will be converted with json2md
     let tempMarkdownArray = []
@@ -213,8 +137,6 @@ function CourseReport({userData, courseData, close}) {
 
     })
 
-    console.log("tempMarkdownArray")
-    console.log(tempMarkdownArray)
     setMarkdownArray(tempMarkdownArray)
     generatePDF(tempMarkdownArray)
     // Give it half a second to render that, then generate the pdf from the html
@@ -225,8 +147,6 @@ function CourseReport({userData, courseData, close}) {
     }, 250);
 
     var tempMarkdownString = json2md(tempMarkdownArray)
-    console.log("tempMarkdownString")
-    console.log(tempMarkdownString)
 
     setMarkdownString(tempMarkdownString)
     createDownloadMarkdownURL(tempMarkdownString)
@@ -312,8 +232,6 @@ function CourseReport({userData, courseData, close}) {
     const doc = new jsPDF();
   
     let courseReportElement = document.getElementById("courseReportHTML")
-    console.log("courseReportElement")
-    console.log(courseReportElement)
 
     // Create a canvas image from the html
     html2canvas(courseReportElement).then(canvas => {
@@ -369,153 +287,108 @@ function CourseReport({userData, courseData, close}) {
   }
   // This one will generate the pdf directly from the JSON
   function generatePDF3(){
-    console.log("generatePDF3")
-    console.log(chaptersArray)
-    if(!Array.isArray(chaptersArray) || chaptersArray.length <= 0){
-      console.log("no chapters array")
+    if(!Array.isArray(chaptersArray) || chaptersArray.length <= 0){      
       return
     }
+
+    // Create a pdf doc with jsPDF node package
     const doc = new jsPDF();
-    let heightOffset = 10
-    // Instead of using line count can use height count so it will be more accurate. Each type of thing will have different heights and they can be larger if the text is multiple lines
-    let lineCount = 0
+
+    // Add the header with name, course, and date
     addLineToDoc(doc, "Course report for "+userData.accountData.firstName+" "+userData.accountData.lastName, 10, 10)
     addLineToDoc(doc, "Course: "+courseData.name, 10, 5)
     let date = new Date()    
     addLineToDoc(doc, "Generated "+date.getFullYear()+" / "+date.getMonth()+" / "+date.getDate(), 10, 5)
+  
+    // Add each chapter along with sections and responses
+    chaptersArray.forEach(chapter => {
+      // setting text formating: https://codepen.io/AndreKelling/pen/BaoLWao        
+      
+      // Add the chapter name and completion statue
+      addLineToDoc(doc, "Chapter: "+chapter.name + " " + (chapter.complete ? "(Complete)":""), 14, 10)
 
-    //doc.text("Course report for "+userData.accountData.firstName+" "+userData.accountData.lastName, 10, heightOffset+=10);
-    // doc.text("Course: "+courseData.name, 10, heightOffset+=10);
-    // doc.text("Generated "+date.getFullYear()+" / "+date.getMonth()+" / "+date.getDate(), 10, heightOffset+=10);
-    // doc.text("    ", 10, heightOffset+=10);
-    for(let i=0; i<20; i++){
-      chaptersArray.forEach(chapter => {
-        // setting text formating: https://codepen.io/AndreKelling/pen/BaoLWao
-        //doc.setFontSize(20)
-        // doc.text(" ", 10, heightOffset+=10);
-        // lineCount++
-        // Height offset would actually be a better way to determine when a new page is needed
-        //doc.text("Chapter: "+chapter.name + " " + (chapter.complete ? "(Complete)":""), 10, heightOffset+=10);
-        addLineToDoc(doc, "Chapter: "+chapter.name + " " + (chapter.complete ? "(Complete)":""), 14, 10)
-        // lineCount++
-        
-        // if(heightOffset>=300){
-        //   doc.addPage()
-        //   lineCount = 0
-        //   heightOffset = 10
-        // }
-        // console.log("chapter.sectionsArray")
-        // console.log(chapter.sectionsArray)
-        if(Array.isArray(chapter.sectionsArray) && chapter.sectionsArray.length > 0){
-          chapter.sectionsArray.forEach(section => {
-            doc.setFontSize(10)
-            //doc.setTextColor("green")
-            // doc.text("    Section: "+section.name + " " + (section.complete ? "(Complete)":""), 10, heightOffset+=8);
-            // doc.setFontSize(8)
-            // doc.text("        Time Spent in Section: "+"    Required Time: ", 10, heightOffset+=5);          
-            // doc.text("        Webcam Images: ", 10, heightOffset+=5);
+      // Add each section
+      if(Array.isArray(chapter.sectionsArray) && chapter.sectionsArray.length > 0){
+        chapter.sectionsArray.forEach(section => {
+          doc.setFontSize(10)
 
-            addLineToDoc(doc, "    Section: "+section.name + " " + (section.complete ? "(Complete)":""), 12, 8)
-            addLineToDoc(doc, "          Time Spent in Section: "+"    Required Time: ", 8, 5)
-            addLineToDoc(doc, "          Webcam Images: ", 8, 5)
+          // Add the section name, completion status, time spent, and webcam images 
+          addLineToDoc(doc, "    Section: "+section.name + " " + (section.complete ? "(Complete)":""), 12, 8)
+          addLineToDoc(doc, "          Time Spent in Section: "+timeString(section.userTime)+"    Required Time: "+timeString(section.requiredTime), 8, 5)
+          addLineToDoc(doc, "          Webcam Images: ", 8, 5)
+      
+          // Add text for each user response
+          if(Array.isArray(section.responsesArray) && section.responsesArray.length > 0){
+            addLineToDoc(doc, "          User Responses: ", 8, 8)
+            section.responsesArray.forEach(response => {
+              if(response.elementData.type === "Text Input"){
+                addLineToDoc(doc, "          "+response.elementData.content, 8, 8)
+                addLineToDoc(doc, "              "+response.response, 8, 5)
 
-            // lineCount+=3
-            // if(heightOffset>=300){
-            //   doc.addPage()
-            //   lineCount = 0
-            //   heightOffset = 10
-            // }
-            if(Array.isArray(section.responsesArray) && section.responsesArray.length > 0){
-              addLineToDoc(doc, "          User Responses: ", 8, 8)
-              section.responsesArray.forEach(response => {
-                if(response.elementData.type === "Text Input"){
-                  addLineToDoc(doc, "          "+response.elementData.content, 8, 8)
-                  addLineToDoc(doc, "              "+response.response, 8, 5)
-
+              }
+              else if(response.elementData.type === "Multiple Choice"){
+                addLineToDoc(doc, "          "+response.elementData?.content, 8, 8)
+                let answerChoices = response.elementData?.answerChoices
+                if(answerChoices && typeof answerChoices === "object"){
+                  Object.entries(answerChoices).forEach(([answerKey, answerChoice]) => {
+                    // If it is the selected answer choice
+                    if(answerKey === response.response?.answerChoiceID){
+                      // Set the color based on if it is correct and add the choice text
+                      if(response.response?.correct == true)
+                        addLineToDoc(doc, "              "+answerChoice.content, 8, 5, "green")                          
+                      else
+                        addLineToDoc(doc, "              "+answerChoice.content, 8, 5, "red")                                                        
+                      }
+                    // If it is not the selected answer choice add it normally without any color
+                    else{
+                      addLineToDoc(doc, "              "+answerChoice.content, 8, 5)                                                                                
+                    }
+                  })
                 }
-                
-              })
-            }
-          })
-        }
-      })
-
-    }
-
+              }              
+            })
+          }
+        })
+      }
+    })
+    
+    // Save the doc for downloading
     setPdfDoc(doc)
+    // Save the url for display in the iframe
     setPdfDocUrl(URL.createObjectURL(doc.output("blob")))
 
-    // Will need to know when to add a new page. Calc based on number of lines, type of line, length of line
   }
 
   const docHeightOffset = useRef(0)
-  function addLineToDoc(doc, text, fontSize, heightOffset){
+  // Adds a line to the doc keeping track of the height offset and when a new page is needed
+  function addLineToDoc(doc, text, fontSize, heightOffset, color){
+    // Set the line color and font size
     doc.setFontSize(fontSize)
+    if(color)
+      doc.setTextColor(color)
+    else
+      doc.setTextColor("black")
 
-    // Check to see if multiple lines need to be added based on font size and text length
-
-    doc.text(text, 10, docHeightOffset.current += heightOffset);
+    // See if a new page needs to be added before adding the line
     if(docHeightOffset.current >= 280){
       doc.addPage()
       docHeightOffset.current = 10
-    }    
+    }   
+
+    // Check to see if multiple lines need to be added based on font size and text length
+
+    // Add the line
+    doc.text(text, 10, docHeightOffset.current += heightOffset);
+ 
   }
 
   return (
 
     <div className='box courseReport'>
-
       <div className='closeButton' onClick={close}>x</div>
       <div className='courseReportInner'>
-        {/* <button className='third' onClick={()=>setViewPDF(!viewPDF)}>View {(viewPDF ? "Report":"PDF Preview")}</button> */}
-        {/* <button className='third' onClick={()=>downloadPDF()}>Download PDF</button>
-        <button className='third' onClick={()=>generatePDF2()}>Generate PDF 2</button> */}
-        <button className='third' onClick={()=>downloadPDF()}>Download {userData.accountData.firstName+"'s Course Report "} PDF</button>
-        {true? 
-          <>
-            {/* <Markdown>{markdownString}</Markdown> */}
-            <iframe className='pdfIframe' src={pdfDocUrl}></iframe>
-          </>
-          :
-          <>
-            <h3>{courseData?.courseName}</h3>
-            <div id='courseReportHTML'>          
-              {chaptersArray.map(chapterDataObject => (
-                <CourseReportChapter chapterUserData={chapterDataObject} id={chapterDataObject.id}></CourseReportChapter>
-              ))}
-              {/* {chaptersArray.map(chapterDataObject => (
-                <div className='courseReportSection'>
-                  <div className='courseReportInfo'>
-                      <div className='courseReportInfoInner courseReportChapterTitle'>
-                          {"Chapter: "+chapterDataObject?.name}
-                      </div>
-                      <div className='courseReportInfoInner'>
-                          {chapterDataObject?.complete ? "(Complete)":"(Incomplete)"}
-                      </div>
-                  </div>
-                  {chapterDataObject?.sectionsArray?.map((sectionUserData)=>(
-                      <div className='courseReportSection'>
-                        <div className='courseReportInfo'>
-                            <div className='courseReportInfoInner courseReportSectionTitle'>
-                                {"Section: "+sectionUserData?.name}
-                            </div>
-                            <div className='courseReportInfoInner'>
-                                {sectionUserData.complete ? "(Complete)":((sectionUserData.numberOfInputElements > 0) ? "("+sectionUserData.responseCount + " / "+sectionUserData.numberOfInputElements+")" :"(Incomplete)")}
-                            </div>
-                        </div>
-                        {sectionUserData?.responsesArray?.map((responseData)=>(
-                            <div className='courseReportResponsesSection'>
-                                <ElementDisplayBlock responseDataOverride={responseData}></ElementDisplayBlock>
-                            </div>            
-                        ))}
-                    </div>
-                  ))}
-              </div>
-              ))} */}
-
-            </div>
-          </>
-        }
+        <button className='third' onClick={()=>downloadPDF()}>Download {userData.accountData.firstName+"'s Course Report "} PDF</button>        
+        <iframe className='pdfIframe' src={pdfDocUrl}></iframe>        
       </div>
 
     </div>

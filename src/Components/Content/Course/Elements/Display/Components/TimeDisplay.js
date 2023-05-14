@@ -1,9 +1,18 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import "./ElementDisplayComponents.css"
-import { saveRemainingSectionTime, saveRemainingSectionTime2, saveUserSectionData, saveUserSectionData2 } from '../../../../../../App/DbSlice'
-import { getUserData } from '../../../../../../App/functions'
+import { saveUserSectionData2 } from '../../../../../../App/DbSlice'
+import { getUserData, timeString } from '../../../../../../App/functions'
 
+/*
+    Checks to see if the page is visible and if this section is selected
+    if so starts the timer
+
+    incrementTimer is recursibely called on a useTimeout every second and increments the currentTime state and ref
+
+    syncTime is called when the timer is paused
+    saves the current time in userData
+*/
 function TimeDisplay({sectionData, chapterID, viewOnly, setRemainingTime}) {
     const [currentTime, setCurrentTime] = useState(0)
     const currentTimeRef = useRef(0)
@@ -12,12 +21,13 @@ function TimeDisplay({sectionData, chapterID, viewOnly, setRemainingTime}) {
     const selectedSectionID = useSelector(state => state.dbslice.selectedSectionID)
     const selectedCourseID = useSelector(state => state.dbslice.selectedCourseID)
     const timerSaveCounter = useSelector(state => state.dbslice.timerSaveCounter)
+    const userID = useSelector(state => state.dbslice.userID)
     const userData = useSelector(state => state.dbslice.userData)
     const timerTimeoutRef = useRef()
     const activeRef = useRef(false)
-    const dispacher = useDispatch()
+    const dispatcher = useDispatch()    
 
-    // Gets sectionData?.requiredTime, listens for visibility changes, and saves the time on component dismount
+    // Leave page listener pauses and resumes the timer when the user leaves the page or returns to it
     useEffect(()=>{
         leavePageListener()
 
@@ -25,6 +35,7 @@ function TimeDisplay({sectionData, chapterID, viewOnly, setRemainingTime}) {
         return ()=>{pauseTimer()}
 
     },[])
+
     // Gets sectionData?.requiredTime
     useEffect(()=>{
         // If the section has a required time, use that
@@ -32,17 +43,27 @@ function TimeDisplay({sectionData, chapterID, viewOnly, setRemainingTime}) {
             sectionRequiredTimeRef.current = sectionData?.requiredTime
 
     },[sectionData])
+  
+    // Put the params in refs because the event callback may not have access to their currnt values
+    const sectionDataRef = useRef(sectionData)
+    const chapterIDRef = useRef(chapterID)
+    const selectedSectionIDRef = useRef(selectedSectionID)
+    useEffect(()=>{
+        sectionDataRef.current = sectionData
+        chapterIDRef.current = chapterID    
+        selectedSectionIDRef.current = selectedSectionID
+    },[sectionData, chapterID, selectedSectionID])
 
-    // Checks ot see if the section is selected and starts or pauses the timer
+    // Checks to see if the section is selected and starts or pauses the timer
     useEffect(() => {
-        // Savge this in a ref so it can be accessed on resume if the user leaves the page and comes back
+        // Save this in a ref so it can be accessed on resume if the user leaves the page and comes back
         sectionActiveRef.current = (selectedSectionID === sectionData?.id)
     
         // If the section is selected start the timer 
         if(sectionActiveRef.current)
-        setTimeout(() => {
-            resumeTimer()            
-        }, 500);
+            setTimeout(() => {
+                resumeTimer()            
+            }, 500);
 
         // Else pause the timer
         else
@@ -51,9 +72,11 @@ function TimeDisplay({sectionData, chapterID, viewOnly, setRemainingTime}) {
     },[selectedSectionID, sectionData])
 
     // When the user data changes (and on start) get the remaining time from userData
-    useEffect(() => {
+    useEffect(() => {       
         // Get the time spent in this section from userData
-        var userCurrentTime = getUserData(userData, "responses/"+selectedCourseID+"/"+chapterID+"/"+sectionData?.id+"/sectionTime")
+        var locationString = "courses/"+selectedCourseID+"/chapterData/"+chapterID+"/sectionData/"+selectedSectionID+"/userTime"
+        var userCurrentTime = getUserData(userData, locationString)
+
         // If a time value was found set the state and ref to it
         if(userCurrentTime){            
             currentTimeRef.current = userCurrentTime
@@ -63,23 +86,29 @@ function TimeDisplay({sectionData, chapterID, viewOnly, setRemainingTime}) {
     },[userData])
 
     useEffect(() => {
-        syncTime()
+        //syncTime()
     },[timerSaveCounter])
 
     /**
      * Adds a listener to the window to detect when the user changes tabs or closes the browser
+     * When the user leaves the page (when it is not visiabe) the timer is paused, when the page is visible again the timer is resumed
      */
     function leavePageListener(){
         // Whenever the user changes or closes the tab or browser this will be called
         window.addEventListener("visibilitychange", (event) => {
+
+            if(selectedSectionIDRef.current !== sectionData?.id)
+                return            
+
             if (document.visibilityState === "visible") {
                 // If this is the active section, resume the timer
                 if(sectionActiveRef.current)
                     resumeTimer()
 
             } else {
-                // When the user leaves the page pause the timer
-                pauseTimer()
+                // When the user leaves the page pause the timer (if it is active)
+                if(activeRef.current )
+                    pauseTimer()
 
             }
         });
@@ -113,6 +142,8 @@ function TimeDisplay({sectionData, chapterID, viewOnly, setRemainingTime}) {
         incrementTime()
     }
 
+    // TODO: check to see if the time is being saved in the correct place in the db
+    // TODO: the required time should be saved in the userData also
     /**
      * Saves the current time in userData and clears the current timer
      */
@@ -120,12 +151,30 @@ function TimeDisplay({sectionData, chapterID, viewOnly, setRemainingTime}) {
         // This is a flag that prevents multiple saves for the same section time
         if(viewOnly)
             return
-        
+
+        // Zero time does not need to be saved and may overwrite the actual user time
+        if(currentTimeRef.current == 0)
+            return  
+
+        // This is still being called when the section is not selected, maybe it pauses on start
+        // console.log("=============================")
+        // console.log("syncing time")
+        // console.log("sectionData?.id")
+        // console.log(sectionData?.id)
+        // console.log("selectedCourseID")
+        // console.log(selectedSectionID)
+
+        // Only save the data if the section is selected
+        if(selectedSectionIDRef.current !== sectionData?.id)
+            return
+        // console.log("=============================")
+        // console.log("saving for "+sectionData?.id)
+
         // Clear this so the timer doesn't keep incrementing
         clearTimeout(timerTimeoutRef.current)
 
         // If the timer is active save the current remaining time in userData. Use the sectionData?.id and chapterID props because the selectedSectionID may not correspond ot this one                
-        dispacher(saveUserSectionData2({sectionID: sectionData?.id, chapterID: chapterID, value: currentTimeRef.current, property: "sectionTime"}))
+        dispatcher(saveUserSectionData2({sectionID: sectionData?.id, chapterID: chapterIDRef.current, kvPairs: {userTime: currentTimeRef.current, requiredTime: sectionDataRef.current?.requiredTime}}))
         
     }
 
@@ -167,51 +216,9 @@ function TimeDisplay({sectionData, chapterID, viewOnly, setRemainingTime}) {
         return timeString(timeLeft)
     }
 
-    /**
-     * Turns the raw time value from seconds into a hh:mm:ss string
-     */
-    function timeString(secondsRaw){
-        // Calcluate the parts of the time string
-        var seconds = secondsRaw % 60
-        var minutes = Math.floor(secondsRaw / 60) % 60
-        var hours = Math.floor(secondsRaw / 3600)
-
-        // If the time requirement has been met display this
-        if(secondsRaw <= 0){
-            return ""
-            return "✔"
-        }
-
-        // If there are seconds but no minutes or hours, return the unpadded seconds
-        if(seconds >= 0 && minutes == 0 && hours == 0){
-            return seconds
-        }
-        // If there are seconds and minutes but no hours, return m:ss
-        else if(seconds >= 0 && minutes > 0 && hours == 0){
-            return minutes + ":" + pad(seconds)
-        }
-        // If there are seconds, minutes and hours, return h:mm:ss
-        else{
-            return hours + ":" + pad(minutes) + ":" + pad(seconds)
-        }
-    }
-    
-    /**
-     * Makes a number 2 digits long by adding a leading 0 if needed
-     */
-    function pad(number){
-        // return number
-        if(!number || number == 0)
-            return "00"
-        if(number < 10) {
-            return "0"+number
-        }
-        else 
-            return number
-    }
-
   return (
     <div className='timeDisplay'>
+        {sectionData.id}
         {countdownTimeString(currentTime)}
     </div>
   )

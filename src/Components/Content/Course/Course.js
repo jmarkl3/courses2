@@ -134,6 +134,7 @@ function Course() {
         let tempSectionData = {
           name: sectionData.name,
           numberOfInputElements: 0,
+          requiredTime: sectionData.requiredTime
         }
 
         // Save it in coursePartialData 

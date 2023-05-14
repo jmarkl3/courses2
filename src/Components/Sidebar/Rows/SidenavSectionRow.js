@@ -167,6 +167,7 @@ var testObj = {}
               // <span style={{color: "green"}}>✔</span>
               <div className='completeIndicator' title='Section Complete'>✔</div>
               :
+              // <div>time</div>
               <TimeDisplay sectionData={itemData} chapterID={chapterID}></TimeDisplay>
             
           }

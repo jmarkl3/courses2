@@ -18,10 +18,20 @@ import Support from './Components/Menus/Support/Support';
 // TODO
 /*      
 
-  con law
-  contact person about position
-
+  get po box and update the court with the address
+  sign up for website thing
+  bp for med
+  talk to hml ppl 
   
+  time component
+    make a note about how it works
+    save the time data in the user data so it can be displayed on the course report
+    check on bugs
+
+  webcam component
+    note about how it works
+    save the webcam images in the user data so they can be displayed on the course report
+
   user should be able to select completed chapters and the chapter after a completed chapter        
  
   dashboards
