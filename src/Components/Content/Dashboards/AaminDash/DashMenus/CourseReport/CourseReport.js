@@ -377,17 +377,20 @@ function CourseReport({userData, courseData, close}) {
     }
     const doc = new jsPDF();
     let heightOffset = 10
+    // Instead of using line count can use height count so it will be more accurate. Each type of thing will have different heights and they can be larger if the text is multiple lines
     let lineCount = 0
     doc.text("Course report for "+userData.accountData.firstName+" "+userData.accountData.lastName, 10, heightOffset+=10);
     let date = new Date()
-    doc.text("Generated "+date.getFullYear()+"/"+date.getMonth()+"/"+date.getDate(), 10, heightOffset+=10);
+    doc.text("Course: "+courseData.name, 10, heightOffset+=10);
+    doc.text("Generated "+date.getFullYear()+" / "+date.getMonth()+" / "+date.getDate(), 10, heightOffset+=10);
+    doc.text("    ", 10, heightOffset+=10);
     for(let i=0; i<20; i++){
       chaptersArray.forEach(chapter => {
         // setting text formating: https://codepen.io/AndreKelling/pen/BaoLWao
-        doc.setFontSize(30)
-        doc.text(" ", 10, heightOffset+=10);
-        lineCount++
-        doc.text(chapter.name, 10, heightOffset+=10);
+        doc.setFontSize(20)
+        // doc.text(" ", 10, heightOffset+=10);
+        // lineCount++
+        doc.text("Chapter: "+chapter.name + " " + (chapter.complete ? "(Complete)":""), 10, heightOffset+=10);
         lineCount++
         if(lineCount>=22){
           doc.addPage()
@@ -398,14 +401,48 @@ function CourseReport({userData, courseData, close}) {
         console.log(chapter.sectionsArray)
         if(Array.isArray(chapter.sectionsArray) && chapter.sectionsArray.length > 0){
           chapter.sectionsArray.forEach(section => {
-            doc.setFontSize(20)
+            doc.setFontSize(10)
             //doc.setTextColor("green")
-            doc.text("    "+section.name, 10, heightOffset+=10);
-            lineCount++
+            doc.text("    "+"Section: "+section.name + " " + (section.complete ? "(Complete)":""), 10, heightOffset+=10);
+            doc.setFontSize(8)
+            doc.text("        Time Spent in Section: "+"    Required Time: ", 10, heightOffset+=10);          
+            doc.text("        Webcam Images: ", 10, heightOffset+=10);
+            lineCount+=3
             if(lineCount>=22){
               doc.addPage()
               lineCount = 0
               heightOffset = 10
+            }
+            if(Array.isArray(section.responsesArray) && section.responsesArray.length > 0){
+              doc.setFontSize(8)
+              section.responsesArray.forEach(response => {
+                if(response.elementData.type === "Text Input"){
+                  // doc.text("      ", 10, heightOffset+=10);
+                  // lineCount++
+                  // if(lineCount>=22){
+                  //   doc.addPage()
+                  //   lineCount = 0
+                  //   heightOffset = 10
+                  // }
+                  // Can have a function that checks the length of the text and adds a new line if it is too long
+                  doc.text("        "+response.elementData.content, 10, heightOffset+=10);
+                  // Can have a function that checks and sets these values. Maybe they can be in refs
+                  lineCount++
+                  if(lineCount>=22){
+                    doc.addPage()
+                    lineCount = 0
+                    heightOffset = 10
+                  }
+                  doc.text("        "+response.response, 10, heightOffset+=10);
+                  lineCount++
+                  if(lineCount>=22){
+                    doc.addPage()
+                    lineCount = 0
+                    heightOffset = 10
+                  }
+                }
+                
+              })
             }
           })
         }
