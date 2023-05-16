@@ -110,7 +110,8 @@ function AuthMenu() {
     return (
         <div className={theme}>
             {showAuthMenu && 
-                <div className={`authMenu ${sideNavOpen ? "sideNavAuthLeftAdjust":""}`}>
+                // <div className={`authMenu ${sideNavOpen ? "sideNavAuthLeftAdjust":""}`}>
+                <div className={`authMenu`}>
                     <div className='closeButton' onClick={()=>dispatcher(toggleShowAuthMenu())}>x</div>
                     <>
                         {userID ? 

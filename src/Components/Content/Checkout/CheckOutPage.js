@@ -132,6 +132,23 @@ function CheckOutPage() {
           return
         }
 
+        /*
+          userStats: {
+            date: {
+              randomKey: {
+                userID: <userID>,
+                type: "new user, existing user enrolled, completed course, amount",
+                time: <time>
+              }
+            }
+          }
+
+          also put in their userData
+
+        */
+
+        // dispatcher(userStats({userID: user.uid, type: "new user"}))
+
         // Save user input data to user account
         dispatcher(saveUserAccountData({userID: user.uid, kvPairs: userInputData}))
 
