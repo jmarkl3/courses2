@@ -7,6 +7,7 @@ import SaveIndicator from './SaveIndicator'
 import { getUserData, objectToArray } from '../../../../../../App/functions'
 import FadeMessage from './FadeMessage'
 import { ref, set } from 'firebase/database'
+import TimeDisplay2 from './TimeDisplay2'
 
 function SectionButtons({sectionData, chapterID}) {
     const [remainingTime, setRemainingTime] = useState(0)
@@ -106,7 +107,7 @@ function SectionButtons({sectionData, chapterID}) {
   return (
     <div className='sectionButtons'>
         <div className='nextButtonTimer'>
-            <TimeDisplay sectionData={sectionData} chapterID={chapterID} setRemainingTime={setRemainingTime}></TimeDisplay>
+            <TimeDisplay2 sectionData={sectionData} chapterID={chapterID} setRemainingTime={setRemainingTime}></TimeDisplay2>
         </div>
         <button onClick={()=>dispacher(selectPreviousSection())}>Back</button>
         <div className='sectionButtonMessage'>            

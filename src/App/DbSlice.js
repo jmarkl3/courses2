@@ -220,7 +220,25 @@ const dbslice = createSlice({
                 return item
             })
         },
+        incrementUserSectionTime(state, action){            
+            runTransaction(ref(database, "coursesApp/userData/"+state.userID+"/courses/"+(action.payload?.courseID || state.selectedCourseID)+"/chapterData/"+(action.payload?.chapterID || state.selectedChapterID)+"/sectionData/"+(action.payload?.sectionID|| state.selectedSectionID)), item => {
+                if(!item.userTime)
+                    item.userTime = 0
+                if(typeof item.userTime !== "number")
+                    item.userTime = Number.parseInt(item.userTime)
+                else
+                    item.userTime++
+                if(action.payload?.requiredTime){
+                    if(typeof action?.payload?.requiredTime)
+                        item.requiredTime = Number.parseInt(action.payload?.requiredTime)
+                    else
+                        item.requiredTime = action.payload?.requiredTime
+                }
 
+                return item
+            })
+
+        },
         // New: saveUserResponse (for answered questions)
         saveUserResponse(state, action){
             if(!action.payload.kvPairs || !action.payload.elementID){
@@ -1170,7 +1188,9 @@ export const {
     saveUserChapterData,
     saveUserSectionData2,
     saveUserResponse,
-    clearAllUserData} = dbslice.actions;
+    clearAllUserData,
+    incrementUserSectionTime,
+} = dbslice.actions;
 // Selection actions
 export const {selectCourse, selectChapter, selectSection, selectElement, selectNextSection, selectPreviousSection, selectSectionIfValid, selectChapterIfValid} = dbslice.actions;
 // Course actions

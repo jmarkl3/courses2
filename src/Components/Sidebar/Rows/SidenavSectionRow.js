@@ -7,6 +7,7 @@ import DragDropIndicatorBar from '../../../Utils/DragDropIndicatorBar.js'
 import HamburgerMenu from '../../../Utils/HamburgerMenu.js'
 import SidenavElementRow from './SidenavElementRow.js'
 import TimeDisplay from '../../Content/Course/Elements/Display/Components/TimeDisplay.js'
+import TimeDisplay2 from '../../Content/Course/Elements/Display/Components/TimeDisplay2.js'
 function SidenavSectionRow({itemData, chapterID, setSectionRenaming}) {
   const [confirmDeleteMessage, setConfirmDeleteMessage] = useState()
   const [renaming, setRenaming] = useState()
@@ -170,7 +171,7 @@ var testObj = {}
               <div className='completeIndicator' title='Section Complete'>✔</div>
               :
               // <div>time</div>
-              <TimeDisplay sectionData={itemData} chapterID={chapterID}></TimeDisplay>
+              <TimeDisplay2 sectionData={itemData} chapterID={chapterID} viewOnly></TimeDisplay2>
             
           }
         </>

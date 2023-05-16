@@ -87,6 +87,8 @@ import Support from './Components/Menus/Support/Support';
   ________________________________________________________________________________
   Bugs
 
+  If use has multiple browser tabs in different windows the TimeDisplay2 timer double counts
+
   the course is showing view certificate even though the course is not complete
 
   time component resets sometimes
