@@ -530,8 +530,7 @@ const dbslice = createSlice({
                 return
 
            // Look into the userData to see if the specified section has the complted property set to true
-            var chapterIsCompleted = getUserData(state.userData, "courses/"+state.selectedCourseID+"/chapterData/"+state.selectedChapterID+"/complete")
-            console.log("chapterIsCompleted: " + chapterIsCompleted)
+            var chapterIsCompleted = getUserData(state.userData, "courses/"+state.selectedCourseID+"/chapterData/"+state.selectedChapterID+"/complete")            
 
             // If it is select it
             if(chapterIsCompleted == true){

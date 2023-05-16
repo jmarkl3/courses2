@@ -32,27 +32,36 @@ function TimeDisplay2({sectionData, chapterID, viewOnly, setRemainingTime}) {
     const selectedCourseID = useSelector(state => state.dbslice.selectedCourseID)
     const selectedSectionID = useSelector(state => state.dbslice.selectedSectionID)
     const requiredTimeRef = useRef(sectionData?.requiredTime)
+    const [userTime, setUserTime] = useState(0)
     const activeRef = useRef(false)
     const dispatcher = useDispatch()
 
     // Sets up a listener to pause and resume the timer if the user leaves the page or returns
     useEffect(() => {
         leavePageListener()
+        
+        // When the comonent is unmounted stop the timer
+        return () => {pauseTimer()}
+
     },[])
 
     // When the users data changes (for example when their userTime for this section updates) update the time
     const userTimeRef = useRef()
     useEffect(() => {
-        if(!userData) return
+        if(!userData) {
+            return
+        }
 
+        // Save it in a ref so the functions can acess it
         userTimeRef.current = getUserData(userData, "courses/"+selectedCourseID+"/chapterData/"+chapterID+"/sectionData/"+sectionData?.id+"/userTime")        
+        // Update it in state so the component will rerender
+        setUserTime(userTimeRef.current)
 
     },[userData])
 
     // When the selected section changes check to the section data, if they match start the timer
     const selectedSectionIDRef = useRef()
     useEffect(() => {
-
         // Save this in a ref so it can be accessed in the leavePageListener
         selectedSectionIDRef.current = selectedSectionID
 
@@ -66,7 +75,7 @@ function TimeDisplay2({sectionData, chapterID, viewOnly, setRemainingTime}) {
             pauseTimer()
         }
 
-    },[selectedSectionID])
+    },[selectedSectionID, sectionData])
 
     function leavePageListener(){
         // Whenever the user changes or closes the tab or browser this will be called
@@ -90,6 +99,10 @@ function TimeDisplay2({sectionData, chapterID, viewOnly, setRemainingTime}) {
     }
 
     function startTimer(){
+        // If this time display is being used only to view the time don't increment the time so it doesn't double update the db
+        if(viewOnly)    
+            return
+
         activeRef.current = true
         clearTimeout(timerRef.current)
         incrementTime()
@@ -126,6 +139,7 @@ function TimeDisplay2({sectionData, chapterID, viewOnly, setRemainingTime}) {
     // Calculates the difference in required time and user time
     function countdownTimeString(){
  
+        // If the required time is being stored as a string convert it into an intiger
         if(typeof requiredTimeRef.current === "string")
             requiredTimeRef.current = parseInt(requiredTimeRef.current)
 
@@ -133,11 +147,13 @@ function TimeDisplay2({sectionData, chapterID, viewOnly, setRemainingTime}) {
         if(!requiredTimeRef.current)
             return ""
 
-        return timeString(requiredTimeRef.current - userTimeRef.current)
+        // Create a time string with the difference (hh:mm:ss)
+        return timeString(requiredTimeRef.current - userTime)
     }
 
   return (
-    <div className='timeDisplay'>
+    <div className='timeDisplay'>      
+
         {countdownTimeString()}
     </div>
   )

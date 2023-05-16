@@ -106,8 +106,8 @@ function SectionButtons({sectionData, chapterID}) {
 
   return (
     <div className='sectionButtons'>
-        <div className='nextButtonTimer'>
-            <TimeDisplay2 sectionData={sectionData} chapterID={chapterID} setRemainingTime={setRemainingTime}></TimeDisplay2>
+        <div className='nextButtonTimer'>            
+            <TimeDisplay2 sectionData={sectionData} chapterID={chapterID} setRemainingTime={setRemainingTime}></TimeDisplay2>                        
         </div>
         <button onClick={()=>dispacher(selectPreviousSection())}>Back</button>
         <div className='sectionButtonMessage'>            
