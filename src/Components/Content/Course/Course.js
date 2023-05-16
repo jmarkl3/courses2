@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { setLoading, setSideNavOpen } from '../../../App/AppSlice'
+import { setEditMode, setLoading, setSideNavOpen } from '../../../App/AppSlice'
 import SideNav from '../../Sidebar/SideNav'
 import ElementMapper from './Elements/ElementMapper'
 import DisplayPage from '../DisplayPage'
@@ -35,12 +35,6 @@ function Course() {
       // check the user data to see if the course data has been loaded into their user data
       let savedCourseData = getUserData(userData, "courses/"+courseID+"/savedCourseData")
 
-      console.log("course data loaded")
-      console.log(courseData)
-      console.log("userData")
-      console.log(userData)
-
-
       /*
 
         take the courseData and create this coursePartialData object:
@@ -74,7 +68,7 @@ function Course() {
       // They will be displayed as components for chapters with sub components for sections with element components for responses
 
       // If it has not been loaded, load it
-      if(!savedCourseData){
+      if(userData && !savedCourseData){
         console.log("user has not saved course data")
         let coursePartialData = generatePartialData(courseData)
         dispatcher(saveUserCourseData({kvPairs: {savedCourseData: true, name: coursePartialData.name, chapterData: coursePartialData.chapterData}, courseID: courseID}))
@@ -86,6 +80,8 @@ function Course() {
   
   useEffect(() => {
     checkIfComplete()
+    if(userData && !(userData.accountData.isFullAdmin || userData.accountData.isCourseAdmin))
+      dispatcher(setEditMode(false))
   },[courseID, userData])
 
   function checkIfComplete(){

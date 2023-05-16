@@ -75,9 +75,12 @@ function AuthMenu() {
       dispatcher(setUserID(user?.uid))
       // If the user signs in take them to the dashboard and hide the auth menu 
       if(user) {
-        dispatcher(setShowAuthMenu(false))
+        dispatcher(setShowAuthMenu(false))                
+        
         // Doing this in a timeout so the auth menu has time to close before navigating
-        setTimeout(()=>navigate("/Dashboard"), 250)
+        if(!window.location.href.toLocaleLowerCase().includes("Course"))
+          // console.log("going to dashboard")
+          setTimeout(()=>navigate("/Dashboard"), 250)
       }
       // If the user signed out take them to the home page and clear their user data
       else{
@@ -120,11 +123,11 @@ function AuthMenu() {
                             } */}
                             <button onClick={goToDashboard}>Your Courses / Dashboard</button>                            
                             <button onClick={()=>dispatcher(toggleTheme())}>{theme === "lightTheme" ? "Dark Theme" : "Light Theme"}</button>                                                                                
+                            <button onClick={()=>dispatcher(saveUserAccountData({kvPairs: {fullAdmin: !fullAdmin}}))}>Toggle fullAdmin {" "+fullAdmin}</button>                                                                                                               
                             <button onClick={signOutUser}>Log Out</button>
-                            {true &&
+                            {fullAdmin &&
                               <>
                                 <button onClick={()=>dispatcher(clearAllCourseData())}>Clear Courses</button>                                                        
-                                <button onClick={()=>dispatcher(saveUserAccountData({kvPairs: {fullAdmin: !fullAdmin}}))}>Toggle fullAdmin {" "+fullAdmin}</button>                                                                                                               
                                 <button onClick={()=>dispatcher(clearAllUserData())}>Clear all user data</button>                                                                                                               
                               </>
                             }

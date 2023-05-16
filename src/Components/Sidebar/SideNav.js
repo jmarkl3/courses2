@@ -38,15 +38,19 @@ function SideNav() {
     return (
     <div className={`sidebar ${!sideNavOpen && "sidebarClosed"}`} onClick={openSidebar} title={!sideNavOpen ? "Open Sidebar" : null}>
         <div className={`sidebarClose ${!sideNavOpen && "hidden"}`} onClick={closeSidebar} title="Hide Sidebar">{"◁"}</div>
-        {!itemArray || itemArray.length === 0 && 
-            <button onClick={addChapterFunction}>Add Chapter</button>
-        }        
-        <div className={sideNavOpen ? "":" sideNaveClosedItems"}>
-            {itemArray.map(chapter => (
-                <SidenavChapterRow itemData={chapter} key={chapter.id}></SidenavChapterRow>
-            ))}
+        {sideNavOpen && 
+            <>
+                {!itemArray || itemArray.length === 0 && 
+                    <button onClick={addChapterFunction}>Add Chapter</button>
+                }        
+                <div className={sideNavOpen ? "":" sideNaveClosedItems"}>
+                    {itemArray.map(chapter => (
+                        <SidenavChapterRow itemData={chapter} key={chapter.id}></SidenavChapterRow>
+                    ))}
 
-        </div>
+                </div>
+            </>
+        }
     </div>
   )
 }

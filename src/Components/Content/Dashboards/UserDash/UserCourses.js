@@ -12,21 +12,17 @@ function UserCourses({userDataOverride}) {
 
     const [enrolledCoursesArray, setEnrolledCoursesArray] = useState([])
     function generateEnrolledCoursesArray(){
-      if((!userData || !userData?.courses || typeof userData?.courses !== "object") && !userDataOverride) {            
-          setEnrolledCoursesArray([])
-          return
-      }
-
       // Get an array of courseIDs that the user is enrolled in
       let tempEnrolledCoursesArray = []
-      // Look through each course in their data
-      if(!userDataOverride || typeof userDataOverride?.courses !== "object")
-        return
-         
-      Object.entries((userDataOverride?.courses || userData?.courses)).forEach(course => {
+      
+      // Look through each course in their data      
+      const userDataTemp = userDataOverride?.courses || userData?.courses  
+      if(!userDataTemp || typeof userDataTemp !== "object") return
+      Object.entries(userDataTemp).forEach(([courseID, courseUserData]) => {
+     
           // If there enrolled in it add the id to the array
-          if(course[1].enrolled)
-              tempEnrolledCoursesArray.push(course[0])
+          if(courseUserData.enrolled)
+              tempEnrolledCoursesArray.push(courseID)
       })
 
       // Put the array in state to be displayed 

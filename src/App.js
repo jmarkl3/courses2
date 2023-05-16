@@ -18,42 +18,31 @@ import Support from './Components/Menus/Support/Support';
 // TODO
 /*      
 
-  get po box and update the court with the address
-  sign up for website thing
+  call co court
+    update address
+    link account to case
+  vall seal lw    
   bp for med
-  talk to hml ppl 
-  
-  time component
-    make a note about how it works
-    save the time data in the user data so it can be displayed on the course report
-    check on bugs
+  talk to hml ppl   
 
-  webcam component
-    note about how it works
-    save the webcam images in the user data so they can be displayed on the course report
-
-  user should be able to select completed chapters and the chapter after a completed chapter        
+  Sidenav
+  user should be able to select only completed chapters and the chapter after a completed chapter        
+  timer 
+    dissapears in the sidebar when it closes
+    the one in the sectiton should keep track of the time even when the sidebar is closed
+    the one in the sidebar should reflect the current time when it is opened, it currently is out of sync          
  
-  dashboards
-    user information  
-    edit user information option (maybe a gear or edit icon in the corner)
-    admin view and edit other user information window
-    styling like the example site
-    admin dashboard
-      recharts
-        log how many new users per day and amount per day  
-      user search
-      user reports             
-        completion status 
-        certificate if complete        
-        full course report with all user info prompts, answers, time on each section, webcam images                                 
-        save and display for each of these
-        time it took to complete the section
-        webcam images    
-  view as admin button
-    admin state stays but another variable is set to show the admin view
-    edit rights are a seperate variable
-    so there can be admins that cna just view the courses as an admin without the ability to edit
+  dashboards       
+    admin 
+      log how many new users per day and amount per day    
+        when a new user creates an account add it to a data structure in the db
+        display it on the chart based on date
+        format the cart so it looks right
+        ability to change the date range    
+      user reports                     
+        view / download certificate button if complete        
+          maybe as a pdf instead of just an image with text overlayed over it, and can save that pdf in the user data
+        webcam images in course report                                       
 
   multi language support
     on landing page add hard coded text that changes based on language
@@ -69,10 +58,8 @@ import Support from './Components/Menus/Support/Support';
     support page input sends an email to the support email address
 
   support page
-    input for name, email, phone, message
     send email to support email address
     maybe have a chat bot
-    phone number and email address
 
   auth
     forgot password button
@@ -80,6 +67,23 @@ import Support from './Components/Menus/Support/Support';
   Style
     checkoutInputThird and Half style changes on screen resize 
     mobile view
+
+  ________________________________________________________________________________
+  After dev work is done
+
+  Support page
+  update supoort page info
+  
+  Landing page
+  title, description, about, quote
+  maybe random background images 
+
+  Courses
+  create courses
+
+  Navbar
+  the logo in the middle of the page
+  the phone number in the top left
 
   ________________________________________________________________________________
   Bugs
@@ -205,6 +209,8 @@ import Support from './Components/Menus/Support/Support';
   account creation data
   last active date set when user logs in
   users in admin dash are sorted by last active date
+
+  when course opens it goes the the last section the user has not completed
 
   when clicking a section in the left menu
     from the section row calls selectSectionIfValid which is in dbslice
@@ -385,9 +391,9 @@ function App() {
         const data = snapshot.val();   
         setTimeout(() => {
           dispatcher(setUserData(data))          
-          // If the user is an admin default the view to admin          
-          if(data?.accountData?.isAdmin && !changedViewAdmin)
-            dispatcher(setViewAsAdmin(true))            
+          // // If the user is an admin default the view to admin          
+          // if(data?.accountData?.isAdmin && !changedViewAdmin)
+          //   dispatcher(setViewAsAdmin(true))            
 
         }, 250)
       })    

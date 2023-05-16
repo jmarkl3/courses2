@@ -31,11 +31,11 @@ function CartCourse({courseData, selected, draggable, readOnly, userDataOverride
      * Checks to see if course is in userData.courses and enrolled == true     
      */
     function checkIfIsEnrolledInCourse(){
-        if(!userData.courses || typeof userData.courses !== "object") 
+        if(!userData?.courses || typeof userData?.courses !== "object") 
             return 
 
         let isEnrolled = false
-        Object.entries(userData.courses).forEach(course => {
+        Object.entries(userData?.courses).forEach(course => {
             if(course[0] === courseData.id && course[1].enrolled)
                 isEnrolled = true
         })
@@ -102,7 +102,7 @@ function CartCourse({courseData, selected, draggable, readOnly, userDataOverride
         else if(isEnrolledInCourse){
             return (
                 <>
-                    <button onClick={()=>navigate("/Course/"+courseData.id)}>{courseCompletionString ? "View Certificate":"Go To Course"}</button>
+                    <button onClick={()=>navigate("/Course/"+courseData.id)}>{(courseCompletionString === "✔") ? "View Certificate":"Go To Course"}</button>
                     <button onClick={()=>setShowMoreInfo(true)}>More Info</button>
                 </>
             )
@@ -114,7 +114,7 @@ function CartCourse({courseData, selected, draggable, readOnly, userDataOverride
                 // If in checkout it will be read only (meaning the user can't remove it)
                 if(readOnly){
                     return(
-                        <button onClick={()=>dispatcher(removeCartCourse(courseData.id))}>Remove</button>
+                        <button onClick={()=>setShowMoreInfo(true)}>More Info</button>
                     )
                 }
                 // If not in checkout it will be editable (meaning the user can remove it)    

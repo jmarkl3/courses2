@@ -25,6 +25,7 @@ function TimedWebcam({sectionData}) {
     
     // ================================================================================
     // #region variables
+    const webcamModule = useSelector(state => state.dbslice.userData?.accountData?.webcamModule)
     const selectedSectionID = useSelector((state) => state.dbslice.selectedSectionID);
     const userID = useSelector((state) => state.dbslice.userID);
     const [currentScreenshot, setCurrentScreenshot] = useState()
@@ -48,7 +49,7 @@ function TimedWebcam({sectionData}) {
         return () => {
             clearTimeout(timerRef.current)
         }
-    },[])
+    },[webcamModule])
 
     // Update the section data times
     useEffect(() => {
@@ -76,6 +77,8 @@ function TimedWebcam({sectionData}) {
      * Increments the timer ref and cals function to take appropriate actions
      */
     function incrementTimer(){
+        if(!webcamModule) return
+        
         // Increment the timer
         timeRef.current = timeRef.current + 1
         

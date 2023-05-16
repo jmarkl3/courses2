@@ -1,0 +1,43 @@
+.profileImage{
+    height: 200px;
+    width: 200px;
+}
+.profileImage img{
+    height: 100%;
+    width: 100%;
+}
+
+.profileSection{
+    width: 200px;
+    display: inline-block;
+    vertical-align: top;
+    padding: 10px;
+}
+.profileSection input{
+    margin: 5px;
+}
+.profileSection button{
+    margin: 5px;
+    width: 100%;
+    vertical-align: top;
+}
+.profileImageButton{
+    padding: 3px 6px;
+    border: 1px solid gray;
+    border-radius: 5px;
+    margin: 5px;
+    cursor: pointer;
+    user-select: none;
+    display: inline-block;
+    font-size: 14px;
+}
+.divInput{
+    padding: 5px 10px;
+    border: none;
+    outline: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5) inset;
+    width: 100%;
+    height: 30px;
+    box-sizing: border-box;
+    margin: 0 5px;
+}

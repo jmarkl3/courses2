@@ -410,6 +410,17 @@ function CourseReport({userData, courseData, close}) {
   }
 
   async function addWebcamImageToDoc(doc, imageURL){
+
+    // it will be displayed in an img tag below
+    // can use html2canvas to convert the image to a canvas and then add it to the pdf
+    // https://stackoverflow.com/questions/16245767/creating-a-pdf-from-a-html-canvas
+    // Will need to make img ids from the section info and index or the url
+    // Then retrieve them from those images after they are displayed
+    // Maybe when building the chapters array create an array of object with imageUrls and ids based on the section id and index
+    // Then after it is built (maybe even with a timeouwt function or after an await)
+    // Create images with hml2canvas ofr each of them and use that in the pdf bilder function
+
+
     console.log("in addWebcamImageToDoc")
     console.log("imageURL")
     console.log(imageURL)

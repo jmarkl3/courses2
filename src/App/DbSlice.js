@@ -190,9 +190,6 @@ const dbslice = createSlice({
             "/courses/"+(action.payload.courseID || state.selectedCourseID)+
             "/chapterData/"+(action.payload.chapterID || state.selectedChapterID)+
             "/sectionData/"+(action.payload.sectionID || state.selectedSectionID)
-            console.log("saving")
-            console.log(locationString)
-            console.log(action.payload.kvPairs)
 
             // Save the key value pair in the db
             update(ref(database, locationString), action.payload.kvPairs)
@@ -210,8 +207,6 @@ const dbslice = createSlice({
             "/courses/"+(action.payload.courseID || state.selectedCourseID)+
             "/chapterData/"+(action.payload.chapterID || state.selectedChapterID)+
             "/sectionData/"+(action.payload.sectionID || state.selectedSectionID)
-
-            console.log("pushing to "+locationString)
 
             // Save the key value pair in the db
             //update(ref(database, locationString), action.payload.kvPairs)
@@ -289,14 +284,14 @@ const dbslice = createSlice({
                     // Filter out the ones the user is already enrolled in 
                     coursesToAdd = coursesToAdd.filter(courseID => !enrolledCourses.includes(courseID))
                     
-                    console.log("enrolling user " + action.payload.userID + "in courses: ")
-                    console.log(action.payload.courseIDArray)
+                    // console.log("enrolling user " + action.payload.userID + "in courses: ")
+                    // console.log(action.payload.courseIDArray)
 
                     // Add the new ones
                     enrolledCourses = enrolledCourses.concat(coursesToAdd)
 
-                    console.log("they are now enrolled in ")
-                    console.log(enrolledCourses)
+                    // console.log("they are now enrolled in ")
+                    // console.log(enrolledCourses)
 
                     // Return the new array to update the db
                     return enrolledCourses
@@ -307,7 +302,7 @@ const dbslice = createSlice({
         // New: enrollUserInCourses2
         enrollUserInCourses2(state, action){
             if(!action.payload || !action.payload.userID || !Array.isArray(action.payload.courseIDArray)) {
-                console.log("Error: enrollUserInCourses: missing data")
+                // console.log("Error: enrollUserInCourses: missing data")
                 return
             }
             // For each course ID in the array
@@ -320,7 +315,7 @@ const dbslice = createSlice({
         },
         unEnrollUserInCourses2(state, action){
             if(!action.payload || !action.payload.userID || !Array.isArray(action.payload.courseIDArray)) {
-                console.log("Error: enrollUserInCourses: missing data")
+                //console.log("Error: enrollUserInCourses: missing data")
                 return
             }
             // For each course ID in the array
@@ -370,9 +365,7 @@ const dbslice = createSlice({
             if(state.theme === "darkTheme")
                 newTheme = "lightTheme";
             else
-                newTheme = "darkTheme";  
-            
-            console.log("setting theme to ", newTheme)
+                newTheme = "darkTheme";              
 
             // Save the new value in state (will update when userData changes anyway)
             state.theme = newTheme
@@ -407,12 +400,12 @@ const dbslice = createSlice({
         
         selectCourse(state, action) {  
             state.selectedCourseID = action.payload;
-            //console.log(state.coursesData)          
+            // console.log(state.coursesData)          
             // if(state.coursesArray.find(course => course.id))
             //     // Set the selected course ID
             //     state.selectedCourseID = action.payload;
             // else
-            //     console.log(action.payload + " is not a valid course ID")
+            // console.log(action.payload + " is not a valid course ID")
 
         },
         selectChapter(state, action) {
@@ -643,8 +636,6 @@ const dbslice = createSlice({
             update(ref(database, 'coursesApp/coursesData/'+action.payload.courseID), {name: action.payload.newName, description: action.payload.newDescription})            
         },
         updateCourseInfo2 (state, action) {  
-            console.log("updateCourseInfo2")
-            console.log(action.payload.valuesObject)
             // Make sure the payload is valid
             if(!action.payload || !action.payload.courseID || !action.payload.valuesObject) return
             // Update the course info

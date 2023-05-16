@@ -118,6 +118,8 @@ function CheckOutPage() {
         return
       }
       
+      userInputData.webcamModule = true
+
       // Save the user creation date
       userInputData.accountCreationDate = new Date().getTime()
 
