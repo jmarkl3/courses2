@@ -18,7 +18,6 @@ function SidenavSectionRow({itemData, chapterID, setSectionRenaming}) {
   const dragItemType = useSelector((state) => state.dbslice.dragItemType);
   const editMode = useSelector((state) => state.appslice.editMode);
   const fullAdmin = useSelector(state => state.dbslice.userData?.accountData?.fullAdmin)
-  
 
   const userSectionDataLocationString = "courses/"+selectedCourseID+"/chapterData/"+selectedChapterID+"/sectionData/"+itemData.id
   var userSectionData = getUserData(userData, userSectionDataLocationString)
@@ -57,6 +56,7 @@ function SidenavSectionRow({itemData, chapterID, setSectionRenaming}) {
   function dragStartFunction(e){
     // So it doesnt also call this on the parent
     e.stopPropagation()
+    if(!editMode) return
     dispatcher(sidenavDragStart({sectionID: itemData?.id, chapterID: chapterID}))
   }
 
@@ -66,6 +66,7 @@ function SidenavSectionRow({itemData, chapterID, setSectionRenaming}) {
 
   function dragOverFunction(e){
     e.preventDefault()
+    if(!editMode) return
     // Only drop elements or sections on sections
     if(dragItemType === "element" || dragItemType === "section"){
       e.stopPropagation()
@@ -73,6 +74,7 @@ function SidenavSectionRow({itemData, chapterID, setSectionRenaming}) {
     }
   }
   function dragEndFunction(e){
+    if(!editMode) return
     // Only drop elements or sections on sections   
     if(dragItemType === "element" || dragItemType === "section"){
       e.stopPropagation()      
@@ -121,7 +123,7 @@ var testObj = {}
   return (
     <div 
       className='sidenavRowOuter' 
-      draggable={!renaming && !elementRenaming}
+      draggable={!renaming && !elementRenaming && editMode}
       onDragOver={dragOverFunction}
       onDragStart={dragStartFunction}
       onDrop={dragEndFunction}

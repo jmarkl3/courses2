@@ -456,6 +456,7 @@ const dbslice = createSlice({
             }                        
             if(!firstSection)
                 return
+
             state.selectedSectionID = firstSection.id
 
             // This is used to get user resopnse data
@@ -482,7 +483,7 @@ const dbslice = createSlice({
                 state.selectedSectionID = action.payload.sectionID
                 return
             }
-  
+    
             // Get the array of sections
             var chapter = getItem(state.courseData, state.selectedChapterID)
             var sectionArray = objectToArray(chapter.items)
@@ -505,6 +506,42 @@ const dbslice = createSlice({
                 }
             })
 
+        },
+        selectChapterIfValid(state, action) {            
+            if(!action.payload.chapterID)
+                return
+
+           // Look into the userData to see if the specified section has the complted property set to true
+            var chapterIsCompleted = getUserData(state.userData, "courses/"+state.selectedCourseID+"/chapterData/"+state.selectedChapterID+"/complete")
+            console.log("chapterIsCompleted: " + chapterIsCompleted)
+
+            // If it is select it
+            if(chapterIsCompleted == true){
+                state.selectedChapterID = action.payload.chapterID
+                state.selectedSectionID = getFirstItem(state.courseData?.items[action.payload.chapterID]?.items)?.id
+                return
+            }
+   
+            var chapterArray = objectToArray(state.courseData?.items)
+
+            // Check to see if the index is the one after the index of the last completed section
+            var previousComplete = true            
+            chapterArray.forEach(chapter => {
+                // If the previous section was completed and the section is found select it
+                if(chapter.id == action.payload.chapterID && previousComplete){     
+                        state.selectedChapterID = action.payload.chapterID
+                        state.selectedSectionID = getFirstItem(state.courseData?.items[action.payload.chapterID]?.items)?.id
+                }
+                // Get the user data for this section                
+                let userDataForThisChapter = getUserData(state.userData, "courses/"+state.selectedCourseID+"/chapterData/"+chapter?.id)
+                // Set the flag based on the section is completed property
+                if(userDataForThisChapter?.complete){                    
+                    previousComplete = true
+                }
+                else {                    
+                    previousComplete = false                
+                }
+            })
         },
         selectNextSection(state, action) {
             var chapterID = state.selectedChapterID
@@ -1135,7 +1172,7 @@ export const {
     saveUserResponse,
     clearAllUserData} = dbslice.actions;
 // Selection actions
-export const {selectCourse, selectChapter, selectSection, selectElement, selectNextSection, selectPreviousSection, selectSectionIfValid} = dbslice.actions;
+export const {selectCourse, selectChapter, selectSection, selectElement, selectNextSection, selectPreviousSection, selectSectionIfValid, selectChapterIfValid} = dbslice.actions;
 // Course actions
 export const {addCourse, deleteCourse, copyCourse, updateCourseInfo, updateCourseInfo2} = dbslice.actions;
 // Chapter actions

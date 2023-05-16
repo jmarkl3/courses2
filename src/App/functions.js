@@ -66,7 +66,7 @@ function pad(number){
 // The getter functions get things from input data
 
 export function getItem(courseData, chapterID, sectionID, elementID){
-    if(!courseData) return null
+    if(!courseData) return {key: "hello"}
     // If there is no chapterID, return the courseData
     if(!chapterID || !courseData?.items) return {...courseData}
 

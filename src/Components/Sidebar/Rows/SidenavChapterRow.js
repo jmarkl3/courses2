@@ -1,7 +1,7 @@
 import { set } from 'firebase/database'
 import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { addChapter, addSection, copyChapter, deleteChapter, selectChapter, selectFirst, sidenavDragEnd, sidenavDragOver, sidenavDragStart, updateItemInfo } from '../../../App/DbSlice.js'
+import { addChapter, addSection, copyChapter, deleteChapter, selectChapter, selectChapterIfValid, selectFirst, sidenavDragEnd, sidenavDragOver, sidenavDragStart, updateItemInfo } from '../../../App/DbSlice.js'
 import { dontClickThrough, getUserData, objectToArray } from '../../../App/functions.js'
 import ConfirmationBox from '../../../Utils/ConfirmationBox.js'
 import DragDropIndicatorBar from '../../../Utils/DragDropIndicatorBar.js'
@@ -14,6 +14,7 @@ function SidenavChapterRow({itemData}) {
   const selectedChapterID = useSelector((state) => state.dbslice.selectedChapterID);
   const selectedCourseID = useSelector((state) => state.dbslice.selectedCourseID);
   const userData = useSelector((state) => state.dbslice.userData);
+  const fullAdmin = useSelector((state) => state.dbslice.userData?.accountData?.fullAdmin);
   const editMode = useSelector((state) => state.appslice.editMode);
   const dispatcher = useDispatch()
 
@@ -52,13 +53,16 @@ function SidenavChapterRow({itemData}) {
   }
 
   function dragStartFunction(){
+    if(!editMode) return
     dispatcher(sidenavDragStart({chapterID: itemData?.id}))
   }
   function dragOverFunction(e){
     e.preventDefault()
+    if(!editMode) return
     dispatcher(sidenavDragOver(itemData?.id))
   }
   function dragEndFunction(){
+    if(!editMode) return
     dispatcher(sidenavDragEnd({chapterID: itemData?.id}))
   }
   function editName(){
@@ -83,7 +87,10 @@ function SidenavChapterRow({itemData}) {
 
   }
   function selectChapterFunction(){
-    dispatcher(selectFirst({chapterID: itemData?.id}))
+    if(editMode || fullAdmin)      
+      dispatcher(selectFirst({chapterID: itemData?.id}))      
+    else    
+      dispatcher(selectChapterIfValid({chapterID: itemData?.id}))
 
   }
   function deleteChapterFunction(){
@@ -118,7 +125,7 @@ function SidenavChapterRow({itemData}) {
   return (
     <div 
       className='sidenavRowOuter noPaddingLeft'
-      draggable={!renaming && !sectionRenaming}
+      draggable={!renaming && !sectionRenaming && editMode}
       onDragOver={dragOverFunction}
       onDragStart={dragStartFunction}
       onDrop={dragEndFunction}

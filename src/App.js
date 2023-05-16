@@ -26,9 +26,8 @@ import Support from './Components/Menus/Support/Support';
   talk to hml ppl   
 
   Sidenav
-  user should be able to select only completed chapters and the chapter after a completed chapter        
   timer 
-    dissapears in the sidebar when it closes
+    dissapears in the sidebar when it closes so:
     the one in the sectiton should keep track of the time even when the sidebar is closed
     the one in the sidebar should reflect the current time when it is opened, it currently is out of sync          
  
