@@ -89,3 +89,6 @@
 .sideNavAuthLeftAdjust{
     left: calc(50vw - 100px);
 }
+.authLink{
+    margin-top: 5px;
+}

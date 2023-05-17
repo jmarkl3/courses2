@@ -24,27 +24,24 @@ import Support from './Components/Menus/Support/Support';
     link account to case
   vall seal lw    
   bp for med
-  talk to hml ppl        
- 
-  multi language support
-      need ggl key
-      this looks cool https://www.npmjs.com/package/react-auto-translate
-      on landing page add hard coded text that changes based on language
-      in course edit have inputs for multiple languages, or could have an auto translate feaure  
+  pay med
+  talk to hml ppl          
 
   dashboards       
-    admin 
-      log how many new users per day and amount per day
-        test by creating a new user
-        chart styling (horzontal dates) and tooltip with date
-        ability to change the date range    
+    admin       
+      ability to change the date range on charts    
+      maybe make a Chart component with dataset and data key props
       user reports                     
         view / download certificate button if complete        
           maybe as a pdf instead of just an image with text overlayed over it, and can save that pdf in the user data
-        webcam images in course report                                       
-
-  auth
-    forgot password button
+        webcam images in course report 
+      ability for admin to manually set a users password and email in admin user menu (maybe can't because it needs the user to be logged in and the user object)
+      firebase manage users https://firebase.google.com/docs/auth/web/manage-users
+    user
+      take new picture button for user profile
+      save an initial picture from webcam comonent to the profile image while user is in the course 
+      title on the profile picture area in the user dashboard saying what it is used for
+      
 
   email 
     this library (emailJS) looks good: https://stackoverflow.com/questions/55795125/how-to-send-email-from-my-react-web-application
@@ -53,8 +50,15 @@ import Support from './Components/Menus/Support/Support';
     support page input sends an email to the support email address
 
   support page
-    send email to support email address
+    send email to support email address, show confirmation message after it sends
+    can log this as a user event
     maybe have a chat bot
+
+  multi language support
+      need ggl key
+      this looks cool https://www.npmjs.com/package/react-auto-translate
+      on landing page add hard coded text that changes based on language
+      in course edit have inputs for multiple languages, or could have an auto translate feaure                                    
 
   security
     firebase rules so only a user can update their own data
@@ -92,6 +96,9 @@ import Support from './Components/Menus/Support/Support';
   time component resets sometimes
   cart items go to available after user enrolls (only shows in admin view)
     cart component could use some cleanup
+
+  test the app in different browsers doing different things in different ways
+  maybe get someone else to test it too
 
 */
 // DB Structure
@@ -205,6 +212,19 @@ import Support from './Components/Menus/Support/Support';
   ________________________________________________________________________________
   Misc notes
         
+  ability to show only a portion of the content in a section at a time with a continue button to show the next part
+  so the user only has a small amount of data at a time and it is easier to digest
+
+  ability to embed webgl games
+  could possibly just host it somewhere else and embed it in an iframe
+
+  other ct courses
+  ins
+  reale
+  code
+
+  ability for user to updload a file
+
   account creation data
   last active date set when user logs in
   users in admin dash are sorted by last active date

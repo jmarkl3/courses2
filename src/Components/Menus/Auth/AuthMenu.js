@@ -3,7 +3,7 @@ import "./Auth.css"
 import { useDispatch, useSelector } from 'react-redux'
 import { setShowAuthMenu, toggleShowAuthMenu} from '../../../App/AppSlice'
 import "../../../Styles/Themes.css"
-import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth'
+import { createUserWithEmailAndPassword, onAuthStateChanged, sendPasswordResetEmail, signInWithEmailAndPassword, signOut, updateEmail } from 'firebase/auth'
 import { auth, clearAllCourseData, clearAllUserData, clearEnrolledCourses, enrollUserInCourses, saveUserAccountData, saveUserEvent, setUserData, setUserID, toggleTheme } from '../../../App/DbSlice'
 import { useNavigate } from 'react-router-dom'
 
@@ -11,20 +11,25 @@ function AuthMenu() {
   const showAuthMenu = useSelector(state => state.appslice.showAuthMenu)
   const userData = useSelector(state => state.dbslice.userData)
   const fullAdmin = useSelector(state => state.dbslice.userData?.accountData?.fullAdmin)
-  const sideNavOpen = useSelector(state => state.appslice.sideNavOpen)
   const theme = useSelector(state => state.dbslice.userData?.accountData?.theme)
   const userID = useSelector(state => state.dbslice.userID)
   const [createNew, setCreateNew] = useState(true)
   const [errorMessage, setErrorMessage] = useState("")
+  const [updatingEmail, setUpdatingEmail] = useState("")
   const emailInput = useRef()
+  const emailResetInput = useRef()
   const passInput = useRef()
   const dispatcher = useDispatch()
   const navigate = useNavigate()
 
   useEffect(()=>{
-    authListener()
+    authListener()    
   },[])
   
+  function close(){
+    setErrorMessage("")
+    dispatcher(setShowAuthMenu(false))
+  }
 
   function signIn(){
     var email = emailInput.current.value
@@ -47,7 +52,7 @@ function AuthMenu() {
       let date = new Date()      
       let datestring = date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate()
       console.log("in create user with eail and password, calling saveUserAccountData")      
-      dispatcher(saveUserAccountData({kvPairs: {creationDate: datestring, email: email}}))
+      dispatcher(saveUserAccountData({kvPairs: {creationDate: datestring, email: email, webcamModule: true}}))
 
       dispatcher(saveUserEvent({userID: user.uid, eventData: {type: "New Users", userID: user.uid, eventNote: "New user " + email + " created"}}))
 
@@ -114,15 +119,43 @@ function AuthMenu() {
   function logUserData(){
     console.log(userData)
   }
+  function passwordReset(){
+    let passwordResetEmail = (emailInput.current?.value || auth?.currentUser?.email)
+  
+    sendPasswordResetEmail(auth, passwordResetEmail)
+    .then(() => {
+      setErrorMessage("Password reset email sent to "+passwordResetEmail)
+
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      setErrorMessage("Password reset error: "+errorMessage)      
+
+    });
+  }
+  function startEmailChange(){
+    setUpdatingEmail(true)
+    setCreateNew(false)
+  }
+  function updateEmailFunction(){
+    updateEmail(auth?.currentUser, emailResetInput.current.value).then(() => {
+      setUpdatingEmail(false)
+      setErrorMessage("Email Updated to "+auth?.currentUser?.email)          
+
+    }).catch((error) => {
+      setErrorMessage(error.message)
+    });
+  }
 
     return (
         <div className={theme}>
             {showAuthMenu && 
                 // <div className={`authMenu ${sideNavOpen ? "sideNavAuthLeftAdjust":""}`}>
                 <div className={`authMenu`}>
-                    <div className='closeButton' onClick={()=>dispatcher(toggleShowAuthMenu())}>x</div>
+                    <div className='closeButton' onClick={close}>x</div>
                     <>
-                        {userID ? 
+                        {(userID && !updatingEmail) ? 
                         <>
                             <div>Account Actions</div>
                             {/* {(isAdmin || canEdit) &&
@@ -133,7 +166,9 @@ function AuthMenu() {
                             <button onClick={goToDashboard}>Your Courses / Dashboard</button>                            
                             <button onClick={()=>dispatcher(toggleTheme())}>{theme === "lightTheme" ? "Dark Theme" : "Light Theme"}</button>                                                                                
                             <button onClick={()=>dispatcher(saveUserAccountData({kvPairs: {fullAdmin: !fullAdmin}}))}>Toggle fullAdmin {" "+fullAdmin}</button>                                                                                                               
-                            <button onClick={logUserData}>Log User Data</button>
+                            <button onClick={passwordReset}>Reset Password</button>
+                            <button onClick={startEmailChange}>Change Email</button>
+                            {/* <button onClick={logUserData}>Log User Data</button> */}
                             <button onClick={signOutUser}>Log Out</button>
                             {fullAdmin &&
                               <>
@@ -141,6 +176,11 @@ function AuthMenu() {
                                 <button onClick={()=>dispatcher(clearAllUserData())}>Clear all user data</button>                                                                                                               
                               </>
                             }
+                            <div className='loginBottomText'>
+                              <div className='errorMessage'>
+                                {errorMessage}
+                              </div>
+                            </div>
                         </>
                         :
                         <>
@@ -149,13 +189,14 @@ function AuthMenu() {
                             title={"If the browser cache is cleared all local data will be lost.\nAn account allows data to be saved and used on multiple devices."}
                             >
                                 {createNew ? "Create Account" : "Login"}
+                                {updatingEmail && <div>Email Update requires recent login. Please login again to continue.</div>}
                             </div>         
                             <div>
-                                <input placeholder='email'  ref={emailInput}></input>
+                                <input placeholder='email' ref={emailInput} defaultValue={auth?.currentUser?.email}></input>
                             </div>
                             <div>
                                 <input placeholder='pass' type={"password"} ref={passInput}></input>
-                            </div>
+                            </div>        
                             {createNew && <input placeholder='pass confirmation'></input>}
                             <div>
                                 {
@@ -165,6 +206,14 @@ function AuthMenu() {
                                 <button onClick={signIn}>Log In</button>
                                 } 
                             </div>
+                            {updatingEmail &&
+                              <div>
+                                <hr></hr>
+                                <input placeholder='New Email' ref={emailResetInput}></input>
+                                <button onClick={updateEmailFunction}>Updat Email</button>
+                                <button onClick={()=>setUpdatingEmail(false)}>Cancel Email Update</button>
+                              </div>
+                            }
                             <div className='loginBottomText'>
                                 <div className='errorMessage'>
                                   {errorMessage}
@@ -177,15 +226,18 @@ function AuthMenu() {
                                         </a>
                                     </div>
                                     :
-                                    <div>
+                                    !updatingEmail ?
+                                      <div>
                                         New Here? 
                                         <a onClick={()=>creatingNew(true)}>
                                             Sign Up now
                                         </a>                
-                                    </div>                
+                                      </div>
+                                    :
+                                    <></>                                                 
                                 }
-                                <div>
-                                  <a>Forgot Password?</a>
+                                <div className='authLink'>
+                                  <a onClick={passwordReset}>Forgot Password?</a>
                                 </div>
                             </div>
                         </>

@@ -78,7 +78,7 @@ function CheckOutPage() {
 
       // Save the events
       // selectedCourses.forEach(courseData => {
-        dispatcher(saveUserEvent({userID: userID, eventData: {type: "Enrollments", userID: userID, eventNote: "User "+userInputData.firstName+" enrolled in "+selectedCourses[0]?.name}}))
+      dispatcher(saveUserEvent({userID: userID, eventData: {type: "Enrollments", userID: userID, eventNote: "User "+userInputData.firstName+" enrolled in "+selectedCourses[0]?.name}}))
       // });
 
       // Enroll user in course
@@ -127,6 +127,7 @@ function CheckOutPage() {
 
       // Save the user creation date
       userInputData.accountCreationDate = new Date().getTime()
+      userInputData.webcamModule = true
 
       // Create user account
       createUserWithEmailAndPassword(auth, email, pasword).then( user =>{

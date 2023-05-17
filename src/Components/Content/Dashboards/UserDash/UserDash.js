@@ -3,8 +3,9 @@ import "../Dashboards.css"
 import { useDispatch, useSelector } from 'react-redux'
 import UserCourses from './UserCourses'
 import "./UserDash.css"
-import { saveUserAccountData, toggleTheme } from '../../../../App/DbSlice'
-import { setShowCart, toggleShowAuthMenu } from '../../../../App/AppSlice'
+import { auth, saveUserAccountData, toggleTheme } from '../../../../App/DbSlice'
+import { setEditMode, setShowCart, toggleShowAuthMenu } from '../../../../App/AppSlice'
+import { updateEmail } from 'firebase/auth'
 
 function UserDash() {
   const userData = useSelector(state => state.dbslice.userData)
@@ -12,6 +13,7 @@ function UserDash() {
   const theme = useSelector(state => state.dbslice.userData?.accountData?.theme)
   const webcamModule = useSelector(state => state.dbslice.userData?.accountData?.webcamModule)
   const [editingProfileInfo, setEditingProfileInfo] = useState(false)
+  const [errorMessage, setErrorMessage] = useState("")
   const dispatcher = useDispatch()
   
   const nameInputF = useRef()
@@ -33,23 +35,21 @@ function UserDash() {
   function resetFields(){
     nameInputF.current.value = (userData?.accountData?.firstName || '')
     nameInputL.current.value = (userData?.accountData?.lastName || '')
-    emailInput.current.value = (userData?.accountData?.email || '')
     phoneInput.current.value = (userData?.accountData?.phone || '')
     adressInput1.current.value = (userData?.accountData?.address1 || '')
     adressInput2.current.value = (userData?.accountData?.address2 || '')
-    
+    emailInput.current.value = (auth.currentUser?.email)
   }
 
   function saveUserAccountDataFunction(){
     let accountDataTemp ={
       firstName: nameInputF.current.value,
       lastName: nameInputL.current.value,
-      email: emailInput.current.value,
       phone: phoneInput.current.value,
       address1: adressInput1.current.value,
       address2: adressInput2.current.value,
     }    
-    dispatcher(saveUserAccountData({kvPairs: accountDataTemp}))        
+    dispatcher(saveUserAccountData({kvPairs: accountDataTemp, userID: userID}))
     setEditingProfileInfo(false)
   }
 
@@ -77,16 +77,17 @@ function UserDash() {
           <div className={"profileImageButton"}> Take New Picture</div>
         </div>
         <div className='profileSection'>
-          <input readOnly={editingProfileInfo? false: "readOnly"} className='half' defaultValue={userData?.accountData?.firstName} ref={nameInputF}></input>          
-          <input readOnly={editingProfileInfo? false: "readOnly"} className='half' defaultValue={userData?.accountData?.lastName} ref={nameInputL}></input>          
-          <input readOnly={editingProfileInfo? false: "readOnly"}  defaultValue={userData?.accountData?.email} ref={emailInput}></input>          
-          <input readOnly={editingProfileInfo? false: "readOnly"}  defaultValue={userData?.accountData?.phone} ref={phoneInput}></input>          
-          <input readOnly={editingProfileInfo? false: "readOnly"}  defaultValue={userData?.accountData?.address1} ref={adressInput1}></input>          
-          <input readOnly={editingProfileInfo? false: "readOnly"}  defaultValue={userData?.accountData?.address2} ref={adressInput2}></input>                            
+          <input readOnly={editingProfileInfo? false: "readOnly"} className='half' defaultValue={userData?.accountData?.firstName} ref={nameInputF} placeholder='First Name'></input>          
+          <input readOnly={editingProfileInfo? false: "readOnly"} className='half' defaultValue={userData?.accountData?.lastName} ref={nameInputL} placeholder='Last Name'></input>          
+          <input readOnly={editingProfileInfo? false: "readOnly"}  defaultValue={userData?.accountData?.phone} ref={phoneInput} placeholder='Phone'></input>          
+          <input readOnly={editingProfileInfo? false: "readOnly"}  defaultValue={userData?.accountData?.address1} ref={adressInput1} placeholder='Address Line 1'></input>          
+          <input readOnly={editingProfileInfo? false: "readOnly"}  defaultValue={userData?.accountData?.address2} ref={adressInput2} placeholder='Address Line 2'></input>                            
+          <input readOnly={"readOnly"} defaultValue={auth?.currentUser?.email} ref={emailInput} title='To edit email click the account button, then click "Change Email"' placeholder='Email'></input>          
           {editingProfileInfo?
             <>
               <div className={"profileImageButton"} onClick={resetFields}> Reset</div>
               <div className={"profileImageButton"} onClick={saveUserAccountDataFunction}> Save</div>
+              {errorMessage}
             </>
             :
             <div className={"profileImageButton"} onClick={startEditingProfileInfo}> Edit Info</div>
