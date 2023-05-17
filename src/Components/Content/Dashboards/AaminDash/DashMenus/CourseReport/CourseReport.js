@@ -95,6 +95,9 @@ function CourseReport({userData, courseData, close}) {
       // tempChapters.push(chapterObject)
       // tempChapters.push(chapterObject)
       // tempChapters.push(chapterObject)
+      console.log("chapterObject")
+      console.log(chapterObject)
+
       tempChapters.push(chapterObject)
       
     })

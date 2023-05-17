@@ -188,15 +188,15 @@ export function removeItem(object, itemToRemoveID){
  * @returns 
  */
 export function removeUndefined(object){
-    if(typeof(object) !== "Object") return object
-    var tempArray = []
+    if(typeof object !== "object") return object
+    let filteredObject = {}
     Object.entries(object).forEach(([key, value]) => {
-        if(value !== undefined){
-            var tempValue = removeUndefined(value)
-            tempArray.push(tempValue)
+        if(value !== undefined && value !== null){
+            filteredObject[key] = removeUndefined(value)
         }
     })
-    return arrayToObject(tempArray)
+
+    return filteredObject
 }
 /**
  * Takes in an object, item, and ID

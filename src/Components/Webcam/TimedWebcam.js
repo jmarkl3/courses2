@@ -28,7 +28,7 @@ function TimedWebcam({sectionData, once, removeDisplay}) {
     const webcamModule = useSelector(state => state.dbslice.userData?.accountData?.webcamModule)
     const selectedSectionID = useSelector((state) => state.dbslice.selectedSectionID);
     const userID = useSelector((state) => state.dbslice.userID);
-    const profileImageUrl = useSelector((state) => state.dbslice.userData.accountData.profileImageUrl);
+    const profileImageUrl = useSelector((state) => state.dbslice.userData?.accountData?.profileImageUrl);
     const [currentScreenshot, setCurrentScreenshot] = useState()
     const [message, setMessage] = useState("Take Image")
     const [showWebcam, setShowWebcam] = useState(false)

@@ -44,13 +44,32 @@ import Support from './Components/Menus/Support/Support';
       firebase manage users https://firebase.google.com/docs/auth/web/manage-users   
 
   email 
-    this library (emailJS) looks good: https://stackoverflow.com/questions/55795125/how-to-send-email-from-my-react-web-application
+    this library (emailJS) looks good: 
+    https://stackoverflow.com/questions/55795125/how-to-send-email-from-my-react-web-application
+    got it working but it can only to the support email address, cant send to user
+
+    sendgrid react (1)
+    https://www.youtube.com/watch?v=jnTodzIlrE8
+
+    sendgrid attachments 8:30 (2)
+    https://www.youtube.com/watch?v=FFDGcroAJ4A
+
+    fireship firebase functions twillio sendgrid (3)
+    https://www.youtube.com/watch?v=vThujL5-fZQ
+
+    smtpjs:
+    https://www.youtube.com/watch?v=kWEDY0rjS30
+
+    nodemailer 
+    specifies to and attachment
+    https://www.youtube.com/watch?v=eF8j-xujbJI
+
     auto email certificate to address based on user data and maybe another one based on selection    
     email when they sign up to give them a link to their dashboard and course info
     support page input sends an email to the support email address
 
   support page
-    send email to support email address, show confirmation message after it sends
+    send email to support email address from SendGrid
     can log this as a user event
     maybe have a chat bot
 

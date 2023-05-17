@@ -9,7 +9,7 @@ import { saveUserChapterData, saveUserCourseData, selectCourse } from '../../../
 import "./Course.css"
 import certificateImage from "../../../Images/certificateNoName.jpg"
 import Certificate from './Elements/Display/Components/Certificate'
-import { getUserData } from '../../../App/functions'
+import { getUserData, removeUndefined } from '../../../App/functions'
 
 function Course() {
   const userData = useSelector(state => state.dbslice.userData)
@@ -68,10 +68,15 @@ function Course() {
       // They will be displayed as components for chapters with sub components for sections with element components for responses
 
       // If it has not been loaded, load it
-      if(userData && !savedCourseData){
+      //if(userData && !savedCourseData){
+      if(userData){
         console.log("user has not saved course data")
         let coursePartialData = generatePartialData(courseData)
-        //dispatcher(saveUserCourseData({kvPairs: {savedCourseData: true, name: coursePartialData.name, chapterData: coursePartialData.chapterData}, courseID: courseID}))
+        let kvPairs = {savedCourseData: true, name: coursePartialData.name, chapterData: coursePartialData.chapterData}
+        kvPairs = removeUndefined(kvPairs)
+        console.log("kvPairs")
+        console.log(kvPairs)
+        dispatcher(saveUserCourseData({kvPairs: kvPairs, courseID: courseID}))
       }
 
     }

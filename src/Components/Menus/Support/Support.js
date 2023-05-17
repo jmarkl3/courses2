@@ -46,10 +46,9 @@ function sendSupportMessage(){
                   <input type="text" name="user_name" defaultValue={userData?.accountData ? (userData?.accountData?.firstName + " " + userData?.accountData?.lastName) : ""} placeholder='Name:' />
                   <input type="email" name="user_email" defaultValue={userData?.accountData ? (userData?.accountData?.email) : ""} placeholder='Email:' />
                   <input type="phone" name="user_phone" defaultValue={userData?.accountData ? (userData?.accountData?.phone) : ""} placeholder='Phone:' />
-                  <textarea name="message" />
+                  <textarea name="message" placeholder='Message:'/>
                   {/* <input type="submit" value="Send" /> */}
-                  <button style={{width: "100%", marginLeft: "5px"}} onClick={sendSupportMessage}>Send</button>
-                  
+                  <button style={{width: "100%", marginLeft: "5px"}} onClick={sendSupportMessage}>Send</button>  
                   <div className='feedback'>{feedback}</div>
                 </form>
             </div>
