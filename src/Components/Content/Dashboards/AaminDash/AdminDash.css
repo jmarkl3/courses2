@@ -23,8 +23,7 @@
     position: fixed;
     top: 80px;
     left: 5vw;    
-    z-index: 4;
-    
+    z-index: 4;    
     cursor: default;
     padding-bottom: 40px;
 }
@@ -103,4 +102,22 @@
     width: 220px;
     margin: 5px;
     display: inline-block;
+}
+.chartDateRangeButtons{    
+    padding-top: 10px;
+}
+.chartDateRangeBox{
+    display: inline-block;    
+}
+.chartDateRangeButton{
+    display: inline-block;
+    padding: 5px 10px;
+    border: 1px solid #8a8a8a9d;
+    border-radius: 10px;
+    margin: 5px;
+    user-select: none;
+    cursor: pointer;
+}
+.chartDateRangeButton:hover{
+    background-color: #cccccc71;
 }

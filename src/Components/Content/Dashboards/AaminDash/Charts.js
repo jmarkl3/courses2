@@ -3,6 +3,7 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { onValue } from 'firebase/database'
 import { database } from '../../../../App/DbSlice'
 import { ref } from 'firebase/database';
+import Chart from './Chart';
 
 function Charts() {
 
@@ -55,6 +56,7 @@ function Charts() {
       const [newUsersChartData, setNewUsersChartData] = useState([])
       const [enrollmentChartData, setEnrollmentChartData] = useState([])
       const userEventsRef = useRef({})
+      const [userEvents, setUserEvents] = useState({})
 
       useEffect(()=>{
         loadEvents()
@@ -64,6 +66,7 @@ function Charts() {
   
         onValue(ref(database, 'coursesApp/userEvents'), (snapshot) => {
             userEventsRef.current = snapshot.val()
+            setUserEvents(snapshot.val())
             console.log(userEventsRef.current)
             setNewUsersChartData(generateChartData("New Users"))
             setEnrollmentChartData(generateChartData("Enrollments"))
@@ -149,70 +152,14 @@ function Charts() {
                 <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
             </AreaChart>
         </div> */}
-        <div className='chartContainer'>
-            New Users
-            <AreaChart
-                width={600}
-                height={200}
-                data={newUsersChartData}
-                margin={{
-                    top: 10,
-                    right: 30,
-                    left: 0,
-                    bottom: 0,
-                }}
-                >
-                <XAxis dataKey="name" angle={325}>
-                    {/* <Label 
-                        style={{
-                            marginTop: "20px",
-                            paddingTop: "20px",
-                            color: "blue",
-                            backgroundColor: "blue",
-                            height: "100px",
-                        }}
-                        value={"date"}
-                        angle={0}                        
-                        
-                    ></Label> */}
-                </XAxis>
-                <YAxis />
-                <Tooltip content={<CustomTooltip dataHeader={"New Users"}/>}/>
-                <Area type="monotone" dataKey="New Users" stroke="#8884d8" fill="#8884d8" />
-            </AreaChart>
-        </div>
-        <div className='chartContainer'>
-            Enrollments
-            <AreaChart
-                width={600}
-                height={200}
-                data={enrollmentChartData}
-                margin={{
-                    top: 10,
-                    right: 30,
-                    left: 0,
-                    bottom: 0,
-                }}
-                >
-                <XAxis dataKey="name" angle={325}>
-                    {/* <Label 
-                        style={{
-                            marginTop: "20px",
-                            paddingTop: "20px",
-                            color: "blue",
-                            backgroundColor: "blue",
-                            height: "100px",
-                        }}
-                        value={"date"}
-                        angle={0}                        
-                        
-                    ></Label> */}
-                </XAxis>
-                <YAxis />
-                <Tooltip content={<CustomTooltip dataHeader={"Enrollments"}/>}/>
-                <Area type="monotone" dataKey="Enrollments" stroke="#8884d8" fill="#8884d8" />
-            </AreaChart>
-        </div>
+        <Chart
+            eventsObject={userEvents}
+            dataKey={"New Users"}
+        ></Chart>
+        <Chart
+            eventsObject={userEvents}
+            dataKey={"Enrollments"}
+        ></Chart>
         {/* <div className='chartContainer'>            
             New Spent
             <AreaChart
