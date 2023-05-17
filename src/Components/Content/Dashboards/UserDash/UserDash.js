@@ -6,6 +6,7 @@ import "./UserDash.css"
 import { auth, saveUserAccountData, toggleTheme } from '../../../../App/DbSlice'
 import { setEditMode, setShowCart, toggleShowAuthMenu } from '../../../../App/AppSlice'
 import { updateEmail } from 'firebase/auth'
+import TimedWebcam from '../../../Webcam/TimedWebcam'
 
 function UserDash() {
   const userData = useSelector(state => state.dbslice.userData)
@@ -14,6 +15,7 @@ function UserDash() {
   const webcamModule = useSelector(state => state.dbslice.userData?.accountData?.webcamModule)
   const [editingProfileInfo, setEditingProfileInfo] = useState(false)
   const [errorMessage, setErrorMessage] = useState("")
+  const [takingNewImage, setTakingNewImage] = useState(false)
   const dispatcher = useDispatch()
   
   const nameInputF = useRef()
@@ -73,8 +75,9 @@ function UserDash() {
           Profile
         </h3>
         <div className='profileSection'>
-          <div className='profileImage'><img></img></div>
-          <div className={"profileImageButton"}> Take New Picture</div>
+          <div className='profileImage'><img src={userData?.accountData?.profileImageUrl}></img></div>
+          <div className={"profileImageButton"} onClick={()=>setTakingNewImage(true)}>Take New Picture</div>
+          {takingNewImage && <TimedWebcam once removeDisplay={()=>setTakingNewImage(false)}></TimedWebcam>}
         </div>
         <div className='profileSection'>
           <input readOnly={editingProfileInfo? false: "readOnly"} className='half' defaultValue={userData?.accountData?.firstName} ref={nameInputF} placeholder='First Name'></input>          

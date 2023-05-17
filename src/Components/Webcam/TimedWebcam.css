@@ -27,3 +27,7 @@
 .fadeIn{
     opacity: 1;
 }
+.fadeInFast{
+    opacity: 1;
+    transition: 1000ms;
+}

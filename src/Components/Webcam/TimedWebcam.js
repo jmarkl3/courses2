@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import Webcam from 'react-webcam'
 import "./TimedWebcam.css"
 import { useDispatch, useSelector } from 'react-redux'
-import { pushToUserSectionData2, saveUserSectionData2, storage } from '../../App/DbSlice';
+import { pushToUserSectionData2, saveUserAccountData, saveUserSectionData2, storage } from '../../App/DbSlice';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 /*
 
@@ -21,13 +21,14 @@ import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
     save the images to user data
     display them in the course report
 */
-function TimedWebcam({sectionData}) {
+function TimedWebcam({sectionData, once, removeDisplay}) {
     
     // ================================================================================
     // #region variables
     const webcamModule = useSelector(state => state.dbslice.userData?.accountData?.webcamModule)
     const selectedSectionID = useSelector((state) => state.dbslice.selectedSectionID);
     const userID = useSelector((state) => state.dbslice.userID);
+    const profileImageUrl = useSelector((state) => state.dbslice.userData.accountData.profileImageUrl);
     const [currentScreenshot, setCurrentScreenshot] = useState()
     const [message, setMessage] = useState("Take Image")
     const [showWebcam, setShowWebcam] = useState(false)
@@ -38,6 +39,7 @@ function TimedWebcam({sectionData}) {
     const timeOffset = useRef(0)
     const webcamRef = useRef()
     const timeRef = useRef(0)
+    const active = useRef(true)
     const dispatcher = useDispatch()
     // #endregion variables
 
@@ -45,14 +47,28 @@ function TimedWebcam({sectionData}) {
     // #region useEffects
     // Start the timer
     useEffect(() => {
+        if(once){            
+            showWebcamFunction()
+            return
+        } 
+        // If the user has not enabled the webcam module, hide the webcam, stop the timer, and return
+        if(!webcamModule){
+            hideWebcamFunction()
+            active.current = false
+        }
+        
+        // If the user has enabled the webcam module set the webcam to active and start the timer
+        active.current = true
         incrementTimer()
         return () => {
             clearTimeout(timerRef.current)
         }
+
     },[webcamModule])
 
     // Update the section data times
     useEffect(() => {
+        if(once) return
         // If there are times, set the time array ref (else will default to [25, 70])
         if(sectionData?.camTimes){
             // Split the array into an array of numbers and set the ref
@@ -63,6 +79,7 @@ function TimedWebcam({sectionData}) {
 
     // Reset the timer and hide the webcam if the section changes
     useEffect(() => {
+        if(once) return
         timeRef.current = 0
         // Hide the webcam immediately (function is on a timer)
         setShowWebcam(false)
@@ -77,7 +94,7 @@ function TimedWebcam({sectionData}) {
      * Increments the timer ref and cals function to take appropriate actions
      */
     function incrementTimer(){
-        if(!webcamModule) return
+        if(!webcamModule || !active.current) return
         
         // Increment the timer
         timeRef.current = timeRef.current + 1
@@ -97,9 +114,6 @@ function TimedWebcam({sectionData}) {
      * Given the number of seconds the user has been on the section, take appropriate actions
      */
     function timeActions(seconds){
-
-        console.log("timeActions: ", seconds)
-
         // Make sure there is an array of times
         if(!timeArrayRef.current || !Array.isArray(timeArrayRef.current) || timeArrayRef.current.length == 0) {
             return
@@ -193,12 +207,16 @@ function TimedWebcam({sectionData}) {
         
                     // Get the download url
                     console.log("getting download url:")       
-                    getDownloadURL(snapshot.ref).then((url) => {
-                        console.log("url: ", url)
+                    getDownloadURL(snapshot.ref).then((url) => {                        
                         // Push the image download url to the array of webcam images in userData for this section
-            
+                        if(!profileImageUrl || once)
+                            dispatcher(saveUserAccountData({kvPairs: {profileImageUrl: url}}))
+
                         // Doing this for now to test before creating the db action 
                         dispatcher(pushToUserSectionData2({sectionID: sectionData?.id, arrayName: "webcamImages", valueArray: [url]}))
+
+                        if(once)
+                            removeDisplay()
 
                     })   
                 
@@ -232,15 +250,23 @@ function TimedWebcam({sectionData}) {
      * Shows the webcam then uses a timer to add a class to the webcam to fade it in
      */
     function showWebcamFunction(){
+        console.log("show webcam function")
         // Show the webcam
         setShowWebcam(true)
         showWebcamRef.current = true
         // Hide the image
         setShowImage(false)
+        if(once){
+            setTimeout(() => {
+                if(!webcamOuterRef.current) return
+                webcamOuterRef.current.classList.add("fadeInFast")                
+            }, 500);
+            return
+        }
         // After a timer add the fade in (gives it time to render the webcam)
         setTimeout(() => {
             if(!webcamOuterRef.current) return
-                webcamOuterRef.current.classList.add("fadeIn")
+            webcamOuterRef.current.classList.add("fadeIn")
         }, 5000);
     }
     /**
@@ -256,6 +282,8 @@ function TimedWebcam({sectionData}) {
             setShowWebcam(false)
             setShowImage(false)
             setMessage()
+            if(once)
+                active.current = false
         }, 5000);
     }
     // #endregion webcam functions

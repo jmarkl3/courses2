@@ -29,8 +29,6 @@ import Support from './Components/Menus/Support/Support';
 
   dashboards       
     admin       
-      ability to change the date range on charts    
-      maybe make a Chart component with dataset and data key props
       user reports                     
         view / download certificate button if complete        
           maybe as a pdf instead of just an image with text overlayed over it, and can save that pdf in the user data
@@ -38,10 +36,9 @@ import Support from './Components/Menus/Support/Support';
       ability for admin to manually set a users password and email in admin user menu (maybe can't because it needs the user to be logged in and the user object)
       firebase manage users https://firebase.google.com/docs/auth/web/manage-users
     user
-      take new picture button for user profile
       save an initial picture from webcam comonent to the profile image while user is in the course 
-      title on the profile picture area in the user dashboard saying what it is used for
-      
+        take new picture button for user profile
+        title on the profile picture area in the user dashboard saying what it is used for      
 
   email 
     this library (emailJS) looks good: https://stackoverflow.com/questions/55795125/how-to-send-email-from-my-react-web-application
