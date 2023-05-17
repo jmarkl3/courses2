@@ -27,6 +27,7 @@ import Support from './Components/Menus/Support/Support';
   talk to hml ppl        
  
   multi language support
+      need ggl key
       this looks cool https://www.npmjs.com/package/react-auto-translate
       on landing page add hard coded text that changes based on language
       in course edit have inputs for multiple languages, or could have an auto translate feaure  
@@ -34,32 +35,30 @@ import Support from './Components/Menus/Support/Support';
   dashboards       
     admin 
       log how many new users per day and amount per day
-        see note in CheckoutPage line 135    
-        when a new user creates an account add it to a data structure in the db
-        display it on the chart based on date
-        format the cart so it looks right
+        test by creating a new user
+        chart styling (horzontal dates) and tooltip with date
         ability to change the date range    
       user reports                     
         view / download certificate button if complete        
           maybe as a pdf instead of just an image with text overlayed over it, and can save that pdf in the user data
         webcam images in course report                                       
 
-  security
-    firebase rules so only a user can update their own data
-    or an admin
+  auth
+    forgot password button
 
   email 
     this library (emailJS) looks good: https://stackoverflow.com/questions/55795125/how-to-send-email-from-my-react-web-application
     auto email certificate to address based on user data and maybe another one based on selection    
-    email when they sign up to give them a link to their dashboard and corse info
+    email when they sign up to give them a link to their dashboard and course info
     support page input sends an email to the support email address
 
   support page
     send email to support email address
     maybe have a chat bot
 
-  auth
-    forgot password button
+  security
+    firebase rules so only a user can update their own data
+    or an admin
 
   Style
     checkoutInputThird and Half style changes on screen resize 

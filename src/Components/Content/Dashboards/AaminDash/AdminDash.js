@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import "../Dashboards.css"
 import AdminCourses from '../../../CourseTile/AdminCourses'
 import { useSelector } from 'react-redux'
@@ -7,12 +7,14 @@ import Charts from './Charts'
 import AdminUsers from './AdminUsers'
 import './AdminDash.css'
 
+
 function AdminDash() {
     const userData = useSelector(state => state.dbslice.userData)
     // Display components based on admin permissions
     const fullAdmin = useSelector(state => state.dbslice.userData?.accountData?.fullAdmin)
     const courseAdmin = useSelector(state => state.dbslice.userData?.accountData?.courseAdmin)
     const userAdmin = useSelector(state => state.dbslice.userData?.accountData?.userAdmin)
+
 
   return (
     <div>

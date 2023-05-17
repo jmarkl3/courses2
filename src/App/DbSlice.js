@@ -146,8 +146,6 @@ const dbslice = createSlice({
             // Save the remaining time in the db
             set(ref(database, locationString), action.payload.value)
         },
-
-
         // New: saveUserCourseData (for enrolled, completed, and certificate path)
         saveUserCourseData(state, action){
             if(!action.payload.kvPairs){
@@ -256,10 +254,6 @@ const dbslice = createSlice({
             // Save the key value pair in the db
             update(ref(database, locationString), action.payload.kvPairs)
         },
-
-
-
-
         // New action.payload.kvPairs = ex:{property: "isAdmin", value: true} optional userID value in the payload
         saveUserAccountData(state, action){            
             if(action.payload.kvPairs == undefined){
@@ -316,7 +310,6 @@ const dbslice = createSlice({
                 }
             )
         },
-
         // New: enrollUserInCourses2
         enrollUserInCourses2(state, action){
             if(!action.payload || !action.payload.userID || !Array.isArray(action.payload.courseIDArray)) {
@@ -410,6 +403,27 @@ const dbslice = createSlice({
                 // Save the new language in the db
                 update(ref(database, locationString), {language: newLanguage})
             }
+        },
+        saveUserEvent(state, action){
+            // Create and modify data
+            let date = new Date()
+            let datestring = date.getFullYear()+'-'+date.getMonth()+'-'+date.getDate()
+            let timeString = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds()
+            let tempEventData = {...action.payload.eventData}
+            tempEventData.time = timeString
+            if(!tempEventData.userID)
+                tempEventData.userID = state.userID
+            
+            // Save in global user events (unless specified not to)
+            if(!action.payload.saveOnlyInUserData){
+                let userEventsRef = push(database, ref(database, 'coursesApp/userEvents/'+datestring))
+                set(userEventsRef, tempEventData)
+            }
+
+            // Save in user data events
+            let userDataEventsRef = push(database, ref(database, 'coursesApp/userData/'+(action?.payload?.userID || state.userID)+'/events/'+datestring))
+            set(userDataEventsRef, tempEventData)
+
         },
         // #endregion user data
 
@@ -1189,6 +1203,7 @@ export const {
     saveUserResponse,
     clearAllUserData,
     incrementUserSectionTime,
+    saveUserEvent,
 } = dbslice.actions;
 // Selection actions
 export const {selectCourse, selectChapter, selectSection, selectElement, selectNextSection, selectPreviousSection, selectSectionIfValid, selectChapterIfValid} = dbslice.actions;

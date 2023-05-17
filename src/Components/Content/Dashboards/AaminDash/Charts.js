@@ -1,5 +1,8 @@
-import React from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Label } from 'recharts';
+import { onValue } from 'firebase/database'
+import { database } from '../../../../App/DbSlice'
+import { ref } from 'firebase/database';
 
 function Charts() {
 
@@ -50,6 +53,57 @@ function Charts() {
         },
       ];
 
+      const [newUsersChartData, setNewUsersChartData] = useState([])
+      const userEventsRef = useRef({})
+
+      useEffect(()=>{
+        loadEvents()
+      },[])
+    
+      function loadEvents(){
+  
+        onValue(ref(database, 'coursesApp'), (snapshot) => {
+            userEventsRef.current = snapshot.val()
+            setNewUsersChartData(generateChartData("New Users"))
+        })
+
+      }
+      function generateChartData(eventTypeName){
+        if(typeof userEventsRef.current !== "object") return
+
+        let dateRange = 30
+        
+        // Generate an array of date strings
+        let dateArray = []
+        let date = new Date()
+        let tempDatestring = date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate()
+        for(let i = 0; i < dateRange; i++){
+            dateArray.push(tempDatestring)
+            date.setDate(date.getDate() - 1)
+            tempDatestring = date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate()
+        }
+
+        // Generate the chard data
+        let tempChartData = []
+
+        // Look through the events on those dates
+        dateArray.forEach(dateString => {
+            let valueOnThisDate = 0  
+            let eventsOnThisDate = userEventsRef.current[dateString]
+            if(eventsOnThisDate && typeof eventsOnThisDate === "object"){
+                Object.values(eventsOnThisDate).forEach((eventData) => {
+                    if(eventData.type === eventTypeName){
+                        valueOnThisDate++
+                    }                        
+                })
+            }
+            tempChartData.push({name: dateString, [eventTypeName]: 0})
+        })
+
+        return tempChartData
+
+      }
+
   return (
     <div className='charts'>
         {/* <h3>
@@ -85,6 +139,37 @@ function Charts() {
                 <YAxis />
                 <Tooltip />
                 <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
+            </AreaChart>
+        </div>
+        <div className='chartContainer'>
+            New Users New
+            <AreaChart
+                width={600}
+                height={200}
+                data={newUsersChartData}
+                margin={{
+                    top: 10,
+                    right: 30,
+                    left: 0,
+                    bottom: 0,
+                }}
+                >
+                <XAxis dataKey="name" >
+                    <Label 
+                        style={{
+                            marginTop: "20px",
+                            paddingTop: "20px",
+                            color: "blue",
+                            backgroundColor: "blue",
+                            height: "100px",
+                        }}
+                        value={"date"}
+                        angle={0}
+                    ></Label>
+                </XAxis>
+                <YAxis />
+                <Tooltip />
+                <Area type="monotone" dataKey="New Users" stroke="#8884d8" fill="#8884d8" />
             </AreaChart>
         </div>
         <div className='chartContainer'>            

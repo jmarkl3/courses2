@@ -6,7 +6,7 @@ import { priceString } from '../../../App/functions'
 import { useNavigate } from 'react-router-dom'
 import DisplayPage from '../DisplayPage'
 import { clearCartCourses, setCheckingOut, setShowCart, setSideNavOpen, toggleShowAuthMenu } from '../../../App/AppSlice'
-import { auth, enrollUserInCourses, enrollUserInCourses2, saveUserAccountData, setUserID } from '../../../App/DbSlice'
+import { auth, enrollUserInCourses, enrollUserInCourses2, saveUserAccountData, saveUserEvent, setUserID } from '../../../App/DbSlice'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
 /*
   if there is no user account 
@@ -132,18 +132,35 @@ function CheckOutPage() {
           return
         }
 
+
+        dispatcher(saveUserEvent({userID: user.uid, eventData: {type: "New Users", userID: user.uid, eventNote: "New user "+userInputData.firstName+" "+user.uid+" created"}}))
+
         /*
-          userStats: {
+          userEvents: {
+            // Allows O1 for the chart
             date: {
               randomKey: {
                 userID: <userID>,
-                type: "new user, existing user enrolled, completed course, amount",
-                time: <time>
+                type: "new user, enrollment, completed course, amount",
+                time: <time>,
+                eventNote: "<user id> signed up for <course name>, completed <section name> in <course name>"
               }
             }
           }
 
           also put in their userData
+          userData: {
+            accountData: {...},
+            courses: {...},
+            events: {
+              date: {
+                randomKey: {
+                  time: <time>,
+                  type: <signed up, enrolled in course, completed section ,course>,
+                  eventNote: "signed up for <course name>, completed <section name> in <course name>"
+                }
+            }
+          }
 
         */
 
@@ -151,6 +168,9 @@ function CheckOutPage() {
 
         // Save user input data to user account
         dispatcher(saveUserAccountData({userID: user.uid, kvPairs: userInputData}))
+        selectedCourses.forEach(courseData => {
+          dispatcher(saveUserEvent({userID: user.uid, eventData: {type: "Enrollments", userID: user.uid, eventNote: "User "+userInputData.firstName+" enrolled in "+courseData.name}}))
+        });
 
         // Enroll user in course
         //dispatcher(enrollUserInCourses({userID: user.uid, courseIDArray: selectedCourseIDs})) 
