@@ -13,7 +13,14 @@ function AdminUserTile({userData}) {
             <div className="hamburgerMenuOption" >Edit User Privilages</div>
             <div className="hamburgerMenuOption" >View Course Data</div>                        
         </HamburgerMenu>
-        {userData?.accountData?.firstName + " "+userData?.accountData?.lastName}
+
+        <div className='userTileText'>
+          {(userData?.accountData?.firstName || userData?.accountData?.lastName)?
+            (userData?.accountData?.firstName + " " + userData?.accountData?.lastName) 
+            : 
+            (userData?.accountData?.email)
+          }
+        </div>
         {showMenu && <AdminUserMenu userData={userData} close={()=>setShowMenu(false)}></AdminUserMenu>}
     </div>
   )
