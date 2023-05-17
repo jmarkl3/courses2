@@ -30,3 +30,16 @@
     margin: 10px;
     margin-top: 30px;
 }
+.supportForm input{
+    margin: 5px;
+}
+.supportForm textarea{
+    margin-left: 5px;
+    min-width: 100%;
+    max-width: 100%;
+    height: 200px;
+}
+.feedback{
+    width: 100%;
+    text-align: center;
+}

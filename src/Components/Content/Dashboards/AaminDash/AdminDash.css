@@ -121,3 +121,10 @@
 .chartDateRangeButton:hover{
     background-color: #cccccc71;
 }
+.profileImageElement{
+    height: 240px;
+    width: 300px;
+    background-color: gray;
+    border-radius: 5px;
+    display: inline-block;
+}

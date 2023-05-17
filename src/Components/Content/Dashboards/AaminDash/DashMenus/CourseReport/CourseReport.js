@@ -6,6 +6,7 @@ import jsPDF from 'jspdf'
 import topImage from "../../../../../../Images/topImage.jpg"
 import html2canvas from 'html2canvas'
 import { timeString } from '../../../../../../App/functions'
+import { FromPixels } from '@tensorflow/tfjs'
 /*
   When user data changes generateChaptersReportObject is called from a useEffect
   This generates the chapters array which is saved in state
@@ -288,6 +289,7 @@ function CourseReport({userData, courseData, close}) {
 
   }
   // This one will generate the pdf directly from the JSON
+  const docRef = useRef()
   async function generatePDF3(){
     if(!Array.isArray(chaptersArray) || chaptersArray.length <= 0){      
       return
@@ -295,6 +297,7 @@ function CourseReport({userData, courseData, close}) {
 
     // Create a pdf doc with jsPDF node package
     const doc = new jsPDF();
+    docRef.current = doc
 
     // Add the header with name, course, and date
     addLineToDoc(doc, "Course report for "+userData.accountData.firstName+" "+userData.accountData.lastName, 10, 10)
@@ -368,6 +371,8 @@ function CourseReport({userData, courseData, close}) {
 
   }
 
+
+  
   const docHeightOffset = useRef(0)
   // Adds a line to the doc keeping track of the height offset and when a new page is needed
   function addLineToDoc(doc, text, fontSize, heightOffset, color){
@@ -443,7 +448,216 @@ function CourseReport({userData, courseData, close}) {
     console.log("dataUrlToFile file:")
     console.log(file)
     return file
+  }
+
+  function drawDataURIOnCanvas(strDataURI, canvas) {
+    "use strict";
+    var img = new window.Image();
+    img.addEventListener("load", function () {
+        canvas.getContext("2d").drawImage(img, 0, 0);
+    });
+    img.setAttribute("src", strDataURI);
 }
+
+  async function addProfileImageTDoc(){
+    // docHeightOffset.current = 0
+    // console.log("docRef.current")
+    // console.log(docRef.current)  
+    
+  //profileImageElement
+
+    // addLineToDoc(docRef.current, "test line from profile image doc", 10, 10)  
+    // addLineToDoc(docRef.current, "test line from profile image doc", 10, 10)  
+    // addLineToDoc(docRef.current, "test line from profile image doc", 10, 10)  
+    // setPdfDoc(docRef.current)
+    // setPdfDocUrl(URL.createObjectURL(docRef.current.output("blob")))
+
+    // docHeightOffset.current = 0
+    // const doc = new jsPDF()
+    // addLineToDoc(doc, "test line from profile image doc", 10, 10)  
+    // addLineToDoc(doc, "test line from profile image doc", 10, 10)  
+    // addLineToDoc(doc, "test line from profile image doc", 10, 10)  
+    // addLineToDoc(doc, "test line from profile image doc", 10, 10)  
+    // setPdfDocUrl(URL.createObjectURL(doc.output("blob")))
+    
+    // looks like theyre downloading them and 
+    // https://stackoverflow.com/questions/48258242/get-the-source-image-file-from-img-tag
+
+    // Going back to the top of the first page of the doc
+    docHeightOffset.current = 0  
+    docRef.current.setPage(1)
+
+    // Get the profile image element (this part is working)
+    let profileImageElement = document.getElementById("profileImgID")
+    console.log("profileImageElement")
+    console.log(profileImageElement)
+    console.log(profileImageElement.src)
+
+    // let tfImg = FromPixels(profileImageElement)
+    // console.log(tfImg)
+    
+    
+    console.log("profileImageElement.baseURI")
+    console.log(profileImageElement.baseURI)
+
+    console.log("trying loadImgAsBase64")
+    loadImgAsBase64(profileImageElement.src)
+
+    // let dataUrl2 = profileImageElement.src.split(',')
+    // let base64 = dataUrl2[1];
+    // console.log("base64")
+    // console.log(base64)
+    // console.log(dataUrl2)
+
+    return
+
+    // let loadedFile = await dataUrlToFile(profileImageElement.src)
+    // let loadedFileUrl = URL.createObjectURL(loadedFile)
+    
+    // console.log("loadedFile")
+    // console.log(loadedFile)  
+    // console.log("loadedFileUrl")  
+    // console.log(loadedFileUrl)  
+    // console.log("topImage")
+    // console.log(topImage)
+
+
+    // docRef.current.addImage(loadedFileUrl, 'png', 10, 10, 60, 40);
+    
+    // Create an image
+    var image = new Image();
+    image.setAttribute('crossOrigin', 'anonymous')
+
+      // Create a canvas
+    var canvas = document.createElement('canvas')
+  
+    //drawDataURIOnCanvas(loadedFileUrl, profileImageElement.src)
+  
+    let dataUrl = canvas.toDataURL('image/jpeg');
+
+    //"https://firebasestorage.googleapis.com/v0/b/defaultproject-c023e.appspot.com/o/courseWebcamImages%2FWozrrcJDW9Z1mYJ43QxWx835tzr2_timedWebcamImage_10_2023_4_17_12%3A49%3A44?alt=media&token=b43dd362-a30a-4a90-9435-ca494b4bdafc"
+
+    html2canvas(profileImageElement).then(canvas => {
+      // Add the image to the doc
+      docRef.current.addImage(canvas, 'jpeg', 10, 10, 60, 40);
+    
+      // Update the display iframe
+      setPdfDocUrl(URL.createObjectURL(docRef.current.output("blob")))
+      
+    })
+
+
+
+    // profileImgID
+
+    //canvas.getContext('2d').drawImage(document.getElementById("profileImgID").scr)
+    //canvas.drawImage(document.getElementById("profileImgID").scr)
+
+    // https://stackoverflow.com/questions/24912021/convert-a-image-url-to-pdf-using-jspdf
+
+    //let dataUrl = canvas.toDataURL('image/jpeg');
+  //  let dataUrl = URL.createObjectURL(image)
+    //let dataUrl = image.toDataURL('image/jpeg');
+
+    //document.getElementById("imgTest").scr = dataUrl
+
+  
+
+    return
+    image.onload = function () {
+      console.log("image loaded")
+      var canvas = document.createElement('canvas');
+      canvas.width = 300;
+      canvas.height = 200; 
+
+      //next three lines for white background in case png has a transparent background
+      var ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#ggg';  /// set white fill style
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      canvas.getContext('2d').drawImage(this, 0, 0);
+
+      let dataUrl = canvas.toDataURL('image/jpeg');
+
+      console.log(document.getElementById("imgTest").src)
+      document.getElementById("imgTest").scr = dataUrl
+      console.log(document.getElementById("imgTest").src)
+
+      //docRef.current.addImage(dataUrl, 'jpeg', 10, 10, 60, 40);
+      docRef.current.addImage(profileImageElement.src, 'jpeg', 10, 10, 60, 40);
+
+      setPdfDocUrl(URL.createObjectURL(docRef.current.output("blob")))
+  };
+    
+
+    return
+
+    // Create a canvas from it
+    html2canvas(profileImageElement).then(canvas => {
+      // This logs something, idk for sure if the image is in it 
+      console.log("adding canvas")
+      console.log(canvas)
+
+      // This is working
+      addLineToDoc(docRef.current, "test line from profile image doc", 10, 10)  
+
+      // Put the image in the doc (adds the element with backgrond, but not contents, also doesn't work for img tag contents (doesnt show src))
+      docRef.current.addImage(canvas, 'JPG', 10, 10, 60, 40);
+
+
+      // This works
+      // docRef.current.addImage(topImage, 'JPG', 10, 10, 60, 40);
+    
+      // Set the url so the ifram displays the updated version (seems to be working)
+      setPdfDocUrl(URL.createObjectURL(docRef.current.output("blob")))
+    })
+
+    return
+    // let courseReportElement = document.getElementById("courseReportHTML")
+
+    // // Create a canvas image from the html
+    // html2canvas(courseReportElement).then(canvas => {
+
+    //   // var imgData = canvas.toDataURL('image/png');
+
+    //   var pageHeight = 295; 
+    //   var heightLeft = canvas.height / 6;
+    //   var position = 10;
+
+    //   // For some reason its adding the first page with a large reverse margin at the top
+    //   doc.addImage(canvas, 'JPG', 10, 10, canvas.width/6, canvas.height/6);
+    // })
+  }
+
+  // https://stackoverflow.com/questions/43000648/html-img-src-works-but-js-image-loading-cause-cors-error
+
+  function loadImgAsBase64(url) {
+
+    let canvas = document.createElement('CANVAS');
+    let img = document.createElement('img');
+    //img.setAttribute('crossorigin', 'anonymous');
+    img.src = url;
+  
+    img.onload = () => {
+      canvas.height = img.height;
+      canvas.width = img.width;
+      let context = canvas.getContext('2d');
+      context.drawImage(img, 0, 0);
+
+      docRef.current.addImage(canvas, 'jpeg', 10, 10, 60, 40);
+    
+      // Update the display iframe
+      setPdfDocUrl(URL.createObjectURL(docRef.current.output("blob")))
+
+      // let dataURL = canvas.toDataURL('image/png');
+      // canvas = null;
+      // console.log(dataURL)
+      //callback(dataURL);
+    };
+  }
+  
+  
+  let url = 'http://lorempixel.com/500/150/sports/9/';
 
   return (
 
@@ -452,9 +666,16 @@ function CourseReport({userData, courseData, close}) {
       <div className='courseReportInner'>
         <button className='third' onClick={()=>downloadPDF()}>Download {userData.accountData.firstName+"'s Course Report "} PDF</button>        
         <iframe className='pdfIframe' src={pdfDocUrl}></iframe>     
-        {webcamImageUrls.map(imageURL => (
-          <img className="webcamImage" src={imageURL}></img>
+        {/* {webcamImageUrls.map(imageURL => (
+          <img id={"imgTest"} className="webcamImage" src={imageURL}></img>
         ))}   
+        <div id='profileImageElement' className='profileImageElement'>
+          <img className="webcamImage" id={"profileImgID"} src={userData.accountData.profileImageUrl}></img>
+          <span style={{color: "blue"}}>
+            test of the thing
+          </span>
+        </div>
+        <button onClick={addProfileImageTDoc}>Add</button> */}
       </div>
 
     </div>

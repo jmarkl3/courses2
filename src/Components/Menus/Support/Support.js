@@ -1,12 +1,28 @@
-import React from 'react'
+import React, { useRef, useState } from 'react'
 import "./Support.css"
 import { useDispatch, useSelector } from 'react-redux'
 import { setShowSupportMenu } from '../../../App/AppSlice'
+import emailjs from '@emailjs/browser'
 
 function Support() {
     const showSupportMenu = useSelector(state => state.appslice.showSupportMenu)
     const userData = useSelector(state => state.dbslice.userData)
+    const [feedback, setFeedback] = useState('')
+    const form = useRef()
     const dispatcher = useDispatch()
+
+
+function sendSupportMessage(){
+  emailjs.sendForm('service_fepcyns', 'template_bl74n4j', form.current, 'jxl1B6Wy4ZMfn1YcQ')
+      .then((result) => {
+          console.log(result.text);
+          setFeedback("Message Sent!")
+      }, (error) => {
+          console.log(error.text);
+          setFeedback("Error Sending Message")
+      });
+
+}
 
   return (
     <>
@@ -24,16 +40,18 @@ function Support() {
                     email@email.com
                   </div>                                    
                 </div>
-                <div className='supportMessage'>
-                  <div className='title'>
-                    Or Send a Message:
-                  </div>                  
-                  <input defaultValue={userData?.accountData ? (userData?.accountData?.firstName + " " + userData?.accountData?.lastName) : ""}></input>
-                  <input defaultValue={userData?.accountData ? (userData?.accountData?.email) : ""} placeholder='Email'></input>
-                  <input defaultValue={userData?.accountData ? (userData?.accountData?.phone) : ""} placeholder='Phone'></input>                  
-                  <textarea placeholder='Message'></textarea>                
-                  <button>Send</button>                                  
-                </div>
+                <hr></hr>
+                <div className='title'>Or Send a Message:</div>
+                <form ref={form} onSubmit={sendSupportMessage} className='supportForm'>
+                  <input type="text" name="user_name" defaultValue={userData?.accountData ? (userData?.accountData?.firstName + " " + userData?.accountData?.lastName) : ""} placeholder='Name:' />
+                  <input type="email" name="user_email" defaultValue={userData?.accountData ? (userData?.accountData?.email) : ""} placeholder='Email:' />
+                  <input type="phone" name="user_phone" defaultValue={userData?.accountData ? (userData?.accountData?.phone) : ""} placeholder='Phone:' />
+                  <textarea name="message" />
+                  {/* <input type="submit" value="Send" /> */}
+                  <button style={{width: "100%", marginLeft: "5px"}} onClick={sendSupportMessage}>Send</button>
+                  
+                  <div className='feedback'>{feedback}</div>
+                </form>
             </div>
         
         }
