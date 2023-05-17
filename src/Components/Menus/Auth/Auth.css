@@ -12,8 +12,7 @@
     text-align: center;
 }
 .authMenu input{
-    height: 32px;
-    color: black;
+    height: 32px;    
     box-sizing: border-box;
     border-radius: 2px;
     margin: 4px;    
@@ -60,9 +59,15 @@
     padding-left: 10px;
     cursor: pointer;
 }
-.errorMessage{
+.message{
     padding-bottom: 5px;
+    font-size: 16px;
+}
+.messageRed{    
     color: rgb(224, 134, 134);
+}
+.messageGreen{
+    color: rgb(134, 224, 164);
 }
 .inputIcon{
     height: 30px;

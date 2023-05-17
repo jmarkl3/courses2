@@ -15,6 +15,7 @@ function AuthMenu() {
   const userID = useSelector(state => state.dbslice.userID)
   const [createNew, setCreateNew] = useState(true)
   const [errorMessage, setErrorMessage] = useState("")
+  const [messageColor, setMessageColor] = useState("")
   const [updatingEmail, setUpdatingEmail] = useState("")
   const emailInput = useRef()
   const emailResetInput = useRef()
@@ -28,6 +29,7 @@ function AuthMenu() {
   
   function close(){
     setErrorMessage("")
+    setMessageColor("")
     dispatcher(setShowAuthMenu(false))
   }
 
@@ -37,6 +39,7 @@ function AuthMenu() {
 
     signInWithEmailAndPassword(auth, email, pass).then( user =>{
       }).catch(err=>{
+        setMessageColor("red")
         displayErrorMessage(err.message)
       })
   }
@@ -58,6 +61,7 @@ function AuthMenu() {
 
 
       }).catch(err=>{
+        setMessageColor("red")
         displayErrorMessage(err.message)
       })
   }
@@ -124,13 +128,13 @@ function AuthMenu() {
   
     sendPasswordResetEmail(auth, passwordResetEmail)
     .then(() => {
+      setMessageColor("green")
       setErrorMessage("Password reset email sent to "+passwordResetEmail)
 
     })
-    .catch((error) => {
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      setErrorMessage("Password reset error: "+errorMessage)      
+    .catch((error) => {      
+      setMessageColor("red")      
+      displayErrorMessage(error.message)        
 
     });
   }
@@ -142,9 +146,10 @@ function AuthMenu() {
     updateEmail(auth?.currentUser, emailResetInput.current.value).then(() => {
       setUpdatingEmail(false)
       setErrorMessage("Email Updated to "+auth?.currentUser?.email)          
-
+      setMessageColor("green")
     }).catch((error) => {
-      setErrorMessage(error.message)
+      setMessageColor("red")
+      displayErrorMessage(error.message)      
     });
   }
 
@@ -177,7 +182,7 @@ function AuthMenu() {
                               </>
                             }
                             <div className='loginBottomText'>
-                              <div className='errorMessage'>
+                              <div className={`errorMessage ${messageColor === "red" ? "messageRed":""} ${messageColor === "green" ? "messageGreen":""}`}>
                                 {errorMessage}
                               </div>
                             </div>
@@ -189,7 +194,7 @@ function AuthMenu() {
                             title={"If the browser cache is cleared all local data will be lost.\nAn account allows data to be saved and used on multiple devices."}
                             >
                                 {createNew ? "Create Account" : "Login"}
-                                {updatingEmail && <div>Email Update requires recent login. Please login again to continue.</div>}
+                                {updatingEmail && <div className='message'>Email Update requires recent login. Please re-authenticate to continue.</div>}
                             </div>         
                             <div>
                                 <input placeholder='email' ref={emailInput} defaultValue={auth?.currentUser?.email}></input>
@@ -210,12 +215,12 @@ function AuthMenu() {
                               <div>
                                 <hr></hr>
                                 <input placeholder='New Email' ref={emailResetInput}></input>
-                                <button onClick={updateEmailFunction}>Updat Email</button>
+                                <button onClick={updateEmailFunction}>Update Email</button>
                                 <button onClick={()=>setUpdatingEmail(false)}>Cancel Email Update</button>
                               </div>
                             }
                             <div className='loginBottomText'>
-                                <div className='errorMessage'>
+                                <div className={`errorMessage ${messageColor === "red" ? "messageRed":""} ${messageColor === "green" ? "messageGreen":""}`}>
                                   {errorMessage}
                                 </div>
                                 {createNew ?
