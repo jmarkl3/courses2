@@ -52,7 +52,7 @@ function CartCourse({courseData, selected, draggable, readOnly, userDataOverride
     function checkCourseProgress(){        
         let completedSections = 0
         // If there is a valid userData.courses object (meaning the user is enrolled in the course)
-        if(userData && userData?.courses[courseData.id]){
+        if(userData && userData?.courses && userData?.courses[courseData.id]){
             // Get an object that containes {chapterID: chapterData, ...}
             let chaptersDataObject = userData?.courses[courseData.id]?.chapterData
             // If there is a valid chaptersDataObject

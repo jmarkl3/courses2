@@ -4,11 +4,12 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setShowAuthMenu, toggleShowAuthMenu} from '../../../App/AppSlice'
 import "../../../Styles/Themes.css"
 import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth'
-import { auth, clearAllCourseData, clearAllUserData, clearEnrolledCourses, enrollUserInCourses, saveUserAccountData, setUserData, setUserID, toggleTheme } from '../../../App/DbSlice'
+import { auth, clearAllCourseData, clearAllUserData, clearEnrolledCourses, enrollUserInCourses, saveUserAccountData, saveUserEvent, setUserData, setUserID, toggleTheme } from '../../../App/DbSlice'
 import { useNavigate } from 'react-router-dom'
 
 function AuthMenu() {
   const showAuthMenu = useSelector(state => state.appslice.showAuthMenu)
+  const userData = useSelector(state => state.dbslice.userData)
   const fullAdmin = useSelector(state => state.dbslice.userData?.accountData?.fullAdmin)
   const sideNavOpen = useSelector(state => state.appslice.sideNavOpen)
   const theme = useSelector(state => state.dbslice.userData?.accountData?.theme)
@@ -46,6 +47,9 @@ function AuthMenu() {
       let date = new Date()
       dispatcher(saveUserAccountData({kvPairs: {creationDate: date.getFullYear() + "/" + date.getMonth() + "/" + date.getDate()}}))
 
+      dispatcher(saveUserEvent({userID: user.uid, eventData: {type: "New Users", userID: user.uid, eventNote: "New user "+user.uid+" created"}}))
+
+
       }).catch(err=>{
         displayErrorMessage(err.message)
       })
@@ -76,10 +80,9 @@ function AuthMenu() {
       // If the user signs in take them to the dashboard and hide the auth menu 
       if(user) {
         dispatcher(setShowAuthMenu(false))                
-        
-        // Doing this in a timeout so the auth menu has time to close before navigating
-        if(!window.location.href.toLocaleLowerCase().includes("Course"))
-          // console.log("going to dashboard")
+          
+        // If the user is on the landing page and they log in take them to the dashboard
+        if(!window.location.href.toLocaleLowerCase().includes("#"))          
           setTimeout(()=>navigate("/Dashboard"), 250)
       }
       // If the user signed out take them to the home page and clear their user data
@@ -106,6 +109,9 @@ function AuthMenu() {
       navigate("/Dashboard")      
     }, 250);
   }
+  function logUserData(){
+    console.log(userData)
+  }
 
     return (
         <div className={theme}>
@@ -125,6 +131,7 @@ function AuthMenu() {
                             <button onClick={goToDashboard}>Your Courses / Dashboard</button>                            
                             <button onClick={()=>dispatcher(toggleTheme())}>{theme === "lightTheme" ? "Dark Theme" : "Light Theme"}</button>                                                                                
                             <button onClick={()=>dispatcher(saveUserAccountData({kvPairs: {fullAdmin: !fullAdmin}}))}>Toggle fullAdmin {" "+fullAdmin}</button>                                                                                                               
+                            <button onClick={logUserData}>Log User Data</button>
                             <button onClick={signOutUser}>Log Out</button>
                             {fullAdmin &&
                               <>

@@ -136,7 +136,7 @@ const dbslice = createSlice({
         // var locationString = "coursesApp/userData/"+state.userID+"/responses/"+state.selectedCourseID+"/"+action.payload.chapterID+"/"+action.payload.sectionID+"/"+action.payload.property
         saveUserSectionData(state, action){
             console.log("saveUserSectionData depreciated")
-            return
+            
             if(!action.payload.sectionID || !action.payload.chapterID || action.payload.value == undefined || !action.payload.property){
                 console.log("Error: saveRemainingSectionTime: missing data")
                 return
@@ -158,7 +158,7 @@ const dbslice = createSlice({
                 "/courses/"+(action.payload.courseID || state.selectedCourseID)
 
             // Save the key value pair in the db
-            update(ref(database, locationString), action.payload.kvPairs)
+            update(ref(database, locationString), removeUndefined(action.payload.kvPairs))
         },
         // New: saveUserChapterData (for chapter complete)
         saveUserChapterData(state, action){
@@ -220,6 +220,8 @@ const dbslice = createSlice({
         },
         incrementUserSectionTime(state, action){            
             runTransaction(ref(database, "coursesApp/userData/"+state.userID+"/courses/"+(action.payload?.courseID || state.selectedCourseID)+"/chapterData/"+(action.payload?.chapterID || state.selectedChapterID)+"/sectionData/"+(action.payload?.sectionID|| state.selectedSectionID)), item => {
+                if(!item)
+                    item = {}
                 if(!item.userTime)
                     item.userTime = 0
                 if(typeof item.userTime !== "number")
@@ -405,23 +407,32 @@ const dbslice = createSlice({
             }
         },
         saveUserEvent(state, action){
+            if(!(action?.payload?.userID || state.userID)){
+                console.log("saveUserEvent with no userID")
+                return
+            }
+
             // Create and modify data
             let date = new Date()
-            let datestring = date.getFullYear()+'-'+date.getMonth()+'-'+date.getDate()
+            let datestring = date.getFullYear()+'_'+date.getMonth()+'_'+date.getDate()
             let timeString = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds()
             let tempEventData = {...action.payload.eventData}
             tempEventData.time = timeString
             if(!tempEventData.userID)
                 tempEventData.userID = state.userID
             
+            tempEventData = removeUndefined(tempEventData)
+
             // Save in global user events (unless specified not to)
             if(!action.payload.saveOnlyInUserData){
-                let userEventsRef = push(database, ref(database, 'coursesApp/userEvents/'+datestring))
+                let globalEventsRef =  ref(database, 'coursesApp/userEvents/'+datestring)
+                let userEventsRef = push(globalEventsRef)
                 set(userEventsRef, tempEventData)
             }
 
             // Save in user data events
-            let userDataEventsRef = push(database, ref(database, 'coursesApp/userData/'+(action?.payload?.userID || state.userID)+'/events/'+datestring))
+            let userEventsRef = ref(database, 'coursesApp/userData/'+(action?.payload?.userID || state.userID)+'/events/'+datestring)
+            let userDataEventsRef = push(userEventsRef)
             set(userDataEventsRef, tempEventData)
 
         },

@@ -49,7 +49,13 @@ function UserDash() {
       address1: adressInput1.current.value,
       address2: adressInput2.current.value,
     }    
-    dispatcher(saveUserAccountData({kvPairs: accountDataTemp}))
+    dispatcher(saveUserAccountData({kvPairs: accountDataTemp}))        
+    setEditingProfileInfo(false)
+  }
+
+  function startEditingProfileInfo(){
+    nameInputF.current.focus()
+    setEditingProfileInfo(true)
   }
 
   return (
@@ -71,19 +77,19 @@ function UserDash() {
           <div className={"profileImageButton"}> Take New Picture</div>
         </div>
         <div className='profileSection'>
-          <input readonly={editingProfileInfo? false: "readonly"} className='half' defaultValue={userData?.accountData?.firstName} ref={nameInputF}></input>          
-          <input readonly={editingProfileInfo? false: "readonly"} className='half' defaultValue={userData?.accountData?.lastName} ref={nameInputL}></input>          
-          <input readonly={editingProfileInfo? false: "readonly"}  defaultValue={userData?.accountData?.email} ref={emailInput}></input>          
-          <input readonly={editingProfileInfo? false: "readonly"}  defaultValue={userData?.accountData?.phone} ref={phoneInput}></input>          
-          <input readonly={editingProfileInfo? false: "readonly"}  defaultValue={userData?.accountData?.address1} ref={adressInput1}></input>          
-          <input readonly={editingProfileInfo? false: "readonly"}  defaultValue={userData?.accountData?.address2} ref={adressInput2}></input>                            
+          <input readOnly={editingProfileInfo? false: "readOnly"} className='half' defaultValue={userData?.accountData?.firstName} ref={nameInputF}></input>          
+          <input readOnly={editingProfileInfo? false: "readOnly"} className='half' defaultValue={userData?.accountData?.lastName} ref={nameInputL}></input>          
+          <input readOnly={editingProfileInfo? false: "readOnly"}  defaultValue={userData?.accountData?.email} ref={emailInput}></input>          
+          <input readOnly={editingProfileInfo? false: "readOnly"}  defaultValue={userData?.accountData?.phone} ref={phoneInput}></input>          
+          <input readOnly={editingProfileInfo? false: "readOnly"}  defaultValue={userData?.accountData?.address1} ref={adressInput1}></input>          
+          <input readOnly={editingProfileInfo? false: "readOnly"}  defaultValue={userData?.accountData?.address2} ref={adressInput2}></input>                            
           {editingProfileInfo?
             <>
               <div className={"profileImageButton"} onClick={resetFields}> Reset</div>
               <div className={"profileImageButton"} onClick={saveUserAccountDataFunction}> Save</div>
             </>
             :
-            <div className={"profileImageButton"} onClick={()=>setEditingProfileInfo(!editingProfileInfo)}> Edit Info</div>
+            <div className={"profileImageButton"} onClick={startEditingProfileInfo}> Edit Info</div>
 
           }
         </div>

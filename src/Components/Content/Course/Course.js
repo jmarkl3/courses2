@@ -71,7 +71,7 @@ function Course() {
       if(userData && !savedCourseData){
         console.log("user has not saved course data")
         let coursePartialData = generatePartialData(courseData)
-        dispatcher(saveUserCourseData({kvPairs: {savedCourseData: true, name: coursePartialData.name, chapterData: coursePartialData.chapterData}, courseID: courseID}))
+        //dispatcher(saveUserCourseData({kvPairs: {savedCourseData: true, name: coursePartialData.name, chapterData: coursePartialData.chapterData}, courseID: courseID}))
       }
 
     }

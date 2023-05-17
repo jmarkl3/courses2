@@ -76,6 +76,11 @@ function CheckOutPage() {
       let userInputData = gatherUserData()
       dispatcher(saveUserAccountData({kvPairs: userInputData}))
 
+      // Save the events
+      // selectedCourses.forEach(courseData => {
+        dispatcher(saveUserEvent({userID: userID, eventData: {type: "Enrollments", userID: userID, eventNote: "User "+userInputData.firstName+" enrolled in "+selectedCourses[0]?.name}}))
+      // });
+
       // Enroll user in course
       //dispatcher(enrollUserInCourses({userID: userID, courseIDArray: selectedCourseIDs}))
       dispatcher(enrollUserInCourses2({userID: userID, courseIDArray: selectedCourseIDs}))
@@ -168,9 +173,9 @@ function CheckOutPage() {
 
         // Save user input data to user account
         dispatcher(saveUserAccountData({userID: user.uid, kvPairs: userInputData}))
-        selectedCourses.forEach(courseData => {
-          dispatcher(saveUserEvent({userID: user.uid, eventData: {type: "Enrollments", userID: user.uid, eventNote: "User "+userInputData.firstName+" enrolled in "+courseData.name}}))
-        });
+        // selectedCourses.forEach(courseData => {
+          dispatcher(saveUserEvent({userID: user.uid, eventData: {type: "Enrollments", userID: user.uid, eventNote: "User "+userInputData.firstName+" enrolled in "+selectedCourses[0]?.name}}))
+        // });
 
         // Enroll user in course
         //dispatcher(enrollUserInCourses({userID: user.uid, courseIDArray: selectedCourseIDs})) 

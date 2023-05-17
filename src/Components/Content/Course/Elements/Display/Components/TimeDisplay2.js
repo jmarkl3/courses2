@@ -131,6 +131,7 @@ function TimeDisplay2({sectionData, chapterID, viewOnly, setRemainingTime}) {
 
     // Updates the time in the db with an action
     function updateUserTime(){
+        
         if(!userData) return
         dispatcher(incrementUserSectionTime())
 
@@ -148,7 +149,10 @@ function TimeDisplay2({sectionData, chapterID, viewOnly, setRemainingTime}) {
             return ""
 
         // Create a time string with the difference (hh:mm:ss)
-        return timeString(requiredTimeRef.current - userTime)
+        if(userTime)
+            return timeString(requiredTimeRef.current - userTime)
+        else
+            return timeString(requiredTimeRef.current)
     }
 
   return (

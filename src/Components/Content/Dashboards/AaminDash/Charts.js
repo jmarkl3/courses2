@@ -69,6 +69,7 @@ function Charts() {
 
       }
       function generateChartData(eventTypeName){
+        // return
         if(typeof userEventsRef.current !== "object") return
 
         let dateRange = 30
@@ -76,10 +77,13 @@ function Charts() {
         // Generate an array of date strings
         let dateArray = []
         let date = new Date()
+        // Starting at the beginning of the date range
+        date.setDate(date.getDate() - (dateRange -1))
         let tempDatestring = date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate()
         for(let i = 0; i < dateRange; i++){
             dateArray.push(tempDatestring)
-            date.setDate(date.getDate() - 1)
+            // Add a day to the date object
+            date.setDate(date.getDate() + 1)
             tempDatestring = date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate()
         }
 
@@ -154,8 +158,8 @@ function Charts() {
                     bottom: 0,
                 }}
                 >
-                <XAxis dataKey="name" >
-                    <Label 
+                <XAxis dataKey="name" angle={325}>
+                    {/* <Label 
                         style={{
                             marginTop: "20px",
                             paddingTop: "20px",
@@ -164,11 +168,12 @@ function Charts() {
                             height: "100px",
                         }}
                         value={"date"}
-                        angle={0}
-                    ></Label>
+                        angle={0}                        
+                        
+                    ></Label> */}
                 </XAxis>
                 <YAxis />
-                <Tooltip />
+                <Tooltip content={<CustomTooltip dataHeader={"New Users"}/>}/>
                 <Area type="monotone" dataKey="New Users" stroke="#8884d8" fill="#8884d8" />
             </AreaChart>
         </div>
@@ -206,5 +211,31 @@ function Charts() {
     </div>
   )
 }
+
+/*
+
+    https://recharts.org/en-US/guide/customize
+    https://github.com/recharts/recharts/issues/466
+
+*/
+function CustomTooltip(props){
+    const { payload, label, active, dataHeader } = props
+
+    return(
+        <div>
+            <p>{`${dataHeader}: ${payload && payload[0]?.value}`}</p>
+            <p>{`${label}` }</p>            
+        </div>
+    )
+} 
+function CustomLabel(props){
+    //const { payload, label, active, dataHeader } = props
+
+    return(
+        <div>
+            <p>text</p>            
+        </div>
+    )
+} 
 
 export default Charts
