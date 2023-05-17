@@ -54,6 +54,7 @@ function Charts() {
       ];
 
       const [newUsersChartData, setNewUsersChartData] = useState([])
+      const [enrollmentChartData, setEnrollmentChartData] = useState([])
       const userEventsRef = useRef({})
 
       useEffect(()=>{
@@ -62,13 +63,16 @@ function Charts() {
     
       function loadEvents(){
   
-        onValue(ref(database, 'coursesApp'), (snapshot) => {
+        onValue(ref(database, 'coursesApp/userEvents'), (snapshot) => {
             userEventsRef.current = snapshot.val()
+            console.log(userEventsRef.current)
             setNewUsersChartData(generateChartData("New Users"))
+            setEnrollmentChartData(generateChartData("Enrollments"))
         })
 
       }
       function generateChartData(eventTypeName){
+        console.log("generating chart data for " + eventTypeName)
         // return
         if(typeof userEventsRef.current !== "object") return
 
@@ -93,15 +97,16 @@ function Charts() {
         // Look through the events on those dates
         dateArray.forEach(dateString => {
             let valueOnThisDate = 0  
-            let eventsOnThisDate = userEventsRef.current[dateString]
+            let eventsOnThisDate = userEventsRef.current[dateString]            
             if(eventsOnThisDate && typeof eventsOnThisDate === "object"){
                 Object.values(eventsOnThisDate).forEach((eventData) => {
-                    if(eventData.type === eventTypeName){
+                    if(eventData.type === eventTypeName){       
+                        console.log("found a "+eventTypeName+" event")                 
                         valueOnThisDate++
                     }                        
                 })
             }
-            tempChartData.push({name: dateString, [eventTypeName]: 0})
+            tempChartData.push({name: dateString, [eventTypeName]: valueOnThisDate})
         })
 
         return tempChartData
@@ -114,7 +119,7 @@ function Charts() {
             Charts
         </h3> */}
         <hr></hr>
-        <div className='chartContainer'>
+        {/* <div className='chartContainer'>
             New Users
             <AreaChart
                 width={600}
@@ -144,9 +149,9 @@ function Charts() {
                 <Tooltip />
                 <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
             </AreaChart>
-        </div>
+        </div> */}
         <div className='chartContainer'>
-            New Users New
+            New Users
             <AreaChart
                 width={600}
                 height={200}
@@ -177,7 +182,39 @@ function Charts() {
                 <Area type="monotone" dataKey="New Users" stroke="#8884d8" fill="#8884d8" />
             </AreaChart>
         </div>
-        <div className='chartContainer'>            
+        <div className='chartContainer'>
+            Enrollments
+            <AreaChart
+                width={600}
+                height={200}
+                data={enrollmentChartData}
+                margin={{
+                    top: 10,
+                    right: 30,
+                    left: 0,
+                    bottom: 0,
+                }}
+                >
+                <XAxis dataKey="name" angle={325}>
+                    {/* <Label 
+                        style={{
+                            marginTop: "20px",
+                            paddingTop: "20px",
+                            color: "blue",
+                            backgroundColor: "blue",
+                            height: "100px",
+                        }}
+                        value={"date"}
+                        angle={0}                        
+                        
+                    ></Label> */}
+                </XAxis>
+                <YAxis />
+                <Tooltip content={<CustomTooltip dataHeader={"Enrollments"}/>}/>
+                <Area type="monotone" dataKey="Enrollments" stroke="#8884d8" fill="#8884d8" />
+            </AreaChart>
+        </div>
+        {/* <div className='chartContainer'>            
             New Spent
             <AreaChart
                 width={600}
@@ -207,7 +244,7 @@ function Charts() {
                 <Tooltip />
                 <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
             </AreaChart>
-        </div>
+        </div> */}
     </div>
   )
 }

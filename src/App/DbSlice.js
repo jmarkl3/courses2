@@ -414,7 +414,7 @@ const dbslice = createSlice({
 
             // Create and modify data
             let date = new Date()
-            let datestring = date.getFullYear()+'_'+date.getMonth()+'_'+date.getDate()
+            let datestring = date.getFullYear()+'-'+date.getMonth()+'-'+date.getDate()
             let timeString = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds()
             let tempEventData = {...action.payload.eventData}
             tempEventData.time = timeString

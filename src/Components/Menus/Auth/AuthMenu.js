@@ -45,9 +45,9 @@ function AuthMenu() {
       
       // Put some stuff in their user data so it loads
       let date = new Date()
-      dispatcher(saveUserAccountData({kvPairs: {creationDate: date.getFullYear() + "/" + date.getMonth() + "/" + date.getDate()}}))
+      dispatcher(saveUserAccountData({kvPairs: {creationDate: date.getFullYear() + "/" + date.getMonth() + "/" + date.getDate(), email: email}}))
 
-      dispatcher(saveUserEvent({userID: user.uid, eventData: {type: "New Users", userID: user.uid, eventNote: "New user "+user.uid+" created"}}))
+      dispatcher(saveUserEvent({userID: user.uid, eventData: {type: "New Users", userID: user.uid, eventNote: "New user " + email + " created"}}))
 
 
       }).catch(err=>{
