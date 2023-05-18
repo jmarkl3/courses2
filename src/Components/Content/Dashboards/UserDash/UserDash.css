@@ -16,6 +16,16 @@
 .profileSection input{
     margin: 5px;
 }
+/* .profileSection .half{
+    margin: 5px 0px;
+} */
+
+.profileSection .half:first-child{
+    margin-right: 10px;
+}
+.profileSection .half:last-child{
+    margin-right: 0px;
+}
 .profileSection button{
     margin: 5px;
     width: 100%;

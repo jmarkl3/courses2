@@ -68,9 +68,7 @@ function Course() {
       // They will be displayed as components for chapters with sub components for sections with element components for responses
 
       // If it has not been loaded, load it
-      //if(userData && !savedCourseData){
-      if(userData){
-        console.log("user has not saved course data")
+      if(userData && !savedCourseData){
         let coursePartialData = generatePartialData(courseData)
         let kvPairs = {savedCourseData: true, name: coursePartialData.name, chapterData: coursePartialData.chapterData}
         kvPairs = removeUndefined(kvPairs)

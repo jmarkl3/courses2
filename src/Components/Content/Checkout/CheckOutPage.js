@@ -128,6 +128,7 @@ function CheckOutPage() {
       // Save the user creation date
       userInputData.accountCreationDate = new Date().getTime()
       userInputData.webcamModule = true
+      userInputData.theme = "lightTheme"
 
       // Create user account
       createUserWithEmailAndPassword(auth, email, pasword).then( user =>{

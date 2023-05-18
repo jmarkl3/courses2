@@ -26,6 +26,14 @@ export function arrayToObject(array){
     return tempObject
 }
 export function timeString(secondsRaw){
+    if(typeof secondsRaw === "string") {
+        try{
+            secondsRaw = parseFloat(secondsRaw)
+        } catch {}
+    }
+    
+    if(typeof secondsRaw !== "number") return 0
+
     // Calcluate the parts of the time string
     var seconds = secondsRaw % 60
     var minutes = Math.floor(secondsRaw / 60) % 60

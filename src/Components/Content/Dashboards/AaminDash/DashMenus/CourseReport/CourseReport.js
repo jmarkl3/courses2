@@ -20,8 +20,7 @@ function CourseReport({userData, courseData, close}) {
   const [chaptersArray, setChaptersArray] = useState([])
   const [markdownArray, setMarkdownArray] = useState([])
   const [viewMarkdown, setViewMarkdown] = useState(false)
-  const [viewPDF, setViewPDF] = useState(false)
-  const [markdownString, setMarkdownString] = useState(false)
+  const [markdownString, setMarkdownString] = useState("")
   const [webcamImageUrls, setWebcamImageUrls] = useState([])
 
   // Generate the chapters report object do be displayed
@@ -32,6 +31,7 @@ function CourseReport({userData, courseData, close}) {
   // Converting the chapters array into a PDF
   useEffect(() => {
     generatePDF3()
+    //chaptersArrayToMarkdown()
   },[chaptersArray])
 
   // Create an array of chapter objects with the chapter data and and array of section data objects
@@ -144,7 +144,7 @@ function CourseReport({userData, courseData, close}) {
     })
 
     setMarkdownArray(tempMarkdownArray)
-    generatePDF(tempMarkdownArray)
+    //generatePDF(tempMarkdownArray)
     // Give it half a second to render that, then generate the pdf from the html
     setTimeout(() => {
 
@@ -154,8 +154,10 @@ function CourseReport({userData, courseData, close}) {
 
     var tempMarkdownString = json2md(tempMarkdownArray)
 
+    console.log("tempMarkdownString")
+    console.log(tempMarkdownString) 
     setMarkdownString(tempMarkdownString)
-    createDownloadMarkdownURL(tempMarkdownString)
+    //createDownloadMarkdownURL(tempMarkdownString)
   }
 
   function elementToMarkdown(elementUserData){
@@ -323,26 +325,28 @@ function CourseReport({userData, courseData, close}) {
           // Add the section name, completion status, time spent, and webcam images 
           addLineToDoc(doc, "    Section: "+section.name + " " + (section.complete ? "(Complete)":""), 12, 8)
           addLineToDoc(doc, "          Time Spent in Section: "+timeString(section.userTime)+"    Required Time: "+timeString(section.requiredTime), 8, 5)
-          addLineToDoc(doc, "          Webcam Images: ", 8, 5)
+          // addLineToDoc(doc, "          Webcam Images: ", 8, 5)
           // If there are webcam imagse add them
-          if(section.webcamImages && Array.isArray(section.webcamImages) && section.webcamImages.length > 0){
-            console.log("ther are images to add")
-            // await addWebcamImageToDoc(doc, section.webcamImages[0])
-            setWebcamImageUrls(section.webcamImages)
+          // if(section.webcamImages && Array.isArray(section.webcamImages) && section.webcamImages.length > 0){
+          //   console.log("ther are images to add")
+          //   // await addWebcamImageToDoc(doc, section.webcamImages[0])
+          //   setWebcamImageUrls(section.webcamImages)
 
-          }
+          // }
 
           // Add text for each user response
+          let responseCount = 0
           if(Array.isArray(section.responsesArray) && section.responsesArray.length > 0){
-            addLineToDoc(doc, "          User Responses: ", 8, 8)
+            addLineToDoc(doc, "          User Responses: ", 8, 6)
             section.responsesArray.forEach(response => {
+              responseCount++  
               if(response.elementData.type === "Text Input"){
-                addLineToDoc(doc, "          "+response.elementData.content, 8, 8)
+                addLineToDoc(doc, "       "+responseCount+") "+response.elementData.content, 8, 12)
                 addLineToDoc(doc, "              "+response.response, 8, 5)
 
               }
               else if(response.elementData.type === "Multiple Choice"){
-                addLineToDoc(doc, "          "+response.elementData?.content, 8, 8)
+                addLineToDoc(doc, "       "+responseCount+") "+response.elementData?.content, 8, 12)
                 let answerChoices = response.elementData?.answerChoices
                 if(answerChoices && typeof answerChoices === "object"){
                   Object.entries(answerChoices).forEach(([answerKey, answerChoice]) => {
@@ -360,7 +364,8 @@ function CourseReport({userData, courseData, close}) {
                     }
                   })
                 }
-              }              
+              }     
+       
             })
           }
         })
@@ -373,8 +378,6 @@ function CourseReport({userData, courseData, close}) {
     setPdfDocUrl(URL.createObjectURL(doc.output("blob")))
 
   }
-
-
   
   const docHeightOffset = useRef(0)
   // Adds a line to the doc keeping track of the height offset and when a new page is needed
@@ -659,6 +662,32 @@ function CourseReport({userData, courseData, close}) {
     };
   }
   
+  // need to change cors settings in firebase
+  function addImageToDoc2(){
+
+    // Create a canvas from it
+    let canvas = document.createElement('canvas')
+    // canvas.width = 300;
+    // canvas.height = 200;
+    // let ctx = canvas.getContext('2d');
+    // ctx.fillStyle = '#ggg';  /// set white fill style
+    // ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    docRef.current.addImage(canvas, 'jpeg', 10, 10, 60, 40);
+    
+    // Update the display iframe
+    setPdfDocUrl(URL.createObjectURL(docRef.current.output("blob")))
+
+    return
+    html2canvas(document.getElementById("markdown")).then(canvas => {
+      // Add the image to the doc
+      docRef.current.addImage(canvas, 'jpeg', 10, 10, 60, 40);
+    
+      // Update the display iframe
+      setPdfDocUrl(URL.createObjectURL(docRef.current.output("blob")))
+      
+    })
+  }
   
   let url = 'http://lorempixel.com/500/150/sports/9/';
 
@@ -668,7 +697,10 @@ function CourseReport({userData, courseData, close}) {
       <div className='closeButton' onClick={close}>x</div>
       <div className='courseReportInner'>
         <button className='third' onClick={()=>downloadPDF()}>Download {userData.accountData.firstName+"'s Course Report "} PDF</button>        
-        <iframe className='pdfIframe' src={pdfDocUrl}></iframe>     
+        <iframe className='pdfIframe' src={pdfDocUrl}></iframe>  
+        {/* <div id={"markdown"} className='markdown'>
+          <Markdown>{markdownString+`![image](${userData.accountData.profileImageUrl})`}</Markdown>   
+        </div> */}
         {/* {webcamImageUrls.map(imageURL => (
           <img id={"imgTest"} className="webcamImage" src={imageURL}></img>
         ))}   
@@ -677,8 +709,8 @@ function CourseReport({userData, courseData, close}) {
           <span style={{color: "blue"}}>
             test of the thing
           </span>
-        </div>
-        <button onClick={addProfileImageTDoc}>Add</button> */}
+        </div>*/}
+        {/* <button onClick={addImageToDoc2}>Add</button> */}
       </div>
 
     </div>
