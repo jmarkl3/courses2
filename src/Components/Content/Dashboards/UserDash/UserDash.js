@@ -96,12 +96,11 @@ function UserDash() {
             </>
             :
             <div className={"profileImageButton"} onClick={startEditingProfileInfo}> Edit Info</div>
-
           }
         </div>
         <div className='profileSection'>
           <div>            
-            <button onClick={()=>dispatcher(toggleTheme())}>{theme === "lightTheme" ? "Dark Theme" : "Light Theme"}</button>                                                                                
+            <button onClick={()=>dispatcher(toggleTheme())}>{theme === "darkTheme" ? "Light Theme" : "Dark Theme"}</button>                                                                                
           </div>
           <div>
             <button 

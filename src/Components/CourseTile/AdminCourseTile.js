@@ -45,6 +45,7 @@ function viewCourseFunction(){
 
 }
 function editCourseFunction(){
+    console.log("editCourseFunction")
     dispatcher(setEditMode(true))
     navigate("/course/"+course.id)
 

@@ -33,7 +33,7 @@ function TimedWebcam({sectionData, once, removeDisplay}) {
     const [message, setMessage] = useState("Take Image")
     const [showWebcam, setShowWebcam] = useState(false)
     const [showImage, setShowImage] = useState(false)
-    const timeArrayRef = useRef([25, 70])
+    const timeArrayRef = useRef([])
     const showWebcamRef = useRef(false)
     const webcamOuterRef = useRef()
     const timeOffset = useRef(0)
@@ -294,6 +294,7 @@ function TimedWebcam({sectionData, once, removeDisplay}) {
         <>
             {showWebcam &&
                 <div className='webcam' ref={webcamOuterRef}> 
+                    {once && <div className='closeButton'>x</div>}
                     {showImage ?
                         <img src={currentScreenshot}></img>
                         :

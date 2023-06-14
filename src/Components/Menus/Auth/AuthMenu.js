@@ -200,9 +200,9 @@ function AuthMenu() {
                                 <input placeholder='email' ref={emailInput} defaultValue={auth?.currentUser?.email}></input>
                             </div>
                             <div>
-                                <input placeholder='pass' type={"password"} ref={passInput}></input>
+                                <input placeholder='password' type={"password"} ref={passInput}></input>
                             </div>        
-                            {createNew && <input placeholder='pass confirmation'></input>}
+                            {createNew && <input placeholder='password confirmation'></input>}
                             <div>
                                 {
                                 createNew ?

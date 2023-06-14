@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { setEditMode, setLoading, setSideNavOpen } from '../../../App/AppSlice'
 import SideNav from '../../Sidebar/SideNav'
@@ -15,8 +15,10 @@ function Course() {
   const userData = useSelector(state => state.dbslice.userData)
   const userDataOverride = useSelector(state => state.dbslice.userDataOverride)
   const courseData = useSelector(state => state.dbslice.courseData)
+  const editMode = useSelector(state => state.appslice.editMode)
   const [courseComplete, setCourseComplete] = useState()
   const [displayCertificate, setDisplayCertificate] = useState()
+  const displayCertificateOverride = useRef()
   const dispatcher = useDispatch()
   const { courseID } = useParams();  
   
@@ -82,13 +84,17 @@ function Course() {
   },[courseData])
   
   useEffect(() => {
+    console.log("in use effect")
+    console.log(courseID)
+    console.log(userData)
+
     checkIfComplete()
-    if(userData && !(userData.accountData.isFullAdmin || userData.accountData.isCourseAdmin))
+    if(userData && userData.accountData && !(userData.accountData.fullAdmin || userData.accountData.isCourseAdmin))
       dispatcher(setEditMode(false))
   },[courseID, userData])
 
   function checkIfComplete(){
-    if(!userData?.courses || !userData?.courses[courseID])
+    if(!userData?.courses || !userData?.courses[courseID] || editMode || displayCertificateOverride.current)
       return false
 
     let complete = userData?.courses[courseID]?.complete
@@ -96,7 +102,7 @@ function Course() {
     if(complete)
       showCertificate()
   }
-  function showCertificate(){
+  function showCertificate(){    
     setDisplayCertificate(true)
     dispatcher(setSideNavOpen(false))
   }
@@ -159,8 +165,6 @@ function Course() {
 
       })
     })
-    console.log("coursePartialData")
-    console.log(coursePartialData)
     return coursePartialData
   }
 
@@ -170,13 +174,18 @@ function Course() {
     return firstName+" "+lastName
   }
 
+  function hideCertificate(){
+    displayCertificateOverride.current = true
+    setDisplayCertificate(false)
+  }
+
   return (
     <DisplayPage>
         {displayCertificate ? 
           <>
             <Certificate></Certificate>
             <div>
-              <button onClick={()=>{setDisplayCertificate(false)}}>View Course</button>
+              <button onClick={hideCertificate}>View Course</button>
             </div>
           </>  
           :

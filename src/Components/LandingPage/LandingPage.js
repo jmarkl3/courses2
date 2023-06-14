@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setCheckingOut, setShowCart, setShowSupportMenu, toggleShowAuthMenu } from '../../App/AppSlice'
 import CartCourse from '../CourseTile/CartCourse'
 import { toggleLanguage } from '../../App/DbSlice'
-import { getEnrolledCourses } from '../../App/functions'
+import { getEnrolledCourses, languageConverter } from '../../App/functions'
 /*    
 
     page content
@@ -76,7 +76,7 @@ import { getEnrolledCourses } from '../../App/functions'
 */
 
 function LandingPage({goto}) {
-    const language = useSelector(state => state.dbslice.language)
+    const language = useSelector(state => state.dbslice?.language)
     const coursesArray = useSelector(state => state.dbslice.coursesArray)
     const userData = useSelector(state => state.dbslice.userData)
     const [availableCourses, setAvailableCourses] = useState([])
@@ -130,22 +130,22 @@ function LandingPage({goto}) {
                 </div>
                 <div className='landingNav'>
                     <div className='landingNavButton' onClick={scrollToAbout}>
-                        About
+                        {languageConverter(language, "About")}
                     </div>
                     <div className='landingNavButton' onClick={scrollToCourses}>
-                        Courses
+                        {languageConverter(language, "Courses")}
                     </div>
                     <div className='landingNavButton' onClick={()=>dispatcher(toggleLanguage())}>
                         {language === "English" ? "Español" : "English"}
                     </div>
                     <div className='landingNavButton' onClick={()=>dispatcher(setShowSupportMenu(true))}>
-                        Support
+                        {languageConverter(language, "Support")}
                     </div>
                     <div className='landingNavButton' onClick={()=>dispatcher(setShowCart(true))}>
-                        Cart
+                        {languageConverter(language, "Cart")}
                     </div>
                     <div className='landingNavButton' onClick={()=>dispatcher(toggleShowAuthMenu())}>
-                        Account
+                        {languageConverter(language, "Account")}
                     </div>
                 </div>
             </div>
@@ -154,42 +154,44 @@ function LandingPage({goto}) {
 
                     <div className={"landingPageTextSection"} ref={aboutRef}> 
                         <h3 className='center' >
-                            About
+                            {languageConverter(language, "About")}
                         </h3>    
                         <div>
-                            If you have been mandated to complete one of our online parenting classes, it is your responsibility to make sure the court or government agency has a copy of your certificate or a record of your completion. OnlineParentingPrograms.com does not file completed certificates on your behalf. If you are unsure how to file your certificate contact the agency that required the program for specific instructions.
+                            {languageConverter(language, "If you have been mandated to complete one of our online parenting classes, it is your responsibility to make sure the court or government agency has a copy of your certificate or a record of your completion. OnlineParentingPrograms.com does not file completed certificates on your behalf. If you are unsure how to file your certificate contact the agency that required the program for specific instructions.")}
                         </div>
                     </div>
                     <div className={"landingPageTextSection"}>
                         <h3 className='center'>
-                            Key Facts
+                            {languageConverter(language, "Key Facts")}
                         </h3>  
                         <hr></hr>
                         <ul>
-                            <li>Meets the requirements of courts throughout Colorado</li>
-                            <li>Dark theme available for easy reading</li>                            
-                            <li>Entire course can be completed online</li>
-                            <li>Offered in English and <a onClick={()=>dispatcher(toggleLanguage())}>Español</a></li>
-                            <li>Curriculum reflects the most recent research about children of divorce</li>                            
-                            <li>Reduced fee for qualified indigent participants</li>
-                            <li>Multiple classes offered for different situations</li>
-                            <li>Automitacally generated certificate of completion</li>
+                            <li>{languageConverter(language, "Meets the requirements of courts throughout Colorado")}</li>
+                            <li>{languageConverter(language, "Dark theme available for easy reading")}</li>                            
+                            <li>{languageConverter(language, "Entire course can be completed online")}</li>
+                            <li>{languageConverter(language, "Offered in English and")} <a onClick={()=>dispatcher(toggleLanguage())}>Español</a></li>
+                            <li>{languageConverter(language, "Curriculum reflects the most recent research about children of divorce")}</li>                            
+                            <li>{languageConverter(language, "Reduced fee for qualified indigent participants")}</li>
+                            <li>{languageConverter(language, "Multiple classes offered for different situations")}</li>
+                            <li>{languageConverter(language, "Automitacally generated certificate of completion")}</li>
                         </ul>
                     </div>
-                    <div className={"landingPageTextSection"} ref={coursesRef}>
-                        <h3 className='center'>
-                            Your Courses
-                        </h3>  
-                        <hr></hr>
-                        <div>
-                            {coursesArray.filter(courseData => enrolledCoursesArray.includes(courseData.id)).map(courseData => (
-                                <CartCourse courseData={courseData} draggable={false} key={courseData.id}></CartCourse>
-                            ))}
-                            {/* {coursesArray.filter(courseData => userData?.enrolledCourses?.includes(courseData.id)).map(courseData => (
-                                <CartCourse courseData={courseData} draggable={false} key={courseData.id}></CartCourse>
-                            ))} */}
+                    {userData &&
+                        <div className={"landingPageTextSection"} ref={coursesRef}>
+                            <h3 className='center'>
+                                Your Courses
+                            </h3>  
+                            <hr></hr>
+                            <div>
+                                {coursesArray.filter(courseData => enrolledCoursesArray.includes(courseData.id)).map(courseData => (
+                                    <CartCourse courseData={courseData} draggable={false} key={courseData.id}></CartCourse>
+                                ))}
+                                {/* {coursesArray.filter(courseData => userData?.enrolledCourses?.includes(courseData.id)).map(courseData => (
+                                    <CartCourse courseData={courseData} draggable={false} key={courseData.id}></CartCourse>
+                                ))} */}
+                            </div>
                         </div>
-                    </div>
+                    }
                     
                     {availableCourses.length > 0 ?                        
                         <div className={"landingPageTextSection"} ref={coursesRef}>
@@ -205,11 +207,15 @@ function LandingPage({goto}) {
                         </div>
                         :
                         <div>
-                            <hr></hr>
-                            <h3 className='center'>
-                                You have enrolled in all available courses
-                            </h3>  
-                            <hr></hr>
+                            {userData &&
+                                <div>
+                                    <hr></hr>
+                                    <h3 className='center'>
+                                        You have enrolled in all available courses
+                                    </h3>  
+                                    <hr></hr>
+                                </div>
+                            }
                         </div>
                     }
                     <div className={"landingPageTextSection"}>

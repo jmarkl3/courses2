@@ -152,7 +152,7 @@ function SidenavChapterRow({itemData}) {
           </div>
           :
           itemData?.name
-        }
+        }        
         {editMode ?
           <HamburgerMenu>
             <div className='hamburgerMenuOption' onClick={()=>dispatcher(copyChapter(itemData))}>Copy</div>

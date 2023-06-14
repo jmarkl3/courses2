@@ -1,5 +1,6 @@
 // #region conversion functions (The conversion functions convert one data type to another)
 
+
 /**
  * Input is an object, output is an array sorted by index
  */
@@ -318,7 +319,48 @@ export function priceString(price){
     // Otherwise just return the price
     return "$"+price
 }
+// Converts the given string to the given language
+export function languageConverter(language, string){
+    if(language === "English")
+        return string
+    else{
+        if(string === "hello")
+            return "hola"
+        if(string === "About")
+            return "Acerca de"
+        if(string === "Support")
+            return "Apoyo"
+        if(string === "Cart")
+            return "Carro"
+        if(string === "Account")
+            return "Cuenta"
+        if(string === "If you have been mandated to complete one of our online parenting classes, it is your responsibility to make sure the court or government agency has a copy of your certificate or a record of your completion. OnlineParentingPrograms.com does not file completed certificates on your behalf. If you are unsure how to file your certificate contact the agency that required the program for specific instructions.")
+            return "Si se le ordenó completar una de nuestras clases para padres en línea, es su responsabilidad asegurarse de que la corte o la agencia gubernamental tenga una copia de su certificado o un registro de su finalización. OnlineParentingPrograms.com no presenta certificados completos en su nombre. Si no está seguro de cómo presentar su certificado, comuníquese con la agencia que solicitó el programa para obtener instrucciones específicas."
+        if(string === "Key Facts")
+            return "Hechos clave"
+        if(string === "Meets the requirements of courts throughout Colorado")
+            return "Cumple con los requisitos de los tribunales de todo Colorado"
+        if(string === "Dark theme available for easy reading")
+            return "Tema oscuro disponible para facilitar la lectura"
+        if(string === "Entire course can be completed online")
+            return "Todo el curso se puede completar en línea"
+        if(string === "Offered in English and")
+            return "Se ofrece en inglés y"
+        if(string === "Curriculum reflects the most recent research about children of divorce")
+            return "El plan de estudios refleja las investigaciones más recientes sobre los hijos de padres divorciados "
+        if(string === "Reduced fee for qualified indigent participants")
+            return "Tarifa reducida para participantes indigentes calificados"
+        if(string === "Multiple classes offered for different situations")
+            return "Múltiples clases ofrecidas para diferentes situaciones."
+        if(string === "Automitacally generated certificate of completion")
+            return "Certificado de finalización generado automáticamente"
+        else{
+            console.log(string)
+            return string
+        }
 
+    }
+}
 // #endregion general helper functions
 
 // #region user data functions

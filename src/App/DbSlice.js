@@ -10,14 +10,22 @@ import { act } from "react-dom/test-utils";
 
 // The config file
 const firebaseConfig = {
-    apiKey: "AIzaSyBDWCKZwSBi_Qp4U0u3D2tKrcIU290IrDE",
-    authDomain: "defaultproject-c023e.firebaseapp.com",
-    databaseURL: "https://defaultproject-c023e-default-rtdb.firebaseio.com",
-    projectId: "defaultproject-c023e",
-    storageBucket: "defaultproject-c023e.appspot.com",
-    messagingSenderId: "147977670881",
-    appId: "1:147977670881:web:fe1532718095f374bbe7a0",
-    measurementId: "G-VY1DMS0BKY"
+    // apiKey: "AIzaSyBDWCKZwSBi_Qp4U0u3D2tKrcIU290IrDE",
+    // authDomain: "defaultproject-c023e.firebaseapp.com",
+    // databaseURL: "https://defaultproject-c023e-default-rtdb.firebaseio.com",
+    // projectId: "defaultproject-c023e",
+    // storageBucket: "defaultproject-c023e.appspot.com",
+    // messagingSenderId: "147977670881",
+    // appId: "1:147977670881:web:fe1532718095f374bbe7a0",
+    // measurementId: "G-VY1DMS0BKY"
+    apiKey: "AIzaSyBmvKBB4-qnurQdJrG0WxcnDXLHzK8BENk",
+    authDomain: "courses-app-8efb5.firebaseapp.com",
+    databaseURL: "https://courses-app-8efb5-default-rtdb.firebaseio.com",
+    projectId: "courses-app-8efb5",
+    storageBucket: "courses-app-8efb5.appspot.com",
+    messagingSenderId: "754361725473",
+    appId: "1:754361725473:web:fc236219cf40a3d670e960",
+    measurementId: "G-H688PKFR3X"
 }
 // The firebase app
 const app = initializeApp(firebaseConfig)
@@ -128,6 +136,9 @@ const dbslice = createSlice({
                 state.theme = action.payload?.accountData?.theme
 
             // Set the language if one is saved
+            if(action.payload?.accountData?.language)
+                state.language = action.payload?.accountData?.language
+
             if(action.payload?.accountData?.language)
                 state.language = action.payload?.accountData?.language
 
@@ -788,7 +799,8 @@ const dbslice = createSlice({
             if(chapters && typeof chapters === "object"){
                 let totalSections = 0                
                 Object.entries(chapters).forEach(([key, value]) => {
-                    totalSections += Object.entries(value?.items).length
+                    if(value?.items)
+                        totalSections += Object.entries(value?.items).length
                 })    
     
                 // Save the new number of sections in the db

@@ -99,10 +99,10 @@ function ElementDisplayBlock({elementData, responseDataOverride}) {
     if(elementData?.type === "Text"){
         return (
             <div className='elementViewDisplay'>
-                <div className='richText'>
-                {HTMLReactParser(elementData?.content)}
+                {elementData?.content && <div className='richText'>
+                    {HTMLReactParser(elementData?.content)}
 
-                </div>
+                </div>}
                 <div className='elementTextDisplay'>
                 </div>
             </div>

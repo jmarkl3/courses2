@@ -18,15 +18,42 @@ import Support from './Components/Menus/Support/Support';
 // TODO
 /*      
 
-  account amounts
-  call co court
-    update address
-    link account to case
-  vall seal lw    
-  bp for med
-  pay med
-  talk to hml ppl          
+  ggl
+    DONE
+    create and link new account for firebase
+    IN PROGRESS
+    
+  multi language support  
+    so add a language selector in the text elements and paste in the translated version. Will need to have this for any videos too
+    this is working, need to update it everywehre text is displayed
+      landing page, course edit, course display, course report, certificate, checkout page, support page, account page, dashboard, navbar, cart
 
+  set up firebase rules
+    user read and write
+    admin read and write
+      firebase rules for admin
+      basically coppying the user id of the admins and putting them in a function in the rules
+      https://stackoverflow.com/questions/55951307/add-admin-privilege-to-firebase-rules  
+
+  look into firebase cors for so the images can be used for the course report and certificate
+
+  mess with firebase functions    
+
+  email
+    crete snedgrid with lm email
+    or find another provider
+
+  security (linked to above bc will need to login)
+    set up firebase rules so only a user or an admin can update their own data    
+    cors in storage
+
+  Style
+    checkoutInputThird and Half style changes on screen resize 
+    mobile view
+    check all pages and menus with different window sizes and in mobile view
+
+  (on hold because of send grid)
+  create with lm email
   email 
     got it working but it can only to the support email address, cant send to user, looking at other options
     this library (emailJS) looks good: 
@@ -56,18 +83,7 @@ import Support from './Components/Menus/Support/Support';
   support page
     send email to support email address from SendGrid
     can log this as a user event
-    maybe have a chat bot
-
-  multi language support
-      need ggl key with card
-      this looks cool https://www.npmjs.com/package/react-auto-translate
-      on landing page add hard coded text that changes based on language
-      in course edit have inputs for multiple languages, or could have an auto translate feaure                                    
-
-  security
-    firebase rules so only a user can update their own data
-    or an admin
-    cors
+    maybe have a chat bot                                  
 
 
   dashboards       
@@ -84,10 +100,11 @@ import Support from './Components/Menus/Support/Support';
         maybe not possible because it needs the user to be logged in and the user object
         firebase manage users https://firebase.google.com/docs/auth/web/manage-users  
 
-  Style
-    checkoutInputThird and Half style changes on screen resize 
-    mobile view
-    check all pages and menus with different window sizes and in mobile view
+  Course
+    when user completes a course
+    create a certificate with their name and course name
+    email the certificate to the user and any other emails (use your own as a placeholder)    
+    save the certificate in the user data
 
   ________________________________________________________________________________
   After dev work is done
@@ -417,6 +434,7 @@ function App() {
     function loadCoursesData(){
       onValue(ref(database, 'coursesApp/coursesMetaData'), (snapshot) => {
         const data = snapshot.val();   
+        if(!data) return
         setTimeout(() => {
           dispatcher(setCoursesData(data))
         }, 250)
@@ -429,7 +447,7 @@ function App() {
       onValue(ref(database, 'coursesApp/userData/'+userID), (snapshot) => {
         const data = snapshot.val();   
         setTimeout(() => {
-          dispatcher(setUserData(data))          
+          dispatcher(setUserData(data))   
           // // If the user is an admin default the view to admin          
           // if(data?.accountData?.isAdmin && !changedViewAdmin)
           //   dispatcher(setViewAsAdmin(true))            

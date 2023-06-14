@@ -15,6 +15,9 @@ function ElementEditBlock({elementData}) {
   const selectedSectionID = useSelector((state) => state.dbslice.selectedSectionID);
   const selectedElementID = useSelector((state) => state.dbslice.selectedElementID);
   const inputTypeInputRef = useRef()
+  const languageVersionInputRef = useRef()
+  const languageVersionRef = useRef()
+  const [languageVersion, setLanguageVersion] = useState("English")
   const inputSizeInputRef = useRef()
 
   useEffect(() => {
@@ -68,6 +71,26 @@ function ElementEditBlock({elementData}) {
       dispacher(updateItemInfo({chapterID: selectedChapterID, sectionID: selectedSectionID, elementID: elementData.id, type: "type", value: typeInputRef.current.value}))
 
   }
+  function elementLanguageVersionChanged(){
+    // Get teh language version value
+    const languageVersionValue = languageVersionInputRef.current.value
+
+    // Save it in state so the corresponding content is shown (can be contentES instead of content for example)
+    setLanguageVersion(languageVersionValue)
+    
+    // Save it in a ref so when the content is changed it is saved in the correct variable name
+    languageVersionRef.current = languageVersionValue
+
+    //CKEditor.instances["editor1"].setData( '<p>This is the editor data.</p>' );
+    dispacher(updateItemInfo({chapterID: selectedChapterID, sectionID: selectedSectionID, elementID: elementData.id, type: "type", value: "none"}))
+    setTimeout(() => {
+      dispacher(updateItemInfo({chapterID: selectedChapterID, sectionID: selectedSectionID, elementID: elementData.id, type: "type", value: typeInputRef.current.value}))
+    }, 500)
+
+    // maybe show a warning if there is not a version for every supported language
+    // English and spanish are the main ones, maybe french https://en.wikipedia.org/wiki/Languages_of_the_United_States
+
+  }
   function confirmDelete(){
     setConfirmationBoxMessage("Are you sure you want to delete this element?")
 
@@ -93,7 +116,10 @@ function ElementEditBlock({elementData}) {
   function elemetEditorContentChanged(event){
     clearTimeout(updateEditorContentTimer.current)
     updateEditorContentTimer.current = setTimeout(() => {
-      dispacher(updateItemInfo({chapterID: selectedChapterID, sectionID: selectedSectionID, elementID: elementData.id, type: "content", value: event.editor.getData()}))
+      if(languageVersionRef.current === "Español")
+        dispacher(updateItemInfo({chapterID: selectedChapterID, sectionID: selectedSectionID, elementID: elementData.id, type: "contentEs", value: event.editor.getData()}))
+      else
+        dispacher(updateItemInfo({chapterID: selectedChapterID, sectionID: selectedSectionID, elementID: elementData.id, type: "content", value: event.editor.getData()}))
     }, 1000)
   }
 
@@ -102,9 +128,10 @@ function ElementEditBlock({elementData}) {
         return (
             <div className='elementTextDisplay'>
               <CKEditor
-                initData={elementData?.content}
+                id="editor1"
+                initData={languageVersion === "English" ? elementData?.content : elementData?.contentEs}
                 onChange={elemetEditorContentChanged}                                 
-            />
+              />
               {/* <textarea onChange={elemetContentChanged}  defaultValue={elementData?.content}></textarea> */}
               {/* <Tiptap elementData={elementData} elemetContentChanged={elemetContentChanged}></Tiptap>                     */}
             </div>
@@ -247,6 +274,13 @@ function ElementEditBlock({elementData}) {
               <option>Multiple Choice</option>
               <option>Text Input</option>
               <option>Input Field</option>
+          </select>
+          <select 
+            ref={languageVersionInputRef} 
+            onChange={elementLanguageVersionChanged} 
+          >
+              <option>English</option>
+              <option>Español</option>          
           </select>
           <button onClick={confirmDelete}>Delete</button>
           <button onClick={copyElementFunction}>Copy</button>
