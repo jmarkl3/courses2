@@ -8,6 +8,9 @@ import DisplayPage from '../DisplayPage'
 import { clearCartCourses, setCheckingOut, setShowCart, setSideNavOpen, toggleShowAuthMenu } from '../../../App/AppSlice'
 import { auth, enrollUserInCourses, enrollUserInCourses2, saveUserAccountData, saveUserEvent, setUserID } from '../../../App/DbSlice'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
+import emailjs from '@emailjs/browser'
+
+
 /*
   if there is no user account 
     shows input fields including password
@@ -142,6 +145,8 @@ function CheckOutPage() {
 
         dispatcher(saveUserEvent({userID: user.uid, eventData: {type: "New Users", userID: user.uid, eventNote: "New user "+userInputData.firstName+" "+user.uid+" created"}}))
 
+        sendEmail(userInputData.firstName)
+
         /*
           userEvents: {
             // Allows O1 for the chart
@@ -251,11 +256,39 @@ function CheckOutPage() {
     setCartTotal(priceString(total))
   }
 
+  // This function sends an email by setting the values of a hidden form and using emailjs to send the form values via email
+  const formRef = useRef()  
+  const formMessageRef = useRef()  
+  const formEmailRef = useRef()  
+  function sendEmail(firstName, userEmail){  
+    
+    formMessageRef.current.value = "Welcome to the courses app "+firstName+"!"
+    formEmailRef.current.value = userEmail
+    //formEmailRef.current.value = "abeapple@protonmail.com"
+    
+    emailjs.sendForm('service_fepcyns', 'template_bl74n4j', formRef.current, 'jxl1B6Wy4ZMfn1YcQ')
+    .then((result) => {
+        console.log(result.text);            
+    }, (error) => {
+        console.log(error.text);            
+    });
+    
+    // setTimeout(() => {
+    // }, 1000);
+
+  }
+
   return (
     <>    
       <DisplayPage>
         <>
           <h2>Checkout</h2>
+          <div onClick={()=>sendEmail("test 2", "abeapple@protonmail.com")}>test email</div>
+          <form ref={formRef} className='hidden'>
+            <input name="to_email" ref={formEmailRef}/>
+            <input name="email_subject" value={"Welcome to the courses app"} />
+            <input name="message" ref={formMessageRef} />            
+          </form>
           <div className='checkout'>        
             <div className='checkoutInput'>
                 First Name

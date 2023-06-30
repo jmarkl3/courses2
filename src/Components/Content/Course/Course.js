@@ -101,6 +101,15 @@ function Course() {
     setCourseComplete(complete)
     if(complete)
       showCertificate()
+
+    completionEmail()
+  }
+  function completionEmail(){
+    // check to see if the email has already been sent
+    // check to see if certificate has been generated
+    // generate the certificate if needed
+    // send the email
+
   }
   function showCertificate(){    
     setDisplayCertificate(true)
@@ -181,6 +190,7 @@ function Course() {
 
   return (
     <DisplayPage>
+        <Certificate></Certificate>
         {displayCertificate ? 
           <>
             <Certificate></Certificate>

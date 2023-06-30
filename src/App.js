@@ -18,15 +18,126 @@ import Support from './Components/Menus/Support/Support';
 // TODO
 /*      
 
+  courses 3
+  main page with the ourse itles 
+  the tiles will only have a view button
+  when user clicks view it opens the course
+  there is a title then a description saying anything they do WILL  be saved as progress towars completion of the course
+  and at a point in the course they will be given an opportuinty to enter details
+  and that their responses are saved initially in the browser so if they retrurn they should use the same browser on the same device and not to clear their local cache
+  initial section will be a very short video with fun questions
+  and it will give positive feedback on each question and maybe gamify it somehow or have fun positive feedback animations
+  when user returns the course will be moved into the my courses section on the landing page with a continue button
+  when they enter details in the input fields it will save into the user data under the key associated with that input field and repopulate if they get to the same page in another course
+  webcam module will be one of these and will not show before the details page, they will have the option to put a profile picture there via the webcam
+  maybe save their payment info (with a secure 3rd party)
+
+  put cheap or affordable or something similar in the name of the company and have competitive prices
+  Affordable Parenting Courses
+  options for a payment amount
+  another payment amount (more) on credit
+  and the option to repay in another way
+  can have an in person component to certain courses. When a user completes an online component they become eligable to enroll in the in person part
+  have the video and instructions then responses or challenge assignments
+  make it so if they already know the material they can just do the assigmnemt without having to go through the instruction parts
+  maybe a scroller section with random interesting reddit posts and in that there are randomly posts with challenges that give them points
+
+  maybe a social feature to make it more engageing and/or gamify it
+  progres chart over a timespan
+  points form completing questions and floating fading emojis when response is saved
+  occasional randomity in getting more points like a slot machine
+  quote bar with cycling positive quotes that are most likely to get them to keep going in the course
+  if they get a certain number of points they get a discout so they care about the points
+  maybe they aren't charged until the end except a confirmation amount (don't need confirmation amount, just charge at end)
+  the initial amount they pay is only a very small amount and the rest is carged at the end, tell them this at the payment section
+
+  multiple websites pointing to the same app but with different images and default landing page courses or other content based on which domain they are on
+  and an option to search all courses that will show all of them
+  and a button to show all of their courses including the ones from other domains
+
+  payment page is not til the end and factors in points for some courses
+  points are explaned in the frist page in the course
+  points are awarded with a slot machine scrolling window on completion of a section and there is an excedingly unlikley option for the whole course to be free
+  option to enable points so the user is interacting and choosing it
+  maybe an info modal window describing it and showing the points scroller with the whole course free option showing noticibly in the description animation/video
+  maybe this even just shows in the main course first section so they always see that the course might be free if they continue
+    so the maximum number of people that get to this page choose this course site
+  finish early option for some courses
+    they pay an extra fee and can finish a few sections early (after they completed the required amount)
+  payment description page for some coureses
+  no payments needed until after the course is complete for some courses is one of the things listed in the landing page
+  maybe put the points description in the landing page too in case they don't click view course
+  and for the price put a range from free to the full cost with an info button that shows a modal reitterating the points system
+  points system that could make teh course FREE as one of the top points in the landing page with an info modal button
+
+  at payment page (either at end or part way through) timer with discount if they buy in the time window
+  if part way say congrats you are 50% done. Pay within the next 10 minutes, recieve $5 off and complete the course
+
+  
+  auto generated things:
+  users have the ability to create their own courses (this is what I went to type)
+  maybe a chat bot for support
+  maybe a chat bot for support that is a character that is a parent and the user is a child and they are talking to the parent about their problems 
+  and the parent is giving them advice and support and the user is getting points for it and the parent is getting points for it and the parent is getting points for it
+
+  before this finish courses 2 (to a point that it is useable as it is, a minimum viable product)
+  1) auth doesn't work any more. If an account is logged in it is still trying to create an account in checkout and doesn't work
+  1) ggl translate
+    set up the account and translate using the api
+    create a cache that saves the inputs and outputs of this in realtime database
+    this can be checked before using the api and can also be saved in local storage if its small enough for instant translations (not important initially)
+  2) firebase rules protecting user data
+  user data encryption (can add later)
+  3) generate certificate as a pdf and save it in user data
+  4) auto emails/texts
+      DONE
+      set up api
+      DONE
+      send email from the site 
+      DONE
+      send email to a user  
+      DONE    
+      send email when user signs up
+      send email when user completes a course to user and default addresses (if there has not already been one sent)
+      create and attach the certificate to that email
+      
+      Email JS
+      https://www.emailjs.com/docs/examples/reactjs/
+      https://medium.com/@patienceadajah/how-to-send-emails-from-a-react-application-without-a-backend-server-1dd8718ceedd 
+      https://www.youtube.com/watch?v=bMq2riFCF90&t=274s
+
+       
+  5) multiple domains to same app (can host same code base under different projects to test this initially)
+  6) description of each component and file at the top. spoken note describing the app flow
+    revert to doing this if getting stuck at other points
+  7) create a course
+  cors for generating reports with user images (can do later if necessary)
+  
+
+
   ggl
     DONE
     create and link new account for firebase
-    IN PROGRESS
     
+  IN PROGRESS
   multi language support  
     so add a language selector in the text elements and paste in the translated version. Will need to have this for any videos too
     this is working, need to update it everywehre text is displayed
       landing page, course edit, course display, course report, certificate, checkout page, support page, account page, dashboard, navbar, cart
+    when a languae is selected first it looks in local cache for translation, then in the db, if not found uses the api
+    then stores those translations in the db and local storage
+    db is set up as the first part put together without spaces as a key then under that random keys with the various language parts 
+    firstpartoftext: {
+      randomKey: {
+        en: "first part of text for full input",
+        es: "(in spanish) first part of text for full input",
+        ...
+      },
+      ...
+    }
+    when looking for text the first part is used to get this data structure then a function goes through it and gets the proper tranlation
+    this data structure is in the db and a stringified json in local storage for the translations the user has seen already
+    probably just in the db initially though as it will still be very fast and won't require much to pull it from the db
 
   set up firebase rules
     user read and write

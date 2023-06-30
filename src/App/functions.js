@@ -1,6 +1,5 @@
 // #region conversion functions (The conversion functions convert one data type to another)
 
-
 /**
  * Input is an object, output is an array sorted by index
  */
@@ -321,45 +320,65 @@ export function priceString(price){
 }
 // Converts the given string to the given language
 export function languageConverter(language, string){
+
+    const translationJSON = {
+        "hello": "hola",
+        "About": "Acerca de",
+        "Courses": "Cursos",
+        "Support": "Apoyo",
+        "Cart": "Carro",
+        "Account": "Cuenta",
+        "If you have been mandated to complete one of our online parenting classes, it is your responsibility to make sure the court or government agency has a copy of your certificate or a record of your completion. OnlineParentingPrograms.com does not file completed certificates on your behalf. If you are unsure how to file your certificate contact the agency that required the program for specific instructions.": "Si se le ordenó completar una de nuestras clases para padres en línea, es su responsabilidad asegurarse de que la corte o la agencia gubernamental tenga una copia de su certificado o un registro de su finalización. OnlineParentingPrograms.com no presenta certificados completos en su nombre. Si no está seguro de cómo presentar su certificado, comuníquese con la agencia que solicitó el programa para obtener instrucciones específicas.",
+        "Key Facts": "Hechos clave",
+        "Meets the requirements of courts throughout Colorado": "Cumple con los requisitos de los tribunales de todo Colorado",
+        "Dark theme available for easy reading": "Tema oscuro disponible para facilitar la lectura",
+        "Entire course can be completed online": "Todo el curso se puede completar en línea",
+        "Offered in English and": "Se ofrece en inglés y",
+        "Curriculum reflects the most recent research about children of divorce": "El plan de estudios refleja las investigaciones más recientes sobre los hijos de padres divorciados ",
+        "Reduced fee for qualified indigent participants":"Tarifa reducida para participantes indigentes calificados",
+        "Multiple classes offered for different situations":"Múltiples clases ofrecidas para diferentes situaciones.",
+        "Automitacally generated certificate of completion":"Certificado de finalización generado automáticamente",
+        "Your Courses" : "Tus cursos",
+        "Available Courses": "Cursos Disponibles",
+        "More Info": "Más información",
+        "Add to Cart": "añadir a la cesta",
+        "Account Actions": "Acciones de cuenta",
+        "Your courses / Dashboard": "Tus cursos / Tablero",
+        "Log Out": "Cerrar sesión",
+        "Light Theme":"",
+        "Dark Theme":"",
+    }
+
     if(language === "English")
         return string
     else{
-        if(string === "hello")
-            return "hola"
-        if(string === "About")
-            return "Acerca de"
-        if(string === "Support")
-            return "Apoyo"
-        if(string === "Cart")
-            return "Carro"
-        if(string === "Account")
-            return "Cuenta"
-        if(string === "If you have been mandated to complete one of our online parenting classes, it is your responsibility to make sure the court or government agency has a copy of your certificate or a record of your completion. OnlineParentingPrograms.com does not file completed certificates on your behalf. If you are unsure how to file your certificate contact the agency that required the program for specific instructions.")
-            return "Si se le ordenó completar una de nuestras clases para padres en línea, es su responsabilidad asegurarse de que la corte o la agencia gubernamental tenga una copia de su certificado o un registro de su finalización. OnlineParentingPrograms.com no presenta certificados completos en su nombre. Si no está seguro de cómo presentar su certificado, comuníquese con la agencia que solicitó el programa para obtener instrucciones específicas."
-        if(string === "Key Facts")
-            return "Hechos clave"
-        if(string === "Meets the requirements of courts throughout Colorado")
-            return "Cumple con los requisitos de los tribunales de todo Colorado"
-        if(string === "Dark theme available for easy reading")
-            return "Tema oscuro disponible para facilitar la lectura"
-        if(string === "Entire course can be completed online")
-            return "Todo el curso se puede completar en línea"
-        if(string === "Offered in English and")
-            return "Se ofrece en inglés y"
-        if(string === "Curriculum reflects the most recent research about children of divorce")
-            return "El plan de estudios refleja las investigaciones más recientes sobre los hijos de padres divorciados "
-        if(string === "Reduced fee for qualified indigent participants")
-            return "Tarifa reducida para participantes indigentes calificados"
-        if(string === "Multiple classes offered for different situations")
-            return "Múltiples clases ofrecidas para diferentes situaciones."
-        if(string === "Automitacally generated certificate of completion")
-            return "Certificado de finalización generado automáticamente"
+        if(translationJSON[string])
+            return translationJSON[string]
         else{
             console.log(string)
             return string
         }
-
     }
+}
+// Returns the correct version of the content in the data object baesd on the language parameter
+export function languageContent(language, data){
+    if(language === "English")
+        return data?.content
+    else if (data?.contentEs)
+        return data?.contentEs
+    else
+        return data?.content
+
+}
+// Returns the correct version of the secondary content in the data object baesd on the language parameter
+export function languageContent2(language, data){
+    if(language === "English")
+        return data?.content2
+    else if (data?.contentEs2)
+        return data?.contentEs2
+    else
+        return data?.content2
+
 }
 // #endregion general helper functions
 

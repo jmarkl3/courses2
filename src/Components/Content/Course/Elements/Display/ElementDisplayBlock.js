@@ -4,7 +4,7 @@ import "./ElementDisplayBlock.css"
 import MulltipleChoiceDisplay from './Components/MulltipleChoiceDisplay'
 import HTMLReactParser from 'html-react-parser'
 import { database, saveUserResponse } from '../../../../../App/DbSlice'
-import { getUserData, isEmptyString } from '../../../../../App/functions'
+import { getUserData, isEmptyString, languageContent, languageContent2 } from '../../../../../App/functions'
 import SaveIndicator from './Components/SaveIndicator'
 import { ref, set } from 'firebase/database'
 import FadeMessage from './Components/FadeMessage'
@@ -14,6 +14,7 @@ function ElementDisplayBlock({elementData, responseDataOverride}) {
     const userData = useSelector(state => state.dbslice.userData)
     // const userDataOverride = useSelector(state => state.appslice.userDataOverride)
     const [userResponse, setUserResponse] = useState()
+    const language = useSelector(state => state.dbslice?.language)
     const selectedCourseID = useSelector(state => state.dbslice.selectedCourseID)
     const selectedChapterID = useSelector(state => state.dbslice.selectedChapterID)
     const selectedSectionID = useSelector(state => state.dbslice.selectedSectionID)
@@ -99,9 +100,8 @@ function ElementDisplayBlock({elementData, responseDataOverride}) {
     if(elementData?.type === "Text"){
         return (
             <div className='elementViewDisplay'>
-                {elementData?.content && <div className='richText'>
-                    {HTMLReactParser(elementData?.content)}
-
+                {(elementData?.content || elementData?.contentEs) && <div className='richText'>
+                    {HTMLReactParser(languageContent(language, elementData))}
                 </div>}
                 <div className='elementTextDisplay'>
                 </div>
@@ -112,7 +112,7 @@ function ElementDisplayBlock({elementData, responseDataOverride}) {
         return (
             <div className='elementViewDisplay'>
                 <div className='elementDisplayTitle'>
-                   {elementData?.content}
+                   {languageContent(language, elementData)}
                 </div>
             </div>
         )
@@ -133,7 +133,7 @@ function ElementDisplayBlock({elementData, responseDataOverride}) {
         return (
             <div className='textInputDisplay'>
                 <div className='textInputDisplayPrompt'>
-                    {elementData?.content}
+                    {languageContent(language, elementData)}
                 </div>
                 <textarea 
                     placeholder='Type your answer here' 
@@ -147,7 +147,7 @@ function ElementDisplayBlock({elementData, responseDataOverride}) {
         return (
             <div className={`inputElement inputElement${elementData.inputSize}`}>
                 <div className='elementInputLabel'>
-                    {elementData?.content}
+                    {languageContent(language, elementData)}
                 </div>
                 {elementData?.inputType === "Select" ?
                     <select 
@@ -156,7 +156,7 @@ function ElementDisplayBlock({elementData, responseDataOverride}) {
                         defaultValue={userResponse}
 
                     >
-                        {elementData?.content2?.split(",").map(optionValue => (
+                        {languageContent2(language, elementData)?.split(",").map(optionValue => (
                             <option 
                                 selected={(userResponse && (typeof userResponse === "string") && optionValue && (typeof optionValue === "string")) && (userResponse?.trim() === optionValue?.trim())}
                                 key={optionValue.id}

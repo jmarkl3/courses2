@@ -6,9 +6,12 @@ import "../../../Styles/Themes.css"
 import { createUserWithEmailAndPassword, onAuthStateChanged, sendPasswordResetEmail, signInWithEmailAndPassword, signOut, updateEmail } from 'firebase/auth'
 import { auth, clearAllCourseData, clearAllUserData, clearEnrolledCourses, enrollUserInCourses, saveUserAccountData, saveUserEvent, setUserData, setUserID, toggleTheme } from '../../../App/DbSlice'
 import { useNavigate } from 'react-router-dom'
+import { languageConverter } from '../../../App/functions'
+import emailjs from '@emailjs/browser'
 
 function AuthMenu() {
   const showAuthMenu = useSelector(state => state.appslice.showAuthMenu)
+  const language = useSelector(state => state.dbslice?.language)
   const userData = useSelector(state => state.dbslice.userData)
   const fullAdmin = useSelector(state => state.dbslice.userData?.accountData?.fullAdmin)
   const theme = useSelector(state => state.dbslice.userData?.accountData?.theme)
@@ -48,6 +51,11 @@ function AuthMenu() {
     var pass = passInput.current.value
     
     createUserWithEmailAndPassword(auth, email, pass).then( user =>{
+      
+      if(!user) return
+      
+      sendEmail("", email)
+
       // Save their user ID in state
       dispatcher(setUserID(user.user.uid))
       
@@ -152,29 +160,53 @@ function AuthMenu() {
       displayErrorMessage(error.message)      
     });
   }
+  // This function sends an email by setting the values of a hidden form and using emailjs to send the form values via email
+  const formRef = useRef()  
+  const formMessageRef = useRef()  
+  const formEmailRef = useRef()  
+  function sendEmail(firstName, userEmail){  
+    
+    formMessageRef.current.value = "Welcome to the courses app "+firstName+"!"
+    formEmailRef.current.value = userEmail
+    //formEmailRef.current.value = "abeapple@protonmail.com"
+    
+    emailjs.sendForm('service_fepcyns', 'template_bl74n4j', formRef.current, 'jxl1B6Wy4ZMfn1YcQ')
+    .then((result) => {
+        console.log(result.text);            
+    }, (error) => {
+        console.log(error.text);            
+    });
+
+  }
 
     return (
         <div className={theme}>
+          
             {showAuthMenu && 
                 // <div className={`authMenu ${sideNavOpen ? "sideNavAuthLeftAdjust":""}`}>
                 <div className={`authMenu`}>
+                  <form ref={formRef} className='hidden'>
+                    <input name="to_email" ref={formEmailRef}/>
+                    <input name="email_subject" value={"Welcome to the courses app"} />
+                    <input name="message" ref={formMessageRef} />            
+                  </form>
                     <div className='closeButton' onClick={close}>x</div>
                     <>
                         {(userID && !updatingEmail) ? 
                         <>
-                            <div>Account Actions</div>
+                            <div>{languageConverter(language, "Account Actions")}</div>
                             {/* {(isAdmin || canEdit) &&
                               <>                          
                                 <button onClick={()=>dispatcher(setViewAsAdmin(!viewAsAdmin))}>{`View As ${viewAsAdmin ? "User": "Admin"}`}</button>                            
                               </>
                             } */}
-                            <button onClick={goToDashboard}>Your Courses / Dashboard</button>                            
-                            <button onClick={()=>dispatcher(toggleTheme())}>{theme === "lightTheme" ? "Dark Theme" : "Light Theme"}</button>                                                                                
+                            <button onClick={goToDashboard}>{languageConverter(language, "Your Courses")} / Dashboard</button>                            
+                            <button onClick={()=>dispatcher(toggleTheme())}>{theme === "lightTheme" ? languageConverter(language, "Dark Theme") : languageConverter(language, "Light Theme")}</button>                                                                                
                             <button onClick={()=>dispatcher(saveUserAccountData({kvPairs: {fullAdmin: !fullAdmin}}))}>Toggle fullAdmin {" "+fullAdmin}</button>                                                                                                               
-                            <button onClick={passwordReset}>Reset Password</button>
-                            <button onClick={startEmailChange}>Change Email</button>
+                            // <button onClick={passwordReset}>Reset Password</button>
+                            // <button onClick={startEmailChange}>Change Email</button>
                             {/* <button onClick={logUserData}>Log User Data</button> */}
-                            <button onClick={signOutUser}>Log Out</button>
+                            <button onClick={signOutUser}>{languageConverter(language, "Log Out")}</button>
                             {fullAdmin &&
                               <>
                                 <button onClick={()=>dispatcher(clearAllCourseData())}>Clear Courses</button>                                                        

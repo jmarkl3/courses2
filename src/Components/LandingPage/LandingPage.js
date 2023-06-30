@@ -121,10 +121,10 @@ function LandingPage({goto}) {
                 <div className='landingPageTitleContainerOuter'>
                     <div className='landingPageTitleContainer'>
                         <div className='landingTitle'>
-                            Online Courses
+                            {languageConverter(language, "Online Courses")}
                         </div>
                         <div className='landingTitleText'>
-                            We offer online courses here. Select a course from the list below to get started.
+                            {languageConverter(language, "We offer online courses here. Select a course from the list below to get started.")}
                         </div>
                     </div>
                 </div>
@@ -139,7 +139,7 @@ function LandingPage({goto}) {
                         {language === "English" ? "Español" : "English"}
                     </div>
                     <div className='landingNavButton' onClick={()=>dispatcher(setShowSupportMenu(true))}>
-                        {languageConverter(language, "Support")}
+                        {languageConverter(language, "Contact / Support")}
                     </div>
                     <div className='landingNavButton' onClick={()=>dispatcher(setShowCart(true))}>
                         {languageConverter(language, "Cart")}
@@ -179,7 +179,7 @@ function LandingPage({goto}) {
                     {userData &&
                         <div className={"landingPageTextSection"} ref={coursesRef}>
                             <h3 className='center'>
-                                Your Courses
+                                {languageConverter(language, "Your Courses")}
                             </h3>  
                             <hr></hr>
                             <div>
@@ -196,7 +196,7 @@ function LandingPage({goto}) {
                     {availableCourses.length > 0 ?                        
                         <div className={"landingPageTextSection"} ref={coursesRef}>
                             <h3 className='center'>
-                                Available Courses
+                                {languageConverter(language, "Available Courses")}
                             </h3>  
                             <hr></hr>
                             <div>
@@ -211,7 +211,7 @@ function LandingPage({goto}) {
                                 <div>
                                     <hr></hr>
                                     <h3 className='center'>
-                                        You have enrolled in all available courses
+                                        {languageConverter(language, "You have enrolled in all available courses")}
                                     </h3>  
                                     <hr></hr>
                                 </div>

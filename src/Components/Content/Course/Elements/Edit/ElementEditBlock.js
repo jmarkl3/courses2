@@ -75,7 +75,7 @@ function ElementEditBlock({elementData}) {
     // Get teh language version value
     const languageVersionValue = languageVersionInputRef.current.value
 
-    // Save it in state so the corresponding content is shown (can be contentES instead of content for example)
+    // Save it in state so the corresponding content is shown (can be contentEs instead of content for example)
     setLanguageVersion(languageVersionValue)
     
     // Save it in a ref so when the content is changed it is saved in the correct variable name
