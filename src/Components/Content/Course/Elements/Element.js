@@ -4,6 +4,15 @@ import ElementDisplayBlock from "./Display/ElementDisplayBlock.js"
 import { useSelector } from 'react-redux';
 import "./Element.css"
 
+/*
+================================================================================
+|                                   Element.js
+================================================================================
+
+    
+
+*/
+
 function Element({elementData}) {
     const editMode = useSelector((state) => state.appslice.editMode);
     

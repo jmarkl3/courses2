@@ -6,6 +6,25 @@ import { newID, objectToArray } from '../../App/functions'
 import SidenavChapterRow from './Rows/SidenavChapterRow'
 import "./SideNav.css"
 
+/*
+================================================================================
+|                                   SideNav.js
+================================================================================
+
+    This component is displayed from ElementMapper.js
+    It displays the sidebar that shows a collapasable menu with chapters, sections, and (in edit mode) elements
+    It allows the user to navigate the course
+
+    In display mode it shows the completion status of each section and chapter
+    it also shows which section is currently selected
+
+    In edit mode is shows all of the elements and allows the user to add, rearange, or delete new chapters, sections, and elements
+
+    There is a global state variable that determines if the sidebar is open or closed
+    If it is closed it shows as a thin bar at the left of the screen that can be clicked to open the sidebar
+
+*/
+
 function SideNav() {    
     const sideNavOpen = useSelector(state => state.appslice.sideNavOpen)
     const courseData = useSelector((state) => state.dbslice.courseData);
@@ -36,23 +55,23 @@ function SideNav() {
     }
 
     return (
-    <div className={`sidebar ${!sideNavOpen && "sidebarClosed"}`} onClick={openSidebar} title={!sideNavOpen ? "Open Sidebar" : null}>
-        <div className={`sidebarClose ${!sideNavOpen && "hidden"}`} onClick={closeSidebar} title="Hide Sidebar">{"◁"}</div>
-        {sideNavOpen && 
-            <>
-                {!itemArray || itemArray.length === 0 && 
-                    <button onClick={addChapterFunction}>Add Chapter</button>
-                }        
-                <div className={sideNavOpen ? "":" sideNaveClosedItems"}>
-                    {itemArray.map(chapter => (
-                        <SidenavChapterRow itemData={chapter} key={chapter.id}></SidenavChapterRow>
-                    ))}
+        <div className={`sidebar ${!sideNavOpen && "sidebarClosed"}`} onClick={openSidebar} title={!sideNavOpen ? "Open Sidebar" : null}>
+            <div className={`sidebarClose ${!sideNavOpen && "hidden"}`} onClick={closeSidebar} title="Hide Sidebar">{"◁"}</div>
+            {sideNavOpen && 
+                <>
+                    {!itemArray || itemArray.length === 0 && 
+                        <button onClick={addChapterFunction}>Add Chapter</button>
+                    }        
+                    <div className={sideNavOpen ? "":" sideNaveClosedItems"}>
+                        {itemArray.map(chapter => (
+                            <SidenavChapterRow itemData={chapter} key={chapter.id}></SidenavChapterRow>
+                        ))}
 
-                </div>
-            </>
-        }
-    </div>
-  )
+                    </div>
+                </>
+            }
+        </div>
+    )
 }
 
 export default SideNav

@@ -6,6 +6,19 @@ import { toggleLanguage } from '../../App/DbSlice'
 import { setShowSupportMenu, toggleShowAuthMenu } from '../../App/AppSlice'
 import { useNavigate } from 'react-router-dom'
 
+/*
+================================================================================
+|                                 Navbar.js
+================================================================================
+
+    This component is embeded in DisplayPage.js and shown above all of the content sections of the application
+
+    it gives the user the ability to navigate to other pages and open menus such as the auth and support menus    
+    it goes to different pages by setting the url that is processed by the router in App.js
+    it opens menus by changing global state that tells menu components to render their content
+
+*/
+
 function Navbar() {
     const dispatcher = useDispatch()
     const language = useSelector(state => state.dbslice.userData?.accountData?.language)
@@ -18,8 +31,8 @@ function Navbar() {
                 727-500-5075
             </div>
             <div className='bottom left'>
+                <button onClick={()=>navigate("/About")} title="View the about section on the Home Page">Home / About</button>
                 <button  onClick={()=>navigate("/Dashboard")} title="Go to your Courses and Dashboard">Dashboard</button>
-                <button onClick={()=>navigate("/About")} title="View the about section on the Home Page">About</button>
             </div>
             <div className='navbarCenter'>
                 <img src={starIcon}></img>

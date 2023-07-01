@@ -16,7 +16,7 @@ import { getUserData, removeUndefined } from '../../../App/functions'
 |                                 Course.js
 ================================================================================
 
-    This component id embeded in the DisplayPage component and displays the course content within that component
+    This component is embeded in the DisplayPage component and displays the course content within that component
 
     if the course is complete and the certificate should be displayed it displays that 
     othwerwise it displays the sidenav and ElementMapper component which displays the course content

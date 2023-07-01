@@ -9,6 +9,20 @@ import SaveIndicator from './Components/SaveIndicator'
 import { ref, set } from 'firebase/database'
 import FadeMessage from './Components/FadeMessage'
 
+/*
+================================================================================
+|                              ElementDisplayBlock.js
+================================================================================
+
+    This component is renderd from Element.js or ElementEdit.js and displays the element data in the appropriate way
+    
+    There are several types of elements including text, video, multiple choice, etc.
+
+    If this is an input element such as a multiple choice element the user resonse data is saved in user data
+    if the user has already responded to an input element their responses are loaded from user data and displayed
+
+*/
+
 function ElementDisplayBlock({elementData, responseDataOverride}) {
   
     const userData = useSelector(state => state.dbslice.userData)

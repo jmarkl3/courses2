@@ -9,6 +9,31 @@ import TimedWebcam from '../../../Webcam/TimedWebcam';
 import { useNavigate } from 'react-router-dom';
 import { setSideNavOpen } from '../../../../App/AppSlice';
 
+/*
+================================================================================
+|                                 ElementMapper.js
+================================================================================
+
+    This component is rendered in Course.js and maps the course elements to the screen
+    it can be in display mode or edit mode
+
+    in display mode it mapps the elements to the screen with their content
+    users can view or interact with the content based on the element type
+
+    there are is also the SectionButton component which displays the
+    next and last buttons that allow the user to navigate to the next or previous section if they have completed the requirements for the current section
+
+    in edit mode it displays the editable version of elements that allow the user to edit the content of the element
+    it also displays some additional components that allow the user to edit the section and course options
+
+    The sidenav which is displayed in Course.js is also different in edit mode and allows the user to take edit actions 
+    such as adding items such as sections or elements
+
+    There is also a timed webcam component that is displayed in the bottom right corner of the screen
+    this component allows the users presence to be verified with their webcam in case that is a requirement
+
+*/
+
 function ElementMapper() {
     const courseData = useSelector((state) => state.dbslice.courseData);
     const selectedChapterID = useSelector((state) => state.dbslice.selectedChapterID);

@@ -5,6 +5,27 @@ import { createSlice } from "@reduxjs/toolkit";
 
 // #endregion Imports
 
+/*
+================================================================================
+|                                   AppSlice.js
+================================================================================
+
+    This is a global redux slice that contains all of the data and actions pertaining to the app state that are not saved in the database 
+    
+    The data contained:
+        1. display state such as if the sidenav is open or closed, or if menus should be rendered
+        2. display data such as the theme or language
+        3. mode data such as edit mode or preview mode
+        4. cart data such as the selected courses and if the cart should be displayed
+
+    The actions are seperated into cataegories:
+        1. General App actions such as setting the theme or menus
+        2. Course View actions such as opening the sidenav
+        3. Course Edit actions such as putting the course in edit mode or minmizing all elements
+        4. Cart actions such as adding or removing courses from the cart
+
+*/
+
 const appSlice = createSlice({
     name: "appslice",
     initialState: {

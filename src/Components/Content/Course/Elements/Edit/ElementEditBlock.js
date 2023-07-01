@@ -7,6 +7,19 @@ import MultipleChoiceEdit from './Components/MultipleChoiceEdit'
 import { CKEditor } from 'ckeditor4-react'
 // import { CKEditor } from 'ckeditor5-react'
 
+/*
+================================================================================
+|                              ElementEditBlock.js
+================================================================================
+
+    This component is renderd from ElementEdit.js and displays the editable element data in the appropriate way
+    
+    There are several types of elements including text, video, multiple choice, etc.
+
+    This component gives the user the ability to edit the element data and options which are saved in the database
+
+*/
+
 function ElementEditBlock({elementData}) {
   const [expanded, setExpanded] = useState(true)
   const [confirmationBoxMessage, setConfirmationBoxMessage] = useState()

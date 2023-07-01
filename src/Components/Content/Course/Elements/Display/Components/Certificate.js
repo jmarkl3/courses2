@@ -24,7 +24,7 @@ import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 |                                 Certificate.js
 ================================================================================
 
-    This component is embeded in teh Course.js component and only displays when a course is complete
+    This component is embeded in the Course.js component and only displays when a course is complete
     
     It checks to see if a certificaet has been generated for this course for this user
     if so it displays that certificate in a pdf iframe

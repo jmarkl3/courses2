@@ -6,10 +6,39 @@ import { get, getDatabase, push, ref, remove, runTransaction, set, update } from
 import { gePreviousItem, getFirstItem, getItem, getLastItemID, getNextItem, getUserData, insertItem, newIDsObject, nItemsInObject, objectToArray, removeItem, removeUndefined } from "./functions";
 import { act } from "react-dom/test-utils";
 
+/*
+================================================================================
+|                                   DbSlice.js
+================================================================================
+
+    This is a global redux slice that contains all of the data and actions pertaining to the database 
+    including things loaded from the database and actions to save things in the database
+    
+    It also contains the firebase setup code and variables that are exporteted for global use
+
+    The data contained:
+        1. coursesData: metadata for all courses including title, description, etc.
+        2. courseData: the course data for the selected course with the lessons, etc.
+        3. userData: the user data from the database
+        4. selection data such as selected course, chapter, section, and element IDs
+        5. App data that may come from user data but sometimes does not such as theme and language
+        6. drag and drop data such as the drag start IDs and drag item type
+
+    The actions are seperated into cataegories:
+        1. loading data (loading data from the database)
+        2. user data (saving and loading user data)
+        3. Selections (actions pertaining to selecting chapters, sections, etc to navigate through the course) 
+        3. course, chapter, section, and element actions (actions pertaining to adding, removing, and modifying course, chapter, section, and element data)         
+        4. drag and drop (state related to keeping track of things to allow dragging and dropping of cart items)
+        5. helper actions
+
+*/
+
 // #region firebase config
 
 // The config file
 const firebaseConfig = {
+    // This is the config for the old db
     // apiKey: "AIzaSyBDWCKZwSBi_Qp4U0u3D2tKrcIU290IrDE",
     // authDomain: "defaultproject-c023e.firebaseapp.com",
     // databaseURL: "https://defaultproject-c023e-default-rtdb.firebaseio.com",
@@ -18,6 +47,8 @@ const firebaseConfig = {
     // messagingSenderId: "147977670881",
     // appId: "1:147977670881:web:fe1532718095f374bbe7a0",
     // measurementId: "G-VY1DMS0BKY"
+
+    // This is the config for the new db
     apiKey: "AIzaSyBmvKBB4-qnurQdJrG0WxcnDXLHzK8BENk",
     authDomain: "courses-app-8efb5.firebaseapp.com",
     databaseURL: "https://courses-app-8efb5-default-rtdb.firebaseio.com",
@@ -1168,6 +1199,7 @@ const dbslice = createSlice({
         // #region helper actions
         // the helper actions do anything else such as updating specified database values
 
+        // updates data on or deletes the specified item (course, chapter, section, or element)
         updateItemInfo(state, action) { 
             if(!action.payload.chapterID){
                 console.log("updateItemInfo: missing payload chapterID")
@@ -1206,6 +1238,7 @@ const dbslice = createSlice({
 
             }
         },
+        // Increment a global counter to be displayed in timers that are shown in multiple places
         incrementTimerSaveCounter(state, action){
             state.timerSaveCounter++
         },

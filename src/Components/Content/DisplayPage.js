@@ -4,6 +4,16 @@ import topImage from "../../Images/topImage.jpg"
 import Navbar from '../Navbar/Navbar'
 import { useSelector } from 'react-redux'
 
+/*
+================================================================================
+|                                 DisplayPage.js
+================================================================================
+
+    This component is a wrapper for all of the components that are displayed in the main content area of the application
+    it contains a navbar, layout styling, and whatever components it is wrapping
+
+*/
+
 function DisplayPage(props) {
     const sideNavOpen = useSelector(state => state.appslice.sideNavOpen)
 

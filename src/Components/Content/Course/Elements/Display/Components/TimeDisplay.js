@@ -5,6 +5,12 @@ import { incrementUserSectionTime, saveUserSectionData2 } from '../../../../../.
 import { getUserData, timeString } from '../../../../../../App/functions'
 
 /*
+================================================================================
+|                                TimeDisplay.js
+================================================================================
+
+    Rendered from SectionButtons.js or SidenavSectionRow.js
+
     Checks to see if the page is visible and if this section is selected
     if so starts the timer
 
@@ -13,18 +19,10 @@ import { getUserData, timeString } from '../../../../../../App/functions'
     syncTime is called when the timer is paused
     saves the current time in userData
 
-    TODO
-    put current time and the timeSectionID in global state
-    update the currentTimeRef when the global state changes in a useEffect
-    if if selectedSectionID === sectionData?.id      
-        if global timeSectionID !== selectedSectionID 
-            set the global time to 0 
-        start the timer        
-
-    or could update the userData time with a runTransaction so it is in sync automatically even in diferent windows
-    then would only want the one in the section to run that, not the one in the sidenav
+    in viewOnly mode it just displays the time and doesn't update it so if there is more thatn one TimeDisplay component on the page they will all display the same time and not double update
 
 */
+
 function TimeDisplay({sectionData, chapterID, viewOnly, setRemainingTime}) {
     const selectedSectionID = useSelector(state => state.dbslice.selectedSectionID)
     const selectedCourseID = useSelector(state => state.dbslice.selectedCourseID)
