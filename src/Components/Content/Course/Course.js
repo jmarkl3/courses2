@@ -11,6 +11,18 @@ import certificateImage from "../../../Images/certificateNoName.jpg"
 import Certificate from './Elements/Display/Components/Certificate'
 import { getUserData, removeUndefined } from '../../../App/functions'
 
+/*
+================================================================================
+|                                 Course.js
+================================================================================
+
+    This component id embeded in the DisplayPage component and displays the course content within that component
+
+    if the course is complete and the certificate should be displayed it displays that 
+    othwerwise it displays the sidenav and ElementMapper component which displays the course content
+
+*/
+
 function Course() {
   const userData = useSelector(state => state.dbslice.userData)
   const userDataOverride = useSelector(state => state.dbslice.userDataOverride)
@@ -190,7 +202,7 @@ function Course() {
 
   return (
     <DisplayPage>
-        <Certificate></Certificate>
+        {/* <Certificate></Certificate> */}
         {displayCertificate ? 
           <>
             <Certificate></Certificate>

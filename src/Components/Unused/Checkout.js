@@ -1,6 +1,20 @@
 import React from 'react'
 // import "./Checkout.css"
 import { useNavigate } from 'react-router-dom';
+
+/*
+================================================================================
+|                                 Checkout.js
+================================================================================
+
+    This component has a form to collect user information
+    if they have an account already their use info will be prepopulated
+
+    When this information is submitted an account will be created for them if they don't have one already
+    and they will be redirected to the course page
+
+*/
+
 function Checkout({openCart}) {
     const navigate = useNavigate();
     function goToCourse(){

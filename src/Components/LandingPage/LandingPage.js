@@ -75,6 +75,21 @@ import { getEnrolledCourses, languageConverter } from '../../App/functions'
 
 */
 
+/*
+================================================================================
+|                              LandingPage.js
+================================================================================
+
+    This is the landing page for the app. It displays information about the app
+    There is a menu below the banner with links to the different sections of the page
+    these include:
+        About, Courses, Contact / Support, Cart, and Account
+    
+    It also shows available courses and courses the user is enrolled in
+    The user has the ability to enroll in courses from this page or go to the course if they are already enrolled
+
+
+*/
 function LandingPage({goto}) {
     const language = useSelector(state => state.dbslice?.language)
     const coursesArray = useSelector(state => state.dbslice.coursesArray)

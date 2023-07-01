@@ -80,16 +80,40 @@ import Support from './Components/Menus/Support/Support';
   maybe a chat bot for support that is a character that is a parent and the user is a child and they are talking to the parent about their problems 
   and the parent is giving them advice and support and the user is getting points for it and the parent is getting points for it and the parent is getting points for it
 
+  no timers before the section where payment is required
+  ability to create pay wall as a section so it can be created anywhere in the course 
+  stuff before it shouldj be fun and easy
+  and it will show the percent completion at the checkout page if its a lot, or some way to bring attention to the amount that was completed
+  in first page of course it explains the pay part way through system, maybe gives an option to pay now
+
+  this data will need to be saved with an anonymous account or locally
+  then transferred when they create an account
+  option to create account now to save progress and also option to pay now. They are nnot both required at the same time
+
   before this finish courses 2 (to a point that it is useable as it is, a minimum viable product)
-  1) auth doesn't work any more. If an account is logged in it is still trying to create an account in checkout and doesn't work
-  1) ggl translate
-    set up the account and translate using the api
-    create a cache that saves the inputs and outputs of this in realtime database
-    this can be checked before using the api and can also be saved in local storage if its small enough for instant translations (not important initially)
+  
+  maybe view certificates button on the dashboard
+
+  edit course button gives user the ability to set domains that point to the app
+  and edit the landing page for each domain
+  will be the standard layout but the background image, text, and available courses can be edited 
+  landing page preview option or just show the landing page with edit icons on it
+  any user can create courses if they have the correct account type
+  main landing page will be for creating courses
+  and there will be other projects pointing to the app that have different course types and landing pages
+
+  DONE
+  1) generate certificate as a pdf and save it in storage then save storage link in user data
+     check this before generating a new certificate
+  
+  THIS CAN BE PUT OFF UNTIL LATER
   2) firebase rules protecting user data
-  user data encryption (can add later)
-  3) generate certificate as a pdf and save it in user data
-  4) auto emails/texts
+     user data encryption (can add later)
+     will need users that create a course to have ability to edit course data
+     admins will also need ability to edit user data
+
+  DONE (for now till account is upgraded)
+  3) auto emails/texts
       DONE
       set up api
       DONE
@@ -98,21 +122,49 @@ import Support from './Components/Menus/Support/Support';
       send email to a user  
       DONE    
       send email when user signs up
+      (this happens in the certificate component which only shows when user completes the course)
       send email when user completes a course to user and default addresses (if there has not already been one sent)
+      PARTIALLY DONE, PAYWALL
       create and attach the certificate to that email
+      save the certificate in storage in user data in link in user data, check this before generating or sending a duplicate
       
       Email JS
       https://www.emailjs.com/docs/examples/reactjs/
       https://medium.com/@patienceadajah/how-to-send-emails-from-a-react-application-without-a-backend-server-1dd8718ceedd 
       https://www.youtube.com/watch?v=bMq2riFCF90&t=274s
 
-       
-  5) multiple domains to same app (can host same code base under different projects to test this initially)
-  6) description of each component and file at the top. spoken note describing the app flow
+  4) description of each component and file at the top. spoken note describing the app flow
     revert to doing this if getting stuck at other points
-  7) create a course
-  cors for generating reports with user images (can do later if necessary)
+  5) auth doesn't work in all cases. If an account is logged in it is still trying to create an account in checkout and doesn't work 
+  6) multiple domains to same app but with different landing pages (can host same code base under different projects to test this initially) 
+  7) ggl translate
+     paywall with personal card
+    set up the account and translate using the api
+    create a cache that saves the inputs and outputs of this in realtime database
+    this can be checked before using the api and can also be saved in local storage if its small enough for instant translations (not important initially)
+    translationCache:{
+      firstsentenceAsKey: {
+        randomKey: {
+          full message: ""
+          es: "",
+          fr: "",
+          ...
+        },
+        ...
+      },
+      ...
+    }
+  8) create a course
+     copy from existing course
+     add own research output and videos
+  9) card system
+  cors for generating reports with user images (can do later if that functionality is necessary)
   
+  only send welcome email if not already sent (save something in user data showing it has already been sent)
+  when cert is generated save it in storage and save link in user data
+  send the cert in an email to 2 emails at the same time when user finishes course
+  maybe put meta data at the bottom like completion date and course name
+  sort out the double auth issue between account menu and checkout (can maybe do this when changing the checkout page)
 
 
   ggl
@@ -518,6 +570,25 @@ ________________________________________________________________________________
 
 */
 
+
+/*
+================================================================================
+|                                   App.js
+================================================================================
+
+    Loads courses meta data that is used to display available course tiles
+    Loads user data
+    Loads course data when a course is selected
+
+    auth menu component is always available and displays based on global state
+      auth menu listens for auth state change and sets userID even when its not displaying the menu
+    support menu and cart menu are always available and also display based on a global state variable
+
+    Router displays pages based on the url
+    Pages are: landing, about (redirects to landing), checkout, dashboard, course, and course with a specified course ID
+
+
+*/
 function App() {    
     const userID = useSelector(state => state.dbslice.userID)
     const theme = useSelector(state => state.dbslice.userData?.accountData?.theme)

@@ -9,6 +9,28 @@ import { useNavigate } from 'react-router-dom'
 import { languageConverter } from '../../../App/functions'
 import emailjs from '@emailjs/browser'
 
+/*
+================================================================================
+|                                 AuthMenu.js
+================================================================================
+
+When the global state variable showAuthMenu is true this component is rendered and the component is active even when this state is false
+
+the rendered component contains 
+when their is no user logged in:
+email and password input for sign in and account creation
+when there is a user logged in:
+buttons to go to dashboard, log out, and other account actions
+
+authListener function contains onAuthStateChanged and listens to see if there is a user signed in currently and also is triggered when a user signs in or out
+this function saves the userID in state which triggers other actions like loading user data
+when a user is signed in the component redirects the user to their dashboard
+
+there are functions to sign in, sign up, and sign out users
+
+
+*/
+
 function AuthMenu() {
   const showAuthMenu = useSelector(state => state.appslice.showAuthMenu)
   const language = useSelector(state => state.dbslice?.language)
@@ -203,8 +225,8 @@ function AuthMenu() {
                             <button onClick={goToDashboard}>{languageConverter(language, "Your Courses")} / Dashboard</button>                            
                             <button onClick={()=>dispatcher(toggleTheme())}>{theme === "lightTheme" ? languageConverter(language, "Dark Theme") : languageConverter(language, "Light Theme")}</button>                                                                                
                             <button onClick={()=>dispatcher(saveUserAccountData({kvPairs: {fullAdmin: !fullAdmin}}))}>Toggle fullAdmin {" "+fullAdmin}</button>                                                                                                               
-                            // <button onClick={passwordReset}>Reset Password</button>
-                            // <button onClick={startEmailChange}>Change Email</button>
+                            {/* <button onClick={passwordReset}>Reset Password</button> */}
+                            {/* <button onClick={startEmailChange}>Change Email</button> */}
                             {/* <button onClick={logUserData}>Log User Data</button> */}
                             <button onClick={signOutUser}>{languageConverter(language, "Log Out")}</button>
                             {fullAdmin &&

@@ -7,6 +7,22 @@ import { clearCartCourses, loadCartCourses, selectCartCourse, setShowCart, setUs
 import { useNavigate } from 'react-router-dom'
 import { enrollUserInCourses2 } from '../../../App/DbSlice'
 
+/*
+================================================================================
+|                                  Cart.js
+================================================================================
+
+    This menu is always available from App.js and renders based on a global state variable
+
+    it displays the courses that are currently saved by the user either in user data or local storage if they don't have an account
+    the user has the ability to drag and drop courses from available courses to their cart
+    they can also remove courses from their cart or view info about the courses
+    the total balance is calculated and displayed
+
+    from this component the user can go to the checkout page if they have courses in their cart that they are not enrolled in
+
+*/
+
 function Cart() {
     const selectedCourseIDs = useSelector(state => state.appslice.selectedCourseIDs)
     const draggingCourseID = useSelector(state => state.appslice.draggingCourseID)
