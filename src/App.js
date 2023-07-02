@@ -135,6 +135,14 @@ import Support from './Components/Menus/Support/Support';
 
   4) description of each component and file at the top. spoken note describing the app flow
     revert to doing this if getting stuck at other points
+
+  ?) To create the cartless flow:
+    1) Create checkout element that will display as a section and allow the user to checkout and create an account if needed
+    2) Save response data in db with the anonymous user ID saved in local storage
+    3) When they create an account this data is reliable transferred to their new account
+       make sure to mention this in the first page so they know to create an account or use the same browser until then
+    4) when a course on the landing page is clicked it goes directly to the course
+
   5) auth doesn't work in all cases. If an account is logged in it is still trying to create an account in checkout and doesn't work 
   6) multiple domains to same app but with different landing pages (can host same code base under different projects to test this initially) 
   7) ggl translate
@@ -166,6 +174,25 @@ import Support from './Components/Menus/Support/Support';
   maybe put meta data at the bottom like completion date and course name
   sort out the double auth issue between account menu and checkout (can maybe do this when changing the checkout page)
 
+    Currently working on    
+    userData input fields:
+    DONE
+    option to create that field in the elementEditBlock
+    DONE
+    user can specify the key that will correspond to the userData.accountData key
+    DONE
+    the intput field is displayed
+    DONE
+    the default value of the input field corresponds to userData.accountData[key]
+    if there is a value it may not be editable depending on the key (email should not be editable)
+    DONE
+    the value saves into userData.accountData[key]
+    
+
+  bug:
+  1) when a chapter is not selected the section completion status is not showing
+  2) because user time is saved in user data and there is a listener for userData all of the data re downloads every second
+     could save it somewhere else, or only get all userData once and listen for userData.accountData only. only listen for userData.courses.courseID when they are in the course
 
   ggl
     DONE
@@ -587,6 +614,13 @@ ________________________________________________________________________________
     Router displays pages based on the url
     Pages are: landing, about (redirects to landing), checkout, dashboard, course, and course with a specified course ID
 
+    Links:
+    https://mail.google.com/mail/u/0/#inbox/FMfcgzGtvsRJsTJFPVLWRBPBsLvKGtdD
+    https://cloud.google.com/translate
+    https://dashboard.emailjs.com/admin/templates/4a8xxml/attachments
+    https://www.emailjs.com/docs/examples/reactjs/
+    https://console.firebase.google.com/project/courses-app-8efb5/storage/courses-app-8efb5.appspot.com/files
+    https://code.visualstudio.com/docs/editor/userdefinedsnippets
 
 */
 function App() {    

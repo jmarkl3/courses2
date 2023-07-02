@@ -5,6 +5,23 @@ import ElementEditBlock from "./ElementEditBlock.js"
 import editIcon from "../../../../../Images/editIconS.png"
 import "./ElementEdit.css"
 
+/*
+================================================================================
+|                              ElementEdit.js
+================================================================================
+
+    This component is renderd from Element.js and displays the element either in edit or preview mode
+    
+    There are several types of elements including text, video, multiple choice, etc.
+
+    The element data is passed through to the element component corresponding to the preview state
+    If it is in preview mode the ElementDisplayBlock componentis shows with an added edit button to edit just that element
+    if in edit mode and not in preview mode the ElementEditBlock component is shown that allows the user to edit the element
+
+*/
+
+
+
 function ElementEdit({elementData}) {
     const previewMode = useSelector((state) => state.appslice.previewMode);
     // If this is true the element displays as an edit block regardless of preview mode

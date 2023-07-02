@@ -9,7 +9,11 @@ import "./Element.css"
 |                                   Element.js
 ================================================================================
 
+    This component is renderd from a map in ElementMapper and displays either an ElementEdit or ElementDisplayBlock for each element 
+    the component type that is displayed is determened by the editMode state in AppSlice.js
     
+    Ihe element data is passed through to the element component corresponding to the editMode state
+    the element component then displays the element data in the appropriate way
 
 */
 

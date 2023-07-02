@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import "./ElementDisplayBlock.css"
 import MulltipleChoiceDisplay from './Components/MulltipleChoiceDisplay'
 import HTMLReactParser from 'html-react-parser'
-import { database, saveUserResponse } from '../../../../../App/DbSlice'
+import { database, saveUserAccountData, saveUserResponse } from '../../../../../App/DbSlice'
 import { getUserData, isEmptyString, languageContent, languageContent2 } from '../../../../../App/functions'
 import SaveIndicator from './Components/SaveIndicator'
 import { ref, set } from 'firebase/database'
@@ -32,6 +32,7 @@ function ElementDisplayBlock({elementData, responseDataOverride}) {
     const selectedCourseID = useSelector(state => state.dbslice.selectedCourseID)
     const selectedChapterID = useSelector(state => state.dbslice.selectedChapterID)
     const selectedSectionID = useSelector(state => state.dbslice.selectedSectionID)
+    const dispatcher = useDispatch()
 
   useEffect(() => {
     if(responseDataOverride){
@@ -107,8 +108,25 @@ function ElementDisplayBlock({elementData, responseDataOverride}) {
 
 
   }
-
   
+  // After 500ms of inactivity after typing into the response box save the result
+  const userDataInputTimeoutRef = useRef()
+  const userDataInputRef = useRef()
+  function userDataNeedsSave(){                
+        console.log("userDataNeedsSave")
+        clearTimeout(userDataInputTimeoutRef.current)
+        userDataInputTimeoutRef.current = setTimeout(()=>{
+            if(!elementData.content3){
+                console.log("error saving user data, invalid key")
+                return
+            }
+            console.log("saveUserAccountData in "+elementData.content3)
+            dispatcher(saveUserAccountData({kvPairs: {[elementData.content3]: userDataInputRef.current.value}}))
+        },500)
+
+  }
+
+
   function displayContent(){
     
     if(elementData?.type === "Text"){
@@ -189,6 +207,40 @@ function ElementDisplayBlock({elementData, responseDataOverride}) {
                 }
             </div>
         )
+    else if(elementData?.type === "User Data Field"){
+        console.log(userData.accountData)
+        return (
+            <div className={`inputElement inputElement${elementData.inputSize}`}>
+                <div className='elementInputLabel'>
+                    {languageContent(language, elementData)}
+                </div>
+                {elementData?.inputType === "Select" ?
+                    <select 
+                        ref={responseSelectRef}
+                        onChange={()=>saveUserResponseFunction(responseSelectRef.current.value)}
+                        defaultValue={userResponse}
+
+                    >
+                        {languageContent2(language, elementData)?.split(",").map(optionValue => (
+                            <option 
+                                selected={(userResponse && (typeof userResponse === "string") && optionValue && (typeof optionValue === "string")) && (userResponse?.trim() === optionValue?.trim())}
+                                key={optionValue.id}
+                            >
+                                {optionValue}
+                            </option>
+                        ))}
+                    </select>
+                    :
+                    <input 
+                        placeholder='Type your answer here' 
+                        ref={userDataInputRef} 
+                        onChange={userDataNeedsSave}                         
+                        defaultValue={userData.accountData[elementData.content3]}
+                    ></input>                    
+                }
+            </div>
+        )
+    }
     else if(elementData?.type === "Multiple Choice")
         return (
             <>

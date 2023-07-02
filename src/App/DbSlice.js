@@ -305,11 +305,15 @@ const dbslice = createSlice({
                 return
             }
 
-            console.log("saveUserAccountData")
-            console.log(action.payload.kvPairs)
-
+            
             // This is the location that the remaining time will be saved
             var locationString = "coursesApp/userData/"+( action.payload.userID || state.userID)+"/accountData"          
+            
+            console.log("locationString")
+            console.log(locationString)
+            
+            console.log("dbslice saveUserAccountData")
+            console.log(action.payload.kvPairs)
 
             // Save the remaining time in the db (shouldnt overwrite other data)
             update(ref(database, locationString), action.payload.kvPairs)

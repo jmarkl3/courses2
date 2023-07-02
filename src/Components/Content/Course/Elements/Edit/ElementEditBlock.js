@@ -55,7 +55,7 @@ function ElementEditBlock({elementData}) {
 
   const updateContentTimer = useRef()
   const contentInputRef = useRef()
-  function elemetContentChanged(){
+  function elementContentChanged(){
     clearTimeout(updateContentTimer.current)
     updateContentTimer.current = setTimeout(() => {
       dispacher(updateItemInfo({chapterID: selectedChapterID, sectionID: selectedSectionID, elementID: elementData.id, type: "content", value: contentInputRef.current.value}))
@@ -63,15 +63,23 @@ function ElementEditBlock({elementData}) {
   }
   const updateContent2Timer = useRef()
   const content2InputRef = useRef()
-  function elemetContent2Changed(){
+  function elementContent2Changed(){
     clearTimeout(updateContent2Timer.current)
     updateContent2Timer.current = setTimeout(() => {
       dispacher(updateItemInfo({chapterID: selectedChapterID, sectionID: selectedSectionID, elementID: elementData.id, type: "content2", value: content2InputRef.current.value}))
     }, 1000)
   }
+  const updateContent3Timer = useRef()
+  const content3InputRef = useRef()
+  function elementContent3Changed(){
+    clearTimeout(updateContent2Timer.current)
+    updateContent3Timer.current = setTimeout(() => {
+      dispacher(updateItemInfo({chapterID: selectedChapterID, sectionID: selectedSectionID, elementID: elementData.id, type: "content3", value: content3InputRef.current.value}))
+    }, 1000)
+  }
   const updateNameTimer = useRef()
   const nameInputRef = useRef()
-  function elemetNameChanged(){
+  function elementNameChanged(){
     console.log("name changed")
     clearTimeout(updateNameTimer.current)
     updateNameTimer.current = setTimeout(() => {
@@ -80,7 +88,7 @@ function ElementEditBlock({elementData}) {
     }, 1000)
   }
   const typeInputRef = useRef()
-  function elemetTypeChanged(){
+  function elementTypeChanged(){
       dispacher(updateItemInfo({chapterID: selectedChapterID, sectionID: selectedSectionID, elementID: elementData.id, type: "type", value: typeInputRef.current.value}))
 
   }
@@ -118,6 +126,7 @@ function ElementEditBlock({elementData}) {
   }
   // This will imediately update element/propertyName ex: element/name = "new name"
   function updateElementProperty(propertyName, propertyValue){
+    console.log("updateElementProperty", propertyName, propertyValue)
     if(!propertyName)
       return
     if(propertyValue == undefined || propertyValue == null)
@@ -126,7 +135,7 @@ function ElementEditBlock({elementData}) {
   }
   
   const updateEditorContentTimer = useRef()
-  function elemetEditorContentChanged(event){
+  function elementEditorContentChanged(event){
     clearTimeout(updateEditorContentTimer.current)
     updateEditorContentTimer.current = setTimeout(() => {
       if(languageVersionRef.current === "Español")
@@ -143,10 +152,10 @@ function ElementEditBlock({elementData}) {
               <CKEditor
                 id="editor1"
                 initData={languageVersion === "English" ? elementData?.content : elementData?.contentEs}
-                onChange={elemetEditorContentChanged}                                 
+                onChange={elementEditorContentChanged}                                 
               />
-              {/* <textarea onChange={elemetContentChanged}  defaultValue={elementData?.content}></textarea> */}
-              {/* <Tiptap elementData={elementData} elemetContentChanged={elemetContentChanged}></Tiptap>                     */}
+              {/* <textarea onChange={elementContentChanged}  defaultValue={elementData?.content}></textarea> */}
+              {/* <Tiptap elementData={elementData} elementContentChanged={elementContentChanged}></Tiptap>                     */}
             </div>
         )
     if (elementData?.type === "Title" || elementData?.type === "Title 2" || elementData?.type === "Title 3")
@@ -155,7 +164,7 @@ function ElementEditBlock({elementData}) {
                 <input 
                   defaultValue={elementData?.content} 
                   ref={contentInputRef} 
-                  onChange={elemetContentChanged} 
+                  onChange={elementContentChanged} 
                   placeholder="Title"
                 ></input>
             </div>
@@ -170,7 +179,7 @@ function ElementEditBlock({elementData}) {
                       title='Click on share on youtube, then copy the url where it says src="url"'  
                       defaultValue={elementData?.content} 
                       ref={contentInputRef} 
-                      onChange={elemetContentChanged}
+                      onChange={elementContentChanged}
                      ></input>
                 </div>
                 <iframe width="560" height="315" src={elementData?.content} title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen></iframe>
@@ -186,7 +195,7 @@ function ElementEditBlock({elementData}) {
                       title='Click on share on youtube, then copy the url where it says src="url"'  
                       defaultValue={elementData?.content} 
                       ref={contentInputRef} 
-                      onChange={elemetContentChanged}
+                      onChange={elementContentChanged}
                     ></input>
                 </div>
                 <div className='elementImage'>
@@ -200,58 +209,107 @@ function ElementEditBlock({elementData}) {
                 <textarea 
                   defaultValue={elementData?.content} 
                   ref={contentInputRef} 
-                  onChange={elemetContentChanged} 
+                  onChange={elementContentChanged} 
                   placeholder="Question Prompt"
                 ></textarea>
             </div>                
         )
-        else if(elementData?.type === "Input Field")
-        return (                   
-            <div >
-              <div className='elementEditOptions'>
+    else if(elementData?.type === "Input Field")
+      return (                   
+          <div >
+            <div className='elementEditOptions'>
+              <input 
+                defaultValue={elementData?.content} 
+                ref={contentInputRef} 
+                placeholder="Input Label"
+                onChange={elementContentChanged} 
+              ></input>
+              <select 
+                title='Input Type'
+                ref={inputTypeInputRef}
+                onChange={()=>updateElementProperty("inputType", inputTypeInputRef.current.value)}
+                defaultValue={elementData?.inputType}
+              >
+                  <option>Text</option>
+                  <option>Select</option>
+              </select>
+              <select 
+                title='Input Size'
+                ref={inputSizeInputRef}
+                onChange={()=>updateElementProperty("inputSize", inputSizeInputRef.current.value)}
+                defaultValue={elementData?.inputSize}
+              >
+                  <option>Whole</option>
+                  <option>Half</option>
+                  <option>Third</option>                        
+                  <option>Quarter</option>                        
+              </select>
+            </div>
+            <div>
+              {elementData.inputType === "Select" &&
                 <input 
-                  defaultValue={elementData?.content} 
-                  ref={contentInputRef} 
-                  placeholder="Input Label"
-                  onChange={elemetContentChanged} 
+                  defaultValue={elementData?.content2} 
+                  ref={content2InputRef} 
+                  placeholder="Select Options (seperated by commas)"
+                  onChange={elementContent2Changed} 
                 ></input>
-                <select 
-                  title='Input Type'
-                  ref={inputTypeInputRef}
-                  onChange={()=>updateElementProperty("inputType", inputTypeInputRef.current.value)}
-                  defaultValue={elementData?.inputType}
-                >
-                    <option>Text</option>
-                    <option>Select</option>
-                </select>
-                <select 
-                  title='Input Size'
-                  ref={inputSizeInputRef}
-                  onChange={()=>updateElementProperty("inputSize", inputSizeInputRef.current.value)}
-                  defaultValue={elementData?.inputSize}
-                >
-                    <option>Whole</option>
-                    <option>Half</option>
-                    <option>Third</option>                        
-                    <option>Quarter</option>                        
-                </select>
-              </div>
-              <div>
-                {elementData.inputType === "Select" &&
-                  <input 
-                    defaultValue={elementData?.content2} 
-                    ref={content2InputRef} 
-                    placeholder="Select Options (seperated by commas)"
-                    onChange={elemetContent2Changed} 
-                  ></input>
-                }
-              </div>
-            </div>                
-        )
+              }
+            </div>
+          </div>                
+      )
+    else if(elementData?.type === "User Data Field")
+      return (                   
+          <div >
+            <div className='elementEditOptions'>
+              <input 
+                defaultValue={elementData?.content} 
+                ref={contentInputRef} 
+                placeholder="Label"
+                onChange={elementContentChanged} 
+              ></input>
+              <input 
+                defaultValue={elementData?.content3} 
+                ref={content3InputRef} 
+                placeholder="Data Key ex: firstName, lastName, phone, address1, address2"                
+                onChange={elementContent3Changed} 
+              ></input>
+              <select 
+                title='Input Type'
+                ref={inputTypeInputRef}
+                onChange={()=>updateElementProperty("inputType", inputTypeInputRef.current.value)}
+                defaultValue={elementData?.inputType}
+              >
+                  <option>Text</option>
+                  <option>Select</option>
+              </select>
+              <select 
+                title='Input Size'
+                ref={inputSizeInputRef}
+                onChange={()=>updateElementProperty("inputSize", inputSizeInputRef.current.value)}
+                defaultValue={elementData?.inputSize}
+              >
+                  <option>Whole</option>
+                  <option>Half</option>
+                  <option>Third</option>                        
+                  <option>Quarter</option>                        
+              </select>
+            </div>
+            <div>
+              {elementData.inputType === "Select" &&
+                <input 
+                  defaultValue={elementData?.content2} 
+                  ref={content2InputRef} 
+                  placeholder="Select Options (seperated by commas)"
+                  onChange={elementContent2Changed} 
+                ></input>
+              }
+            </div>
+          </div>                
+      )
     else if(elementData?.type === "Multiple Choice")
         return (
             <div className='multipleChoiceTextArea'>
-               <MultipleChoiceEdit elementData={elementData} contentInputRef={contentInputRef} elemetContentChanged={elemetContentChanged}></MultipleChoiceEdit>
+               <MultipleChoiceEdit elementData={elementData} contentInputRef={contentInputRef} elementContentChanged={elementContentChanged}></MultipleChoiceEdit>
             </div>
         )   
     else
@@ -259,7 +317,7 @@ function ElementEditBlock({elementData}) {
             <textarea 
               defaultValue={elementData?.content} 
               ref={contentInputRef} 
-              onChange={elemetContentChanged} 
+              onChange={elementContentChanged} 
               placeholder="Message to display"
             ></textarea>
         )
@@ -273,11 +331,11 @@ function ElementEditBlock({elementData}) {
             className='' 
             defaultValue={elementData?.name} 
             ref={nameInputRef} 
-            onChange={elemetNameChanged}
+            onChange={elementNameChanged}
           ></input>
           <select 
             ref={typeInputRef} 
-            onChange={elemetTypeChanged} 
+            onChange={elementTypeChanged} 
             defaultValue={elementData?.type}
           >
               <option>Text</option>
@@ -287,6 +345,7 @@ function ElementEditBlock({elementData}) {
               <option>Multiple Choice</option>
               <option>Text Input</option>
               <option>Input Field</option>
+              <option>User Data Field</option>
           </select>
           <select 
             ref={languageVersionInputRef} 

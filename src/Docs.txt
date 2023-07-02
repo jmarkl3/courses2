@@ -1,0 +1,249 @@
+================================================================================
+|                                   App.js
+================================================================================
+
+    Loads courses meta data that is used to display available course tiles
+    Loads user data
+    Loads course data when a course is selected
+
+    auth menu component is always available and displays based on global state
+      auth menu listens for auth state change and sets userID even when its not displaying the menu
+    support menu and cart menu are always available and also display based on a global state variable
+
+    Router displays pages based on the url
+    Pages are: landing, about (redirects to landing), checkout, dashboard, course, and course with a specified course ID
+
+    Links:
+    https://mail.google.com/mail/u/0/#inbox/FMfcgzGtvsRJsTJFPVLWRBPBsLvKGtdD
+    https://cloud.google.com/translate
+    https://dashboard.emailjs.com/admin/templates/4a8xxml/attachments
+    https://www.emailjs.com/docs/examples/reactjs/
+    https://console.firebase.google.com/project/courses-app-8efb5/storage/courses-app-8efb5.appspot.com/files
+
+================================================================================
+|                                   DbSlice.js
+================================================================================
+
+    This is a global redux slice that contains all of the data and actions pertaining to the database 
+    including things loaded from the database and actions to save things in the database
+    
+    It also contains the firebase setup code and variables that are exporteted for global use
+
+    The data contained:
+        1. coursesData: metadata for all courses including title, description, etc.
+        2. courseData: the course data for the selected course with the lessons, etc.
+        3. userData: the user data from the database
+        4. selection data such as selected course, chapter, section, and element IDs
+        5. App data that may come from user data but sometimes does not such as theme and language
+        6. drag and drop data such as the drag start IDs and drag item type
+
+    The actions are seperated into cataegories:
+        1. loading data (loading data from the database)
+        2. user data (saving and loading user data)
+        3. Selections (actions pertaining to selecting chapters, sections, etc to navigate through the course) 
+        3. course, chapter, section, and element actions (actions pertaining to adding, removing, and modifying course, chapter, section, and element data)         
+        4. drag and drop (state related to keeping track of things to allow dragging and dropping of cart items)
+        5. helper actions
+
+================================================================================
+|                                   AppSlice.js
+================================================================================
+
+    This is a global redux slice that contains all of the data and actions pertaining to the app state that are not saved in the database 
+    
+    The data contained:
+        1. display state such as if the sidenav is open or closed, or if menus should be rendered
+        2. display data such as the theme or language
+        3. mode data such as edit mode or preview mode
+        4. cart data such as the selected courses and if the cart should be displayed
+
+    The actions are seperated into cataegories:
+        1. General App actions such as setting the theme or menus
+        2. Course View actions such as opening the sidenav
+        3. Course Edit actions such as putting the course in edit mode or minmizing all elements
+        4. Cart actions such as adding or removing courses from the cart
+
+================================================================================
+|                              LandingPage.js
+================================================================================
+
+    This is the landing page for the app. It displays information about the app
+    There is a menu below the banner with links to the different sections of the page
+    these include:
+        About, Courses, Contact / Support, Cart, and Account
+    
+    It also shows available courses and courses the user is enrolled in
+    The user has the ability to enroll in courses from this page or go to the course if they are already enrolled
+
+================================================================================
+|                                 Support.js
+================================================================================
+
+    This component is mainly just a contact form 
+    it contains contact info and a form to send an email message to the admin
+    
+    This component is embeded in App.js and displays based on a global state variable 
+      so it is always available from anywhere in the application that this state variable can be set
+  
+================================================================================
+|                                 AuthMenu.js
+================================================================================
+
+    When the global state variable showAuthMenu is true this component is rendered and the component is active even when this state is false
+
+    the rendered component contains 
+    when their is no user logged in:
+    email and password input for sign in and account creation
+    when there is a user logged in:
+    buttons to go to dashboard, log out, and other account actions
+
+    authListener function contains onAuthStateChanged and listens to see if there is a user signed in currently and also is triggered when a user signs in or out
+    this function saves the userID in state which triggers other actions like loading user data
+    when a user is signed in the component redirects the user to their dashboard
+
+    there are functions to sign in, sign up, and sign out users
+
+================================================================================
+|                                  Cart.js
+================================================================================
+
+    This menu is always available from App.js and renders based on a global state variable
+
+    it displays the courses that are currently saved by the user either in user data or local storage if they don't have an account
+    the user has the ability to drag and drop courses from available courses to their cart
+    they can also remove courses from their cart or view info about the courses
+    the total balance is calculated and displayed
+
+    from this component the user can go to t
+
+================================================================================
+|                                 Checkout.js
+================================================================================
+
+    This component has a form to collect user information
+    if they have an account already their use info will be prepopulated
+
+    When this information is submitted an account will be created for them if they don't have one already
+    and they will be redirected to the course page
+
+================================================================================
+|                                 DisplayPage.js
+================================================================================
+
+    This component is a wrapper for all of the components that are displayed in the main content area of the application
+    it contains a navbar, layout styling, and whatever components it is wrapping
+
+================================================================================
+|                                 Navbar.js
+================================================================================
+
+    This component is embeded in DisplayPage.js and shown above all of the content sections of the application
+
+    it gives the user the ability to navigate to other pages and open menus such as the auth and support menus    
+    it goes to different pages by setting the url that is processed by the router in App.js
+    it opens menus by changing global state that tells menu components to render their content
+
+================================================================================
+|                                 Course.js
+================================================================================
+
+    This component is embeded in the DisplayPage component and displays the course content within that component
+
+    if the course is complete and the certificate should be displayed it displays that 
+    othwerwise it displays the sidenav and ElementMapper component which displays the course content
+
+================================================================================
+|                                 Certificate.js
+================================================================================
+
+    This component is embeded in the Course.js component and only displays when a course is complete
+    
+    It checks to see if a certificaet has been generated for this course for this user
+    if so it displays that certificate in a pdf iframe
+    the pdf certificate can be downloaded from there
+    
+    If the certificate has not been generated it generated a pdf version of the certificate with JSPDF
+    it then saves it in firebase storage and saves the download link in user data to be checked next time the component is rendered
+    it also emails the new certificate to the user with EmailJS and to a predefined email address based on the course data
+
+================================================================================
+|                                 ElementMapper.js
+================================================================================
+
+    This component is rendered in Course.js and maps the course elements to the screen
+    it can be in display mode or edit mode
+
+    in display mode it mapps the elements to the screen with their content
+    users can view or interact with the content based on the element type
+
+    there are is also the SectionButton component which displays the
+    next and last buttons that allow the user to navigate to the next or previous section if they have completed the requirements for the current section
+
+    in edit mode it displays the editable version of elements that allow the user to edit the content of the element
+    it also displays some additional components that allow the user to edit the section and course options
+
+    The sidenav which is displayed in Course.js is also different in edit mode and allows the user to take edit actions 
+    such as adding items such as sections or elements
+
+    There is also a timed webcam component that is displayed in the bottom right corner of the screen
+    this component allows the users presence to be verified with their webcam in case that is a requirement
+
+================================================================================
+|                                   SideNav.js
+================================================================================
+
+    This component is displayed from ElementMapper.js
+    It displays the sidebar that shows a collapasable menu with chapters, sections, and (in edit mode) elements
+    It allows the user to navigate the course
+
+    In display mode it shows the completion status of each section and chapter
+    it also shows which section is currently selected
+
+    In edit mode is shows all of the elements and allows the user to add, rearange, or delete new chapters, sections, and elements
+
+    There is a global state variable that determines if the sidebar is open or closed
+    If it is closed it shows as a thin bar at the left of the screen that can be clicked to open the sidebar
+
+================================================================================
+|                                   Element.js
+================================================================================
+
+    This component is renderd from a map in ElementMapper and displays either an ElementEdit or ElementDisplayBlock for each element 
+    the component type that is displayed is determened by the editMode state in AppSlice.js
+    
+    Ihe element data is passed through to the element component corresponding to the editMode state
+    the element component then displays the element data in the appropriate way
+
+================================================================================
+|                              ElementDisplayBlock.js
+================================================================================
+
+    This component is renderd from Element.js or ElementEdit.js and displays the element data in the appropriate way
+    
+    There are several types of elements including text, video, multiple choice, etc.
+
+    If this is an input element such as a multiple choice element the user resonse data is saved in user data
+    if the user has already responded to an input element their responses are loaded from user data and displayed
+
+================================================================================
+|                                   ElementEdit.js
+================================================================================
+
+    This component is renderd from Element.js and displays the element either in edit or preview mode
+    
+    There are several types of elements including text, video, multiple choice, etc.
+
+    The element data is passed through to the element component corresponding to the preview state
+    If it is in preview mode the ElementDisplayBlock componentis shows with an added edit button to edit just that element
+    if in edit mode and not in preview mode the ElementEditBlock component is shown that allows the user to edit the element
+
+================================================================================
+|                              ElementEditBlock.js
+================================================================================
+
+    This component is renderd from ElementEdit.js and displays the editable element data in the appropriate way
+    
+    There are several types of elements including text, video, multiple choice, etc.
+
+    This component gives the user the ability to edit the element data and options which are saved in the database
+

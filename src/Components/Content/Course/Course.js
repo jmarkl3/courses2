@@ -96,9 +96,9 @@ function Course() {
   },[courseData])
   
   useEffect(() => {
-    console.log("in use effect")
-    console.log(courseID)
-    console.log(userData)
+    // console.log("in use effect")
+    // console.log(courseID)
+    // console.log(userData)
 
     checkIfComplete()
     if(userData && userData.accountData && !(userData.accountData.fullAdmin || userData.accountData.isCourseAdmin))
@@ -215,7 +215,9 @@ function Course() {
             <SideNav></SideNav>
             <div className='course'>
               {courseComplete &&
-                <button onClick={()=>{showCertificate(true)}}>View Certificate</button>
+                <div>
+                  <button onClick={()=>{showCertificate(true)}}>View Certificate</button>
+                </div>
               }
               <ElementMapper></ElementMapper>
             </div>

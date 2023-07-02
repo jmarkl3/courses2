@@ -4,6 +4,18 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setShowSupportMenu } from '../../../App/AppSlice'
 import emailjs from '@emailjs/browser'
 
+/*
+  ================================================================================
+  |                                 Support.js
+  ================================================================================
+
+    This component is mainly just a contact form 
+    it contains contact info and a form to send an email message to the admin
+    
+    This component is embeded in App.js and displays based on a global state variable 
+      so it is always available from anywhere in the application that this state variable can be set
+
+*/
 function Support() {
     const showSupportMenu = useSelector(state => state.appslice.showSupportMenu)
     const userData = useSelector(state => state.dbslice.userData)
