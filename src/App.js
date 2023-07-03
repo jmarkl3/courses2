@@ -32,11 +32,19 @@ ________________________________________________________________________________
   or could do timeData/userID/... so its seperate. Then wouldn't need to update all of the places that user userData is saved or retrieved
 
   seems like the best option is to create a timeData/userID/courseID/... and put the time data there, so:
+  DONE
   create an action that saves the time data in that location
+  bugs:
+  Timer does not show time when in view only mode
+  section next button goes to next section even when there is remaning times
+  selecting section in edit mode selects the wrong section
+
   update the places that save the time data to save it there
     timer components
   find all of the locations the time data is being used and update where it is getting the data from
-    check the timer components, section completion status components, section next buttons, and the course report
+    check the timer components, section completion status components, section next buttons, and the course report, total time in course in course report and maybe on certificate
+  
+    auto generate and email course report with cert to admin email
 
   account creation element
     displays a component when this element is present

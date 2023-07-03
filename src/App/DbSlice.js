@@ -281,9 +281,7 @@ const dbslice = createSlice({
             })
 
         },
-        incrementUserSectionTime(state, action){  
-            // console.log("dbslice incrementUserSectionTime")  
-            // console.log(action.payload)        
+        incrementUserSectionTime(state, action){         
             runTransaction(ref(database, "coursesApp/userDataTimes/"+state.userID+"/courses/"+(action.payload?.courseID || state.selectedCourseID)+"/chapterData/"+(action.payload?.chapterID || state.selectedChapterID)+"/sectionData/"+(action.payload?.sectionID|| state.selectedSectionID)), item => {
                 if(!item)
                     item = {}

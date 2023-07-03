@@ -87,14 +87,14 @@ function SectionEditOptions() {
                 <input 
                     placeholder='Section Title' 
                     title='Section Title'
-                    defaultValue={sectionData?.name}
+                    defaultValue={sectionData?.name || ""}
                     ref={sectionNameInputRef}
                     onChange={sectionNameChange}
                 ></input>                            
                 <input 
                     placeholder='Section Time' 
                     title='The minimum amount of time the user will need to be in the section before the can proceed'
-                    defaultValue={sectionData?.requiredTime}
+                    defaultValue={sectionData?.requiredTime || ""}
                     ref={sectionTimeInputRef}
                     onChange={sectionTimeChange}
                     key={selectedSectionID}
@@ -102,7 +102,7 @@ function SectionEditOptions() {
                 <input 
                     placeholder='Webcam Times' 
                     title='The times in seconds that the webcam will take pictures of users'
-                    defaultValue={sectionData?.camTimes}                    
+                    defaultValue={sectionData?.camTimes || ""}                    
                     ref={sectionWebcamTimesInputRef}
                     onChange={sectionWebcamTimesChange}    
                     key={selectedSectionID}                

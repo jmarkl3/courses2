@@ -26,12 +26,13 @@ function SectionButtons({sectionData, chapterID}) {
      * Check to see if the user has answered all questions and if there is still remaining time, aff all requirements are met go to the next section
      */
     function nextSection(){
-        console.log("in next section")
+
+
+
         // Check to see if the user has answered all questions     
         const responseDataLocationString = "courses/"+selectedCourseID+"/chapterData/"+selectedChapterID+"/sectionData/"+selectedSectionID+"/responseData"
         var userResponseData = getUserData(userData, responseDataLocationString)   
-        console.log("SectionButtons nextSection userResponseData")
-        console.log(userResponseData)
+
         // var userResponseData = getUserData(userData, "responses/"+selectedCourseID+"/"+selectedChapterID+"/"+selectedSectionID)
         if(!allInputsComplete(userResponseData, sectionData)){
             setMessage("Please respond to all questions")
@@ -40,11 +41,11 @@ function SectionButtons({sectionData, chapterID}) {
         }
         
         // Check to see if there is still remaining time
-        if(!fullAdmin && remainingTime > 0){
+        if(remainingTime > 0){
             setMessage("There is still remaining time")
             seMessageRefreshCount(messageRefreshCount + 1)
             return
-        }        
+        }  
 
         // Saving the completion status to show the user has completed the sectin
         dispacher(saveUserSectionData2({sectionID: sectionData?.id, chapterID: chapterID, kvPairs: {complete: true}}))
@@ -103,11 +104,15 @@ function SectionButtons({sectionData, chapterID}) {
         })        
         return allComplete
     }
+    function setRemainingTimeFunction(remainingTime){
+        // console.log("setting remaining time: ", remainingTime)
+        setRemainingTime(remainingTime)
+    }
 
   return (
     <div className='sectionButtons'>
         <div className='nextButtonTimer'>            
-            <TimeDisplay2 sectionData={sectionData} chapterID={chapterID} setRemainingTime={setRemainingTime}></TimeDisplay2>                        
+            <TimeDisplay2 sectionData={sectionData} chapterID={chapterID} setRemainingTime={setRemainingTimeFunction}></TimeDisplay2>                        
         </div>
         <button onClick={()=>dispacher(selectPreviousSection())}>Back</button>
         <div className='sectionButtonMessage'>            
