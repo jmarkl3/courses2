@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import "./ElementDisplayComponents.css"
-import { incrementUserSectionTime, saveUserSectionData2 } from '../../../../../../App/DbSlice'
+import { database, incrementUserSectionTime, saveUserSectionData2 } from '../../../../../../App/DbSlice'
 import { getUserData, timeString } from '../../../../../../App/functions'
+import { onValue, ref } from 'firebase/database'
 
 /*
 ================================================================================
@@ -11,10 +12,14 @@ import { getUserData, timeString } from '../../../../../../App/functions'
 
     Rendered from SectionButtons.js or SidenavSectionRow.js
 
-    Checks to see if the page is visible and if this section is selected
-    if so starts the timer
+    Checks to see if the section this is in is selected in useEffect
+    if so starts the timer with resumeTimer
 
-    incrementTimer is recursibely called on a useTimeout every second and increments the currentTime state and ref
+    resumeTimer clears the timout ref and calls incrementTime2
+    incrementTime2 is recursively called on a useTimeout every second 
+    dispatches incrementUserSectionTime which saves the userTime and requiredTime
+    userTime increments automatically in the action, then updates here from the onValue listener
+    requiredTime comes from the sectionData
 
     syncTime is called when the timer is paused
     saves the current time in userData
@@ -27,6 +32,7 @@ function TimeDisplay({sectionData, chapterID, viewOnly, setRemainingTime}) {
     const selectedSectionID = useSelector(state => state.dbslice.selectedSectionID)
     const selectedCourseID = useSelector(state => state.dbslice.selectedCourseID)
     const timerSaveCounter = useSelector(state => state.dbslice.timerSaveCounter)
+    const userID = useSelector(state => state.dbslice.userID)
     const userData = useSelector(state => state.dbslice.userData)    
     const [currentTime, setCurrentTime] = useState(0)
     const currentTimeRef = useRef(0)
@@ -44,9 +50,12 @@ function TimeDisplay({sectionData, chapterID, viewOnly, setRemainingTime}) {
         // return ()=>{pauseTimer()}
 
     },[])
+
+    // If the section this is in is selected starts the timer
     useEffect(()=>{
+        // Check to see if the section this is in is selected
         if(selectedSectionID === sectionData?.id){
-            console.log("satarting timer for "+sectionData?.name)
+            console.log("starting timer for "+sectionData?.name)
             resumeTimer()
         }
 
@@ -89,25 +98,43 @@ function TimeDisplay({sectionData, chapterID, viewOnly, setRemainingTime}) {
 
     // When the user data changes (and on start) get the remaining time from userData
     const userTime = useRef(0)
+    // useEffect(() => {       
+    //     console.log("user data updated")
+    //     // Get the time spent in this section from userData
+    //     var locationString = "courses/"+selectedCourseID+"/chapterData/"+chapterID+"/sectionData/"+selectedSectionID+"/userTime"
+    //     var userCurrentTime = getUserData(userData, locationString)        
+    //     userTime.current = userCurrentTime
+
+    //     // If a time value was found set the state and ref to it
+    //     if(userCurrentTime){            
+    //         currentTimeRef.current = userCurrentTime
+    //     }
+    //     // This just causes the didplay to update
+    //     setCurrentTime(currentTimeRef.current)
+
+    // },[userData])
+
+    let variable = 100
+
+    // When the course, chapter, or section ID change listen for the time stored in the corresponding location
     useEffect(() => {       
-        console.log("user data updated")
-        // Get the time spent in this section from userData
-        var locationString = "courses/"+selectedCourseID+"/chapterData/"+chapterID+"/sectionData/"+selectedSectionID+"/userTime"
-        var userCurrentTime = getUserData(userData, locationString)        
-        userTime.current = userCurrentTime
+        startValueListener()
 
-        // If a time value was found set the state and ref to it
-        if(userCurrentTime){            
-            currentTimeRef.current = userCurrentTime
-        }
-        // This just causes the didplay to update
-        setCurrentTime(currentTimeRef.current)
+    },[selectedCourseID, chapterID, selectedSectionID])
 
-    },[userData])
+    // Listens for the time stored in the corresponing location
+    function startValueListener(){
+        let dbString = "coursesApp/userDataTimes/" + userID + "/" + selectedCourseID + "/chapterData/" + chapterID + "/sectionData/" + selectedSectionID
+        onValue(ref(database, dbString), snap => {
+            userTime.current = snap.val()
+            //currentTimeRef.current = snap.val()
+            setCurrentTime(userTime.current)
+        })
+    }
 
-    useEffect(() => {
-        //syncTime()
-    },[timerSaveCounter])
+    // useEffect(() => {
+    //     //syncTime()
+    // },[timerSaveCounter])
 
     /**
      * Adds a listener to the window to detect when the user changes tabs or closes the browser
@@ -140,7 +167,7 @@ function TimeDisplay({sectionData, chapterID, viewOnly, setRemainingTime}) {
     function pauseTimer(){
         // If the timer is active and is now becoming inactive, save the current remaining time in userData
         // if(activeRef.current)
-        syncTime()
+        //syncTime()
 
         // Set this flag so the useEffect knows when to save the time in user data
         activeRef.current = false
@@ -182,6 +209,7 @@ function TimeDisplay({sectionData, chapterID, viewOnly, setRemainingTime}) {
         // Clear this so the timer doesn't keep incrementing
         clearTimeout(timerTimeoutRef.current)
 
+        // This location is depreciated
         // If the timer is active save the current remaining time in userData. Use the sectionData?.id and chapterID props because the selectedSectionID may not correspond ot this one                
         dispatcher(saveUserSectionData2({sectionID: sectionData?.id, chapterID: chapterIDRef.current, kvPairs: {userTime: currentTimeRef.current, requiredTime: sectionDataRef.current?.requiredTime}}))
         
@@ -212,6 +240,8 @@ function TimeDisplay({sectionData, chapterID, viewOnly, setRemainingTime}) {
         //currentTimeRef.current = currentTimeRef.current + 1
 
         console.log("in incrementTime2")
+
+        // Another check to make sure the timer is on the selected section, if not it stops
         if(selectedSectionIDRef.current !== sectionData?.id){
             console.log("selectedSectionID !== sectionData?.id so timer not starting")
             return

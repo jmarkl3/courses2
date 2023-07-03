@@ -260,8 +260,31 @@ const dbslice = createSlice({
                 return item
             })
         },
-        incrementUserSectionTime(state, action){            
+        incrementUserSectionTimeOld(state, action){            
             runTransaction(ref(database, "coursesApp/userData/"+state.userID+"/courses/"+(action.payload?.courseID || state.selectedCourseID)+"/chapterData/"+(action.payload?.chapterID || state.selectedChapterID)+"/sectionData/"+(action.payload?.sectionID|| state.selectedSectionID)), item => {
+                if(!item)
+                    item = {}
+                if(!item.userTime)
+                    item.userTime = 0
+                if(typeof item.userTime !== "number")
+                    item.userTime = Number.parseInt(item.userTime)
+                else
+                    item.userTime++
+                if(action.payload?.requiredTime){
+                    if(typeof action?.payload?.requiredTime)
+                        item.requiredTime = Number.parseInt(action.payload?.requiredTime)
+                    else
+                        item.requiredTime = action.payload?.requiredTime
+                }
+
+                return item
+            })
+
+        },
+        incrementUserSectionTime(state, action){  
+            // console.log("dbslice incrementUserSectionTime")  
+            // console.log(action.payload)        
+            runTransaction(ref(database, "coursesApp/userDataTimes/"+state.userID+"/courses/"+(action.payload?.courseID || state.selectedCourseID)+"/chapterData/"+(action.payload?.chapterID || state.selectedChapterID)+"/sectionData/"+(action.payload?.sectionID|| state.selectedSectionID)), item => {
                 if(!item)
                     item = {}
                 if(!item.userTime)

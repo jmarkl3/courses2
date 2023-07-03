@@ -17,6 +17,57 @@ import Support from './Components/Menus/Support/Support';
 
 // TODO
 /*      
+================================================================================
+2023-7-2
+________________________________________________________________________________
+  Currently working on:
+
+  bug #2
+
+  option1:
+  save the time data in a seperate place. 
+  Would still be under userID/something so it would still trigger a re download of all the data
+  would also have to update all the places the time data is used
+  would need to specify a specific part of userID/... to listen to with onValue that does not include the time data
+  or could do timeData/userID/... so its seperate. Then wouldn't need to update all of the places that user userData is saved or retrieved
+
+  seems like the best option is to create a timeData/userID/courseID/... and put the time data there, so:
+  create an action that saves the time data in that location
+  update the places that save the time data to save it there
+    timer components
+  find all of the locations the time data is being used and update where it is getting the data from
+    check the timer components, section completion status components, section next buttons, and the course report
+
+  account creation element
+    displays a component when this element is present
+    if user is already logged in it says they are already logged in and maybe gives accout options
+    if no account is logged in it has input fields and a create account button
+    if user loggs in for the first time all local data or db data with an anonymous user id is transferred to the new account
+      will need to handle all of the inputs being processed at once including user data inputs, card, and creationg of an account all at once
+      or could put this component in a section before this one and not let user continue to card section unlsess they create an account
+
+  bugs:
+  1) when a chapter is not selected the section completion status is not showing
+  2) because user time is saved in user data and there is a listener for userData all of the data re downloads every second
+     could save it somewhere else, or only get all userData once and listen for userData.accountData only. only listen for userData.courses.courseID when they are in the course
+
+  ________________________________________________________________________________
+  Done:
+
+    userData input fields:
+    DONE
+    option to create that field in the elementEditBlock
+    DONE
+    user can specify the key that will correspond to the userData.accountData key
+    DONE
+    the intput field is displayed
+    DONE
+    the default value of the input field corresponds to userData.accountData[key]
+    if there is a value it may not be editable depending on the key (email should not be editable)
+    DONE
+    the value saves into userData.accountData[key]
+
+  ================================================================================
 
   courses 3
   main page with the ourse itles 
@@ -174,26 +225,9 @@ import Support from './Components/Menus/Support/Support';
   maybe put meta data at the bottom like completion date and course name
   sort out the double auth issue between account menu and checkout (can maybe do this when changing the checkout page)
 
-    Currently working on    
-    userData input fields:
-    DONE
-    option to create that field in the elementEditBlock
-    DONE
-    user can specify the key that will correspond to the userData.accountData key
-    DONE
-    the intput field is displayed
-    DONE
-    the default value of the input field corresponds to userData.accountData[key]
-    if there is a value it may not be editable depending on the key (email should not be editable)
-    DONE
-    the value saves into userData.accountData[key]
+
+  
     
-
-  bug:
-  1) when a chapter is not selected the section completion status is not showing
-  2) because user time is saved in user data and there is a listener for userData all of the data re downloads every second
-     could save it somewhere else, or only get all userData once and listen for userData.accountData only. only listen for userData.courses.courseID when they are in the course
-
   ggl
     DONE
     create and link new account for firebase

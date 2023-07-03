@@ -325,7 +325,7 @@ function ElementEditBlock({elementData}) {
 
   return (
     <>
-      <div className={`elementDisplay bottomPadding5 ${(elementData.id === selectedElementID) ? "selectedEditElement":""}`} ref={elementEditBlockRef}>                  
+      <div className={`elementDisplay bottomPadding5 ${(elementData.id === selectedElementID) ? "selectedEditElement":""}`} ref={elementEditBlockRef} key={elementData.id}>                  
         <div className='elementEditOptions'>
           <input 
             className='' 
