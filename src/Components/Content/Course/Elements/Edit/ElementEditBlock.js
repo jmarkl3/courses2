@@ -152,7 +152,24 @@ function ElementEditBlock({elementData}) {
               <CKEditor
                 id="editor1"
                 initData={languageVersion === "English" ? elementData?.content : elementData?.contentEs}
-                onChange={elementEditorContentChanged}                                 
+                onChange={elementEditorContentChanged}  
+                config={{
+                  toolbar: [
+                    ['JustifyLeft', 'JustifyRight', 'JustifyCenter', 'JustifyBlock'],
+                    // [
+                    //   "Cut",
+                    //   "Copy",
+                    //   "Paste",
+                    //   "Pasteasplaintext",
+                    //   "FormattingStyles",
+                    //   "Undo",
+                    //   "Redo"
+                    // ],
+                    // ["List", "Indent", "Blocks", "Align", "Bidi", "Paragraph"],
+                    // ["Find", "Selection", "Spellchecker", "Editing"]
+                  ]
+                }} 
+                                              
               />
               {/* <textarea onChange={elementContentChanged}  defaultValue={elementData?.content}></textarea> */}
               {/* <Tiptap elementData={elementData} elementContentChanged={elementContentChanged}></Tiptap>                     */}
@@ -314,12 +331,14 @@ function ElementEditBlock({elementData}) {
         )   
     else
         return (
-            <textarea 
+          <>
+            {/* <textarea 
               defaultValue={elementData?.content} 
               ref={contentInputRef} 
               onChange={elementContentChanged} 
               placeholder="Message to display"
-            ></textarea>
+            ></textarea> */}
+          </>
         )
   }
 

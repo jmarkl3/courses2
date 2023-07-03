@@ -22,7 +22,6 @@ import Support from './Components/Menus/Support/Support';
 ________________________________________________________________________________
   Currently working on:
 
-
   account creation element
     displays a component when this element is present
     if user is already logged in it says they are already logged in and maybe gives accout options or shows their info
@@ -44,6 +43,9 @@ ________________________________________________________________________________
 
   bugs:
   Theme default on first toggle does not reflect what the theme actually is
+
+  additional features:
+  ckeditor 4 text align center button
   ________________________________________________________________________________
   Done:
 

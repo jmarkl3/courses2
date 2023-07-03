@@ -8,6 +8,9 @@ import { getUserData, isEmptyString, languageContent, languageContent2 } from '.
 import SaveIndicator from './Components/SaveIndicator'
 import { ref, set } from 'firebase/database'
 import FadeMessage from './Components/FadeMessage'
+import AccountElement from './Components/AccountElement'
+import Card from './Components/Card'
+import Checkout from './Components/Checkout'
 
 /*
 ================================================================================
@@ -210,7 +213,7 @@ function ElementDisplayBlock({elementData, responseDataOverride}) {
     else if(elementData?.type === "User Data Field"){
         console.log(userData.accountData)
         return (
-            <div className={`inputElement inputElement${elementData.inputSize}`}>
+            <div className={`inputElement inputElement${elementData.inputSize}`} style={{display: "inline-block"}}>
                 <div className='elementInputLabel'>
                     {languageContent(language, elementData)}
                 </div>
@@ -251,6 +254,30 @@ function ElementDisplayBlock({elementData, responseDataOverride}) {
                 ></MulltipleChoiceDisplay>
             </>
         ) 
+    else if(elementData?.type === "Account")
+        return (
+            <>
+                <AccountElement
+                    elementData={elementData} 
+                ></AccountElement>
+            </>
+        ) 
+    else if(elementData?.type === "Card")
+        return (
+            <>
+                <Card
+                    elementData={elementData} 
+                ></Card>
+            </>
+        ) 
+    else if(elementData?.type === "Checkout")
+        return (
+            <>
+                <Checkout
+                    elementData={elementData} 
+                ></Checkout>
+            </>
+        ) 
     else {
       return(
         <>
@@ -264,7 +291,7 @@ function ElementDisplayBlock({elementData, responseDataOverride}) {
   return (
     <>   
         
-        {elementData?.type === "Input Field" ?
+        {elementData?.type === "Input Field" || elementData?.type === "User Data Field" ?
             <>                
                 {displayContent()}
                 <div className='bottomLeftFadeMessage'> 
