@@ -20,7 +20,7 @@ function SidenavSectionRow({itemData, chapterID, setSectionRenaming}) {
   const editMode = useSelector((state) => state.appslice.editMode);
   const fullAdmin = useSelector(state => state.dbslice.userData?.accountData?.fullAdmin)
 
-  const userSectionDataLocationString = "courses/"+selectedCourseID+"/chapterData/"+selectedChapterID+"/sectionData/"+itemData.id
+  const userSectionDataLocationString = "courses/"+selectedCourseID+"/chapterData/"+chapterID+"/sectionData/"+itemData.id
   var userSectionData = getUserData(userData, userSectionDataLocationString)
 
 
@@ -113,14 +113,15 @@ function SidenavSectionRow({itemData, chapterID, setSectionRenaming}) {
 
   }
 
-  function selectSectionFunction(){    
+  function selectSectionFunction(){   
+    console.log("selectSectionFunction "+itemData.name) 
     if(editMode || fullAdmin)      
       dispatcher(selectFirst({chapterID: chapterID, sectionID: itemData?.id}))
     else
       dispatcher(selectSectionIfValid({sectionID: itemData?.id}))    
 
   }
-var testObj = {}
+
   return (
     <div 
       className='sidenavRowOuter' 
@@ -128,6 +129,7 @@ var testObj = {}
       onDragOver={dragOverFunction}
       onDragStart={dragStartFunction}
       onDrop={dragEndFunction}
+      key={itemData.id}
     >
       <div 
         className={`sidenavRowInner ${(selectedSectionID === itemData?.id) && "selectedRow"}`} 

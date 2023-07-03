@@ -22,43 +22,28 @@ import Support from './Components/Menus/Support/Support';
 ________________________________________________________________________________
   Currently working on:
 
-  bug #2
-
-  option1:
-  save the time data in a seperate place. 
-  Would still be under userID/something so it would still trigger a re download of all the data
-  would also have to update all the places the time data is used
-  would need to specify a specific part of userID/... to listen to with onValue that does not include the time data
-  or could do timeData/userID/... so its seperate. Then wouldn't need to update all of the places that user userData is saved or retrieved
-
-  seems like the best option is to create a timeData/userID/courseID/... and put the time data there, so:
-  DONE
-  create an action that saves the time data in that location
-  bugs:
-  Timer does not show time when in view only mode
-  section next button goes to next section even when there is remaning times
-  selecting section in edit mode selects the wrong section
-
-  update the places that save the time data to save it there
-    timer components
-  find all of the locations the time data is being used and update where it is getting the data from
-    check the timer components, section completion status components, section next buttons, and the course report, total time in course in course report and maybe on certificate
-  
-    auto generate and email course report with cert to admin email
 
   account creation element
     displays a component when this element is present
-    if user is already logged in it says they are already logged in and maybe gives accout options
+    if user is already logged in it says they are already logged in and maybe gives accout options or shows their info
     if no account is logged in it has input fields and a create account button
     if user loggs in for the first time all local data or db data with an anonymous user id is transferred to the new account
       will need to handle all of the inputs being processed at once including user data inputs, card, and creationg of an account all at once
-      or could put this component in a section before this one and not let user continue to card section unlsess they create an account
+        could put this component in a section before this one and not let user continue to card section unlsess they create an account
+        could use setTimeout with userData stored in a ref so that is saved first and then the updated userData is used to create the account
+  
+  card element
+
+  checkout element
+  contains all of the userData input fields, account creation element, and card element
+
+  find all of the locations the time data is being used and update where it is getting the data from
+    check the timer components, section completion status components, section next buttons, and the course report, total time in course in course report and maybe on certificate
+  
+  auto generate and email course report with cert to admin email
 
   bugs:
-  1) when a chapter is not selected the section completion status is not showing
-  2) because user time is saved in user data and there is a listener for userData all of the data re downloads every second
-     could save it somewhere else, or only get all userData once and listen for userData.accountData only. only listen for userData.courses.courseID when they are in the course
-
+  Theme default on first toggle does not reflect what the theme actually is
   ________________________________________________________________________________
   Done:
 
@@ -74,6 +59,18 @@ ________________________________________________________________________________
     if there is a value it may not be editable depending on the key (email should not be editable)
     DONE
     the value saves into userData.accountData[key]
+
+    Timer component
+    DONE
+    put in new place in the db
+    DONE
+    retrieve from new place in the db in timer component
+
+    DONE
+    when section row is selected in edit mode the wrong data appears
+
+    DONE
+    when a chapter is not selected the section completion status is not showing
 
   ================================================================================
 

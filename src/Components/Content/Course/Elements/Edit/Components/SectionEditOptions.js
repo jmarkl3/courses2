@@ -72,7 +72,7 @@ function SectionEditOptions() {
     }
   return (
     <>
-        <div className='elementDisplay bottomPadding5' key={selectedSectionID}>
+        <div className='elementDisplay bottomPadding5' key={sectionData.id}>
             <div className='elementEditOptions'>  
                 <select 
                     // ref={sectionTypeRef} 

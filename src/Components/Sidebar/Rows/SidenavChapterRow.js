@@ -9,7 +9,7 @@ import HamburgerMenu from '../../../Utils/HamburgerMenu.js'
 import SidenavSectionRow from './SidenavSectionRow.js'
 function SidenavChapterRow({itemData}) {
   const [confirmDeleteMessage, setConfirmDeleteMessage] = useState()
-  const [renaming, setRenaming] = useState()
+  const [renaming, setRenaming] = useState()  
   const [sectionRenaming, setSectionRenaming] = useState()
   const selectedChapterID = useSelector((state) => state.dbslice.selectedChapterID);
   const selectedCourseID = useSelector((state) => state.dbslice.selectedCourseID);
@@ -129,6 +129,7 @@ function SidenavChapterRow({itemData}) {
       onDragOver={dragOverFunction}
       onDragStart={dragStartFunction}
       onDrop={dragEndFunction}
+      key={itemData.id}
     >
       <div 
         className={`sidenavRowInner ${(selectedChapterID === itemData?.id) && "selectedRow"}`} 

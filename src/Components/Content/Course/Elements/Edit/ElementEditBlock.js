@@ -346,6 +346,9 @@ function ElementEditBlock({elementData}) {
               <option>Text Input</option>
               <option>Input Field</option>
               <option>User Data Field</option>
+              <option>Account</option>
+              <option>Card</option>
+              <option>Checkout</option>
           </select>
           <select 
             ref={languageVersionInputRef} 
