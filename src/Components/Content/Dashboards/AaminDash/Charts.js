@@ -67,14 +67,14 @@ function Charts() {
         onValue(ref(database, 'coursesApp/userEvents'), (snapshot) => {
             userEventsRef.current = snapshot.val()
             setUserEvents(snapshot.val())
-            console.log(userEventsRef.current)
+            //console.log(userEventsRef.current)
             setNewUsersChartData(generateChartData("New Users"))
             setEnrollmentChartData(generateChartData("Enrollments"))
         })
 
       }
       function generateChartData(eventTypeName){
-        console.log("generating chart data for " + eventTypeName)
+        //console.log("generating chart data for " + eventTypeName)
         // return
         if(typeof userEventsRef.current !== "object") return
 
@@ -103,7 +103,7 @@ function Charts() {
             if(eventsOnThisDate && typeof eventsOnThisDate === "object"){
                 Object.values(eventsOnThisDate).forEach((eventData) => {
                     if(eventData.type === eventTypeName){       
-                        console.log("found a "+eventTypeName+" event")                 
+                        //console.log("found a "+eventTypeName+" event")                 
                         valueOnThisDate++
                     }                        
                 })

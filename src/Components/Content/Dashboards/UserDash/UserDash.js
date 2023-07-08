@@ -7,7 +7,8 @@ import { auth, saveUserAccountData, toggleTheme } from '../../../../App/DbSlice'
 import { setEditMode, setShowCart, toggleShowAuthMenu } from '../../../../App/AppSlice'
 import { updateEmail } from 'firebase/auth'
 import TimedWebcam from '../../../Webcam/TimedWebcam'
-import { languageConverter } from '../../../../App/functions'
+import { languageConverter, log } from '../../../../App/functions'
+import ProfileEdit from '../ProfileEdit'
 
 function UserDash() {
   const userData = useSelector(state => state.dbslice.userData)
@@ -52,7 +53,7 @@ function UserDash() {
       phone: phoneInput.current.value,
       address1: adressInput1.current.value,
       address2: adressInput2.current.value,
-    }    
+    }        
     dispatcher(saveUserAccountData({kvPairs: accountDataTemp, userID: userID}))
     setEditingProfileInfo(false)
   }
@@ -81,7 +82,7 @@ function UserDash() {
           <div className={"profileImageButton"} onClick={()=>setTakingNewImage(true)}>{languageConverter(language, "Take New Picture")}</div>
           {takingNewImage && <TimedWebcam once removeDisplay={()=>setTakingNewImage(false)}></TimedWebcam>}
         </div>
-        <div className='profileSection'>
+        {/* <div className='profileSection'>
           <div>
             <input readOnly={editingProfileInfo? false: "readOnly"} className='half' defaultValue={userData?.accountData?.firstName} ref={nameInputF} placeholder={languageConverter(language, "First Name")}></input>          
             <input readOnly={editingProfileInfo? false: "readOnly"} className='half' defaultValue={userData?.accountData?.lastName} ref={nameInputL} placeholder={languageConverter(language, "Last Name")}></input>          
@@ -99,7 +100,8 @@ function UserDash() {
             :
             <div className={"profileImageButton"} onClick={startEditingProfileInfo}> {languageConverter(language, "Edit Info")}</div>
           }
-        </div>
+        </div> */}
+        <ProfileEdit></ProfileEdit>
         <div className='profileSection'>
           <div>            
             <button onClick={()=>dispatcher(toggleTheme())}>{theme === "darkTheme" ? languageConverter(language, "Light Theme") : languageConverter(language, "Dark Theme")}</button>                                                                                

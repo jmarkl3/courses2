@@ -44,6 +44,7 @@ function ElementMapper() {
     const [sectionData, setSectionData] = useState()
     const dispatcher = useDispatch()
     const navitage = useNavigate()
+    const [checkoutSection, setCheckoutSection] = useState(false)
 
   // Open the sidebar after the page has loaded
   useEffect(() => {
@@ -62,8 +63,19 @@ function ElementMapper() {
         setSectionData(sectionData)
         var elementsArrayTemp = objectToArray(sectionData?.items)
         setElementsArray(elementsArrayTemp)
+        checkIfCheckoutSection()
 
-    }, [courseData, selectedChapterID, selectedSectionID])
+    }, [courseData, selectedChapterID, selectedSectionID])    
+
+    // Checks to see if this a checkout section so it can display the section buttons differently if it is
+    function checkIfCheckoutSection(){
+        let hasCheckoutElement = false
+        elementsArray.forEach(element => {
+            if(element.type === "Checkout")
+                hasCheckoutElement = true
+        })
+        setCheckoutSection(hasCheckoutElement)
+    }
 
     return (
         <>
@@ -72,11 +84,11 @@ function ElementMapper() {
                     {editMode &&
                         <SectionEditOptions></SectionEditOptions>
                     }
-                    {elementsArray.map(element => (                
+                    {elementsArray.map(element => (  
                         <Element elementData={element} key={element.id}></Element>                
                     ))}
                     {!editMode &&
-                        <SectionButtons sectionData={sectionData} chapterID={selectedChapterID}></SectionButtons>
+                        <SectionButtons sectionData={sectionData} chapterID={selectedChapterID} checkoutSection={checkoutSection}></SectionButtons>
                     }            
                 </>
                 :

@@ -13,6 +13,9 @@ import { useNavigate } from 'react-router-dom';
     When this information is submitted an account will be created for them if they don't have one already
     and they will be redirected to the course page
 
+
+
+
 */
 
 function Checkout({openCart}) {

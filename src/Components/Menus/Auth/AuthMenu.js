@@ -4,10 +4,12 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setShowAuthMenu, toggleShowAuthMenu} from '../../../App/AppSlice'
 import "../../../Styles/Themes.css"
 import { createUserWithEmailAndPassword, onAuthStateChanged, sendPasswordResetEmail, signInWithEmailAndPassword, signOut, updateEmail } from 'firebase/auth'
-import { auth, clearAllCourseData, clearAllUserData, clearEnrolledCourses, enrollUserInCourses, saveUserAccountData, saveUserEvent, setUserData, setUserID, toggleTheme } from '../../../App/DbSlice'
+import { auth, clearAllCourseData, clearAllUserData, clearEnrolledCourses, database, enrollUserInCourses, saveUserAccountData, saveUserEvent, setAnonID, setUserData, setUserID, toggleTheme, transferAnonData } from '../../../App/DbSlice'
 import { useNavigate } from 'react-router-dom'
-import { languageConverter } from '../../../App/functions'
+import { concatUserData, languageConverter, log } from '../../../App/functions'
 import emailjs from '@emailjs/browser'
+import { onValue, set, ref as dbRef } from 'firebase/database'
+import { ref } from 'firebase/storage'
 
 /*
 ================================================================================
@@ -38,10 +40,12 @@ function AuthMenu() {
   const fullAdmin = useSelector(state => state.dbslice.userData?.accountData?.fullAdmin)
   const theme = useSelector(state => state.dbslice.userData?.accountData?.theme)
   const userID = useSelector(state => state.dbslice.userID)
+  const anonID = useSelector(state => state.dbslice.anonID)
   const [createNew, setCreateNew] = useState(true)
   const [errorMessage, setErrorMessage] = useState("")
   const [messageColor, setMessageColor] = useState("")
   const [updatingEmail, setUpdatingEmail] = useState("")
+  const [createNewAccountFromAnon, setCreateNewAccountFromAnon] = useState("")
   const emailInput = useRef()
   const emailResetInput = useRef()
   const passInput = useRef()
@@ -117,21 +121,104 @@ function AuthMenu() {
   // Listen for auth state changes and puts userID in state
   function authListener(){
     onAuthStateChanged(auth, (user) => {
-      dispatcher(setUserID(user?.uid))
+      
       // If the user signs in take them to the dashboard and hide the auth menu 
       if(user) {
-        dispatcher(setShowAuthMenu(false))                
-          
-        // If the user is on the landing page and they log in take them to the dashboard
+
+        setCreateNewAccountFromAnon(false)
+
+        console.log("there is a user")
+        // This makes it so the window does not show but the auth component is still active
+        dispatcher(setShowAuthMenu(false))    
+        
+        // Look for an anon ID to see if there is data that needs to be transferred
+        let anonID = lookForAnonAccount()
+
+        // If there is currently an anon user signed in tranfer the data into the (new or existing) account
+        console.log("anonID: ", anonID)
+        if(anonID) 
+          dataTransfer(anonID, user?.uid)
+          //dispatcher(transferAnonData({userID: user?.uid, anonID: anonID}))  
+        else
+          // Save the user ID in state so the userData loads from the useEffect listening for userID state change. This will be done in transferAnonData if there is an anon account
+          dispatcher(setUserID(user?.uid))
+
+        // Then remove the anonID from state (make sure it does not load anyway)
+        //dispatcher(setAnonID(null))
+
+        // If the user is on the landing page and they log in take them to the dashboard (it will have a # if there on any other page because using hash router)
         if(!window.location.href.toLocaleLowerCase().includes("#"))          
           setTimeout(()=>navigate("/Dashboard"), 250)
+
+        // This should be set in the transferAnonData function but it is not working
+        //dispatcher(setUserID(user?.uid))
       }
       // If the user signed out take them to the home page and clear their user data
       else{
-        navigate("/")
-        dispatcher(setUserData(null))
+        let anonID = lookForAnonAccount()
+        // If there is no userID and no anonID clear the user data and return to the landing page
+        if(!anonID){
+          dispatcher(setUserData(null))
+          navigate("/")          
+        }
+        else{
+          // Get the anon account data and save it to the user data
+          getAnonAccountData(anonID)
+        }
       }
     })
+  }
+  function dataTransfer(anonID, userID){
+    console.log("dataTransfer ", anonID, userID)
+    // Get the data from the main account (if there is any)
+    onValue(dbRef(database, "coursesApp/userData/"+userID), mainSnap => {
+      // Get the data from the anon account (if there is any, which there should be if there is an an anonID, which there needs to be for this function to be called)
+      onValue(dbRef(database, "coursesApp/userData/"+anonID), anonSnap => {
+      
+        // console.log("anonSnap.val()")
+        // console.log(anonSnap.val())
+        // console.log("mainSnap.val()")
+        // console.log(mainSnap.val())
+
+        // Combine the data from the anon account and the main account
+        let concatedUserData = concatUserData(anonSnap.val(), mainSnap.val())
+        console.log("concatedUserData")
+        console.log(concatedUserData)
+
+        // Set the main account data db value to the concated data
+        set(dbRef(database, "coursesApp/userData/" + userID), concatedUserData)
+
+        // Set the userID to the main account ID so the data loads and functions save to the main account        
+        dispatcher(setUserID(userID))
+
+        // Remove the anonID from state and storage so the data transfer only happens once
+        //dispatcher(setAnonID(null))
+        //window.localStorage.removeItem("anonID")
+
+        // End of onValue2 return snap
+        }, {
+          onlyOnce: true
+      // End of onValue2
+      })
+
+      // End of onValue1 return snap
+      }, {
+        onlyOnce: true
+    // End of onValue1
+    })
+  }
+  function lookForAnonAccount(){
+    let anonID = window.localStorage.getItem("anonID")
+    log("found anon ID ", anonID)
+    return anonID
+  }
+  // This puts the anonID into storage so the userData is loaded and saved there
+  function getAnonAccountData(anonID){
+    console.log("getting anon account data by setting userID to ", anonID)
+    // Look in the db for data stored under that anonID    
+    dispatcher(setUserID(anonID))
+    dispatcher(setAnonID(anonID))
+
   }
   function signOutUser(){
     // Signs the user out and calls onAuthStateChanged in App.js
@@ -182,6 +269,9 @@ function AuthMenu() {
       displayErrorMessage(error.message)      
     });
   }
+  function clearAnonAccount(){
+    window.localStorage.removeItem("anonID")
+  }
   // This function sends an email by setting the values of a hidden form and using emailjs to send the form values via email
   const formRef = useRef()  
   const formMessageRef = useRef()  
@@ -214,9 +304,12 @@ function AuthMenu() {
                   </form>
                     <div className='closeButton' onClick={close}>x</div>
                     <>
-                        {(userID && !updatingEmail) ? 
+                        {(userID && !createNewAccountFromAnon) ? 
                         <>
                             <div>{languageConverter(language, "Account Actions")}</div>
+                            <div>
+                              {anonID && "(Anonomous User)"}
+                            </div>
                             {/* {(isAdmin || canEdit) &&
                               <>                          
                                 <button onClick={()=>dispatcher(setViewAsAdmin(!viewAsAdmin))}>{`View As ${viewAsAdmin ? "User": "Admin"}`}</button>                            
@@ -228,7 +321,16 @@ function AuthMenu() {
                             {/* <button onClick={passwordReset}>Reset Password</button> */}
                             {/* <button onClick={startEmailChange}>Change Email</button> */}
                             {/* <button onClick={logUserData}>Log User Data</button> */}
-                            <button onClick={signOutUser}>{languageConverter(language, "Log Out")}</button>
+                            {anonID ? 
+                              <>
+                                <button onClick={clearAnonAccount}>Remove Anon Account</button>                                                                                                               
+                                <button onClick={()=>setCreateNewAccountFromAnon(true)}>{"Sign In / Create Account"}</button>                            
+                                {/* <button onClick={signOutUser} title='Warning! If you log out then create an account you may loose data.'>{languageConverter(language, "Log Out")}</button> */}
+                              </>
+                              :                              
+                              <button onClick={signOutUser}>{languageConverter(language, "Log Out")}</button>
+                            }
+                            {/* {!anonID && <button onClick={signOutUser}>{languageConverter(language, "Log Out")}</button>} */}
                             {fullAdmin &&
                               <>
                                 <button onClick={()=>dispatcher(clearAllCourseData())}>Clear Courses</button>                                                        
@@ -244,8 +346,8 @@ function AuthMenu() {
                         :
                         <>
                             <div 
-                            className='authTitle'
-                            title={"If the browser cache is cleared all local data will be lost.\nAn account allows data to be saved and used on multiple devices."}
+                              className='authTitle'
+                              title={"If the browser cache is cleared all local data will be lost.\nAn account allows data to be saved and used on multiple devices."}
                             >
                                 {createNew ? "Create Account" : "Login"}
                                 {updatingEmail && <div className='message'>Email Update requires recent login. Please re-authenticate to continue.</div>}
@@ -258,12 +360,19 @@ function AuthMenu() {
                             </div>        
                             {createNew && <input placeholder='password confirmation'></input>}
                             <div>
-                                {
+                              {anonID ? 
+                                <>                                                                                                                          
+                                  <button onClick={()=>setCreateNewAccountFromAnon(false)}>{"Back to Anon Account Options"}</button>                                                              
+                                </>
+                                : 
+                                <></>                                                             
+                              }
+                              {
                                 createNew ?
-                                <button onClick={signUp}>Create Account</button>
-                                :
-                                <button onClick={signIn}>Log In</button>
-                                } 
+                                  <button onClick={signUp}>Create Account</button>
+                                  :
+                                  <button onClick={signIn}>Log In</button>
+                              } 
                             </div>
                             {updatingEmail &&
                               <div>

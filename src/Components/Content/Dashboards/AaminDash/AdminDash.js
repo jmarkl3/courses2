@@ -6,6 +6,7 @@ import UserCourses from '../UserDash/UserCourses'
 import Charts from './Charts'
 import AdminUsers from './AdminUsers'
 import './AdminDash.css'
+import ProfileEdit from '../ProfileEdit'
 
 
 function AdminDash() {
@@ -39,7 +40,7 @@ function AdminDash() {
           <AdminUsers></AdminUsers>
         </>
       }
-
+    <ProfileEdit></ProfileEdit>
     </div>
   )
 }

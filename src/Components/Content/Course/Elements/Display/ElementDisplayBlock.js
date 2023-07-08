@@ -210,8 +210,7 @@ function ElementDisplayBlock({elementData, responseDataOverride}) {
                 }
             </div>
         )
-    else if(elementData?.type === "User Data Field"){
-        console.log(userData.accountData)
+    else if(elementData?.type === "User Data Field"){        
         return (
             <div className={`inputElement inputElement${elementData.inputSize}`} style={{display: "inline-block"}}>
                 <div className='elementInputLabel'>
@@ -238,7 +237,7 @@ function ElementDisplayBlock({elementData, responseDataOverride}) {
                         placeholder='Type your answer here' 
                         ref={userDataInputRef} 
                         onChange={userDataNeedsSave}                         
-                        defaultValue={userData.accountData[elementData.content3]}
+                        defaultValue={userData?.accountData && userData?.accountData[elementData.content3]}
                     ></input>                    
                 }
             </div>

@@ -2,8 +2,8 @@ import { createSlice } from "@reduxjs/toolkit";
 import {initializeApp} from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getStorage } from "firebase/storage";
-import { get, getDatabase, push, ref, remove, runTransaction, set, update } from "firebase/database";
-import { gePreviousItem, getFirstItem, getItem, getLastItemID, getNextItem, getUserData, insertItem, newIDsObject, nItemsInObject, objectToArray, removeItem, removeUndefined } from "./functions";
+import { get, getDatabase, onValue, push, ref, remove, runTransaction, set, update } from "firebase/database";
+import { concatUserData, gePreviousItem, getFirstItem, getItem, getLastItemID, getNextItem, getUserData, insertItem, log, newIDsObject, nItemsInObject, objectToArray, removeItem, removeUndefined } from "./functions";
 import { act } from "react-dom/test-utils";
 
 /*
@@ -154,8 +154,12 @@ const dbslice = createSlice({
 
         // #region user data
         setUserID(state, action){
+            console.log("setting user ID to ", action.payload)
             state.userID = action.payload;
         },   
+        setAnonID(state, action){
+            state.anonID = action.payload;
+        },
         // action.payload = userData from the db
         setUserData(state, action){
 
@@ -261,7 +265,7 @@ const dbslice = createSlice({
             })
         },
         incrementUserSectionTimeOld(state, action){            
-            runTransaction(ref(database, "coursesApp/userData/"+state.userID+"/courses/"+(action.payload?.courseID || state.selectedCourseID)+"/chapterData/"+(action.payload?.chapterID || state.selectedChapterID)+"/sectionData/"+(action.payload?.sectionID|| state.selectedSectionID)), item => {
+            runTransaction(ref(database, "coursesApp/userData/"+action.payload.userID+"/courses/"+(action.payload?.courseID || state.selectedCourseID)+"/chapterData/"+(action.payload?.chapterID || state.selectedChapterID)+"/sectionData/"+(action.payload?.sectionID|| state.selectedSectionID)), item => {
                 if(!item)
                     item = {}
                 if(!item.userTime)
@@ -320,21 +324,24 @@ const dbslice = createSlice({
             update(ref(database, locationString), action.payload.kvPairs)
         },
         // New action.payload.kvPairs = ex:{property: "isAdmin", value: true} optional userID value in the payload
-        saveUserAccountData(state, action){            
+        saveUserAccountData(state, action){                   
+
             if(action.payload.kvPairs == undefined){
                 console.log("Error: saveUserAccountData: missing data")
                 return
             }
 
-            
+            // Check for a userID, if there is none look for an anonymous userID and save it there
+            let tempUserID = action.payload.userID || state.userID
+
             // This is the location that the remaining time will be saved
-            var locationString = "coursesApp/userData/"+( action.payload.userID || state.userID)+"/accountData"          
+            var locationString = "coursesApp/userData/"+ tempUserID +"/accountData"          
             
-            console.log("locationString")
-            console.log(locationString)
+            // console.log("locationString")
+            // console.log(locationString)
             
-            console.log("dbslice saveUserAccountData")
-            console.log(action.payload.kvPairs)
+            // console.log("dbslice saveUserAccountData")
+            // console.log(action.payload.kvPairs)
 
             // Save the remaining time in the db (shouldnt overwrite other data)
             update(ref(database, locationString), action.payload.kvPairs)
@@ -394,6 +401,82 @@ const dbslice = createSlice({
                 update(ref(database, "coursesApp/userData/"+action.payload.userID+"/courses/"+courseID), {enrolled: true})
 
             })
+
+        },
+        enrollUserInCourseAnon(state, action){
+            // Check for a userID, and anon status
+            let userID = action.payload?.userID || state.userID
+            
+            // If there is neither create an anonymous user ID 
+            if(!userID){
+                let newAnonUserKey = push(ref(database, "coursesApp/userData/"))
+                userID = newAnonUserKey.key
+                window.localStorage.setItem("anonID", userID)
+                state.anonID = userID
+                state.userID = userID
+            }
+
+            // save user enrollment data in the existing or new ID
+            let courseID = action.payload.courseID
+            update(ref(database, "coursesApp/userData/"+userID+"/courses/"+courseID), {enrolled: true})
+        },
+        transferAnonData(state, action){
+            console.log("in dbslice transferAnonData")
+
+            // Get both IDs
+            let anonID = action.payload?.anonID || state.anonID
+            let userID = action.payload?.userID || state.userID
+
+            // If there is no anonID return
+            if(!anonID || !userID){
+                console.log("dbslice transferAnonData: need both IDs")
+                return
+            }
+
+            // Transfer the db data from the anonID to the userID
+            log("transferring from ", anonID, "to", userID)
+
+            // The object that will hold the concatenated data
+            let concatedUserData = {}
+            
+            // The data currently stored in userData will be the anon data
+            let anonData = state.userData
+
+            // Get the data from the main account (if there is any)
+            onValue(ref(database, "coursesApp/userData/"+userID), snap => {
+
+                console.log("userData: ")
+                console.log(snap.val())
+                console.log("anonData")
+                console.log(anonData)
+                
+                // If there is no data in the main account, the anon data will be the only data
+                if(!snap.val()){
+                    concatedUserData = anonData                    
+                }                              
+                // If there is data in the main account, the anon data will be added to it
+                else{
+                    // concatedUserData = snap.val()
+                    concatedUserData = concatUserData(anonData, snap.val())
+                    console.log("concatUserData")
+                    console.log(concatedUserData)
+                    
+
+                }
+
+                // Set the userID to the main account ID
+                //state.userID = userID
+
+            }, {
+                onlyOnce: true
+            })
+            
+            // Save the concatenated data in the main account
+            //set(ref(database, "coursesApp/userData/"+userID), concatUserData)
+
+            // Clear the anon ID so this transfer only happens once
+            state.anonID = null
+            // window.setItem("anonID", null)
 
         },
         unEnrollUserInCourses2(state, action){
@@ -1278,7 +1361,7 @@ export const dbsliceReducer = dbslice.reducer;
 // Loading actions
 export const {setCourseData, setCoursesData} = dbslice.actions;
 // User Data actions
-export const {pushToUserSectionData2, toggleLanguage, toggleTheme, enrollUserInCourses, enrollUserInCourses2, unEnrollUserInCourses2, clearEnrolledCourses, clearAllCourseData, setUserID, setUserData, saveUserSectionData, saveUserAccountData} = dbslice.actions;
+export const {pushToUserSectionData2, toggleLanguage, toggleTheme, enrollUserInCourses, enrollUserInCourses2, enrollUserInCourseAnon, unEnrollUserInCourses2, clearEnrolledCourses, clearAllCourseData, setUserID, setAnonID, setUserData, saveUserSectionData, saveUserAccountData} = dbslice.actions;
 // New User Data actions
 export const {
     saveUserCourseData,
@@ -1288,6 +1371,7 @@ export const {
     clearAllUserData,
     incrementUserSectionTime,
     saveUserEvent,
+    transferAnonData,
 } = dbslice.actions;
 // Selection actions
 export const {selectCourse, selectChapter, selectSection, selectElement, selectNextSection, selectPreviousSection, selectSectionIfValid, selectChapterIfValid} = dbslice.actions;

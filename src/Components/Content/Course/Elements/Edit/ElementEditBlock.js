@@ -152,24 +152,7 @@ function ElementEditBlock({elementData}) {
               <CKEditor
                 id="editor1"
                 initData={languageVersion === "English" ? elementData?.content : elementData?.contentEs}
-                onChange={elementEditorContentChanged}  
-                config={{
-                  toolbar: [
-                    ['JustifyLeft', 'JustifyRight', 'JustifyCenter', 'JustifyBlock'],
-                    // [
-                    //   "Cut",
-                    //   "Copy",
-                    //   "Paste",
-                    //   "Pasteasplaintext",
-                    //   "FormattingStyles",
-                    //   "Undo",
-                    //   "Redo"
-                    // ],
-                    // ["List", "Indent", "Blocks", "Align", "Bidi", "Paragraph"],
-                    // ["Find", "Selection", "Spellchecker", "Editing"]
-                  ]
-                }} 
-                                              
+                onChange={elementEditorContentChanged}                                 
               />
               {/* <textarea onChange={elementContentChanged}  defaultValue={elementData?.content}></textarea> */}
               {/* <Tiptap elementData={elementData} elementContentChanged={elementContentChanged}></Tiptap>                     */}

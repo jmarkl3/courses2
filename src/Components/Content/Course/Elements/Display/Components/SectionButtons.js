@@ -9,7 +9,7 @@ import FadeMessage from './FadeMessage'
 import { ref, set } from 'firebase/database'
 import TimeDisplay2 from './TimeDisplay2'
 
-function SectionButtons({sectionData, chapterID}) {
+function SectionButtons({sectionData, chapterID, checkoutSection}) {
     const [remainingTime, setRemainingTime] = useState(0)
     const [message, setMessage] = useState()
     const [messageRefreshCount, seMessageRefreshCount] = useState(0)
@@ -110,16 +110,20 @@ function SectionButtons({sectionData, chapterID}) {
     }
 
   return (
-    <div className='sectionButtons'>
-        <div className='nextButtonTimer'>            
-            <TimeDisplay2 sectionData={sectionData} chapterID={chapterID} setRemainingTime={setRemainingTimeFunction}></TimeDisplay2>                        
-        </div>
-        <button onClick={()=>dispacher(selectPreviousSection())}>Back</button>
-        <div className='sectionButtonMessage'>            
-            <FadeMessage message={message} refreshCount={messageRefreshCount} backgroundColor={"rgb(197, 119, 119)"}></FadeMessage>
-        </div>
-        <button onClick={nextSection}>Next</button>
-    </div>
+    <>
+        {!checkoutSection &&
+            <div className='sectionButtons'>
+                <div className='nextButtonTimer'>            
+                    <TimeDisplay2 sectionData={sectionData} chapterID={chapterID} setRemainingTime={setRemainingTimeFunction}></TimeDisplay2>                        
+                </div>
+                <button onClick={()=>dispacher(selectPreviousSection())}>Back</button>
+                <div className='sectionButtonMessage'>            
+                    <FadeMessage message={message} refreshCount={messageRefreshCount} backgroundColor={"rgb(197, 119, 119)"}></FadeMessage>
+                </div>
+                <button onClick={nextSection}>Next</button>
+            </div>
+        }
+    </>
   )
 }
 

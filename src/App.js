@@ -14,6 +14,7 @@ import Course from './Components/Content/Course/Course';
 import About from './Components/LandingPage/About';
 import Cart from './Components/Menus/Cart/Cart';
 import Support from './Components/Menus/Support/Support';
+import { log } from './App/functions';
 
 // TODO
 /*      
@@ -21,6 +22,29 @@ import Support from './Components/Menus/Support/Support';
 2023-7-2
 ________________________________________________________________________________
   Currently working on:
+
+  testing:          DONE (partially)  DONE
+  anon user data saves (account info, course info)  
+  anon data is transferred when the user creates a full account 
+    with the checkout page
+    in the auth menu
+    doesn't overrite existing data in existing account just adds to it
+  time data saves in anon account
+  time data transfers when an anon user creates a full account
+  do all neccessary functions work when there is only an anon account?
+
+  note:
+  can have a global state variable that shows if the user is in the checkout menu or not
+  if they are in the checkout menu the auth state listener in the checkout menu will be the one to handle the creation of a new account
+  so this value will be checked in the auth state listener in app.js
+  otherwise the data transfer will happen in the auth menu listener
+  this is becaue in the checkout menu there are fields witl data that will be saved but are not yet in the anon account db data
+  
+
+  ability to log into a seperate full acount even when there is an anon account
+
+  ability to go from anon account to full account from auth menu
+    will need the same functions as in the checkout page
 
   account creation element
     displays a component when this element is present
@@ -43,6 +67,7 @@ ________________________________________________________________________________
 
   bugs:
   Theme default on first toggle does not reflect what the theme actually is
+  if user has same course open in multiple tabs is counts time multiple times per second
 
   additional features:
   ckeditor 4 text align center button
@@ -679,6 +704,7 @@ function App() {
 
     // When the userID changes loads there data
     useEffect(() => {   
+      console.log("userID changed to ", userID)
       loadUserData()
     }, [userID])
   
@@ -700,9 +726,12 @@ function App() {
  
     // Loads the user data in to state
     function loadUserData(){
+      log("loading user data for ", userID)
       if(!userID) return
       onValue(ref(database, 'coursesApp/userData/'+userID), (snapshot) => {
-        const data = snapshot.val();   
+        const data = snapshot.val();  
+        // console.log("loaded user data: ") 
+        // console.log(snapshot.val())
         setTimeout(() => {
           dispatcher(setUserData(data))   
           // // If the user is an admin default the view to admin          

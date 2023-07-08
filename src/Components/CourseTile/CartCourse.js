@@ -6,7 +6,7 @@ import { removeCartCourse, selectCartCourse, setDraggingCourse, setShowCart} fro
 import { useNavigate } from 'react-router-dom'
 import CartCourseMoreInfo from './CartCourseMoreInfo'
 import HamburgerMenu from '../../Utils/HamburgerMenu'
-import { unEnrollUserInCourses2 } from '../../App/DbSlice'
+import { enrollUserInCourseAnon, unEnrollUserInCourses2 } from '../../App/DbSlice'
 import CourseReport from '../Content/Dashboards/AaminDash/DashMenus/CourseReport/CourseReport'
 
 function CartCourse({courseData, selected, draggable, readOnly, userDataOverride}) {
@@ -91,6 +91,14 @@ function CartCourse({courseData, selected, draggable, readOnly, userDataOverride
         
     }
 
+    function anonViewCourse(){
+        // Creates an account if there is not one already and enrolls the user in the course
+        dispatcher(enrollUserInCourseAnon({courseID: courseData.id}))
+
+        // Display the course
+        navigate("/Course/"+courseData.id)
+    }
+
     function buttonsDisplay(){
         // This is for when the course is in the admin dash un a users menu 
         if(userDataOverride){
@@ -122,7 +130,7 @@ function CartCourse({courseData, selected, draggable, readOnly, userDataOverride
                     return(
                         <>
                             <button onClick={()=>dispatcher(removeCartCourse(courseData.id))}>Remove</button>
-                            <button onClick={()=>setShowMoreInfo(true)}>More Info</button>
+                            <button onClick={()=>setShowMoreInfo(true)}>More Info</button>                            
                         </>                            
                     )
                 }    
@@ -130,8 +138,9 @@ function CartCourse({courseData, selected, draggable, readOnly, userDataOverride
             else{
                 return (
                     <>
-                        <button onClick={selectCourse}>Add To Cart</button>
-                        <button onClick={()=>setShowMoreInfo(true)}>More Info</button>
+                        {/* <button onClick={selectCourse}>Add To Cart</button> */}
+                        {/* <button onClick={()=>setShowMoreInfo(true)}>More Info</button> */}
+                        <button onClick={anonViewCourse}>View</button>
                     </>
                 )
             }
@@ -143,7 +152,7 @@ function CartCourse({courseData, selected, draggable, readOnly, userDataOverride
             return(
                 <>                
                     <HamburgerMenu>
-                        <div className="hamburgerMenuOption" onClick={()=>dispatcher(unEnrollUserInCourses2({userID: userDataOverride.id ,courseIDArray: [courseData.id]}))}>Un-Enroll User</div>
+                        <div className="hamburgerMenuOption" onClick={()=>dispatcher(unEnrollUserInCourses2({userID: userDataOverride.id, courseIDArray: [courseData.id]}))}>Un-Enroll User</div>
                         <div className="hamburgerMenuOption" >View Course Report</div>      
                     </HamburgerMenu>
                     <div className='priceBox priceText priceBoxAdmin'>

@@ -69,7 +69,7 @@ function TimeDisplay2({sectionData, chapterID, viewOnly, setRemainingTime}) {
     function startValueListener(){
         // If all of the data is not loaded and available return, it will be called again
         if(!userID || !selectedCourseID || !chapterID || !sectionData   ){
-            console.log("missing data in startValueListener: ", userID, selectedCourseID, chapterID, sectionData)
+            //console.log("missing data in startValueListener: ", userID, selectedCourseID, chapterID, sectionData)
             return
         }
 

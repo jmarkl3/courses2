@@ -380,6 +380,96 @@ export function languageContent2(language, data){
         return data?.content2
 
 }
+
+export function log(prop1, prop2, prop3, prop4, prop5){
+    if(prop5 && prop4 && prop3 && prop2 && prop1)
+        console.log(prop1, prop2, prop4, prop5)
+    else if(prop4 && prop3 && prop2 && prop1)
+        console.log(prop1, prop2, prop4)
+    else if(prop3 && prop2 && prop1)
+        console.log(prop1, prop2)
+    else if(prop2 && prop1)
+        console.log(prop1, prop2)
+    else if(prop1)
+        console.log(prop1)
+}
+
+// This function recursively looks through all values in the source set and adds values to the target set if they do not exist in the target set
+export function concatUserData(souceSet, targetSet, concatSet){
+    // console.log("in concatUserData")
+    // console.log(souceSet)
+    // console.log(targetSet)
+    // console.log(concatSet)
+
+    // Start with the target set if no concat set is specified
+    if(!concatSet) concatSet = targetSet
+    
+if(souceSet && typeof souceSet === "object")
+    Object.entries(souceSet).forEach(([key, value]) => {
+        // If the key does not exist in the target set, add it with the data from the source set
+        if(!targetSet[key]){
+            concatSet[key] = value
+        }
+        // If the key exists in both sets look through each value to determine if it should be added
+        else if(typeof value === "object" && typeof targetSet[key] === "object"){
+            concatSet[key] = concatUserData(souceSet[key], targetSet[key], concatSet[key])
+        }
+    })
+
+    // Return the concat set with the new values added
+    return concatSet
+
+    /* 
+        Example
+
+        Input Values:
+        sourceSet = {
+            key1: "value1",
+            key2: {
+                "value2",
+                "value3",
+            },
+        }
+        targetSet = {
+            key2: {
+                "value2",
+            },
+        }
+        concatSet = null
+
+        Recursion input Values:
+        the sourceSet[key2]
+        sourceSet = {
+            "value2",
+            "value3",
+        }
+        the targetSet[key2]
+        targetSet = {
+            "value2",
+        },
+        the concatSet[key2]
+        targetSet = {
+            "value2",
+        },
+
+        output of 2nd level recursion:
+        concatSet = {
+            "value2",
+            "value3",
+        }
+        this is returned and added to first level recursion concatSet[key2]
+
+        output of 1st level recursion:
+        concatSet = {
+            key1: "value1",
+            key2: {
+                "value2",
+                "value3",
+            },
+        }
+
+    */
+}
 // #endregion general helper functions
 
 // #region user data functions
