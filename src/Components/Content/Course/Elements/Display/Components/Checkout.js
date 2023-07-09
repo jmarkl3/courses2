@@ -6,6 +6,7 @@ import { createUserWithEmailAndPassword, onAuthStateChanged } from 'firebase/aut
 import { auth, database, saveUserAccountData, saveUserEvent } from '../../../../../../App/DbSlice'
 import { useDispatch, useSelector } from 'react-redux'
 import { get, onValue, ref, set } from 'firebase/database'
+import "./Checkout.css"
 
 /*
 
@@ -72,7 +73,7 @@ function Checkout({elementData}) {
     const anonID = useSelector(state => state.dbslice.anonID)
     const userData = useSelector(state => state.dbslice.userData)    
     const [errorMessage, setErrorMessage] = useState("")
-    const [messageColor, setMessageColor] = useState("")
+    const [messageColor, setMessageColor] = useState("red")
     const emailInput = useRef()
     const passInput = useRef()
     const passConfirmInput = useRef()    
@@ -92,8 +93,8 @@ function Checkout({elementData}) {
         // Then check the card stuff
 
         // If all good then move to the next step
-      }
 
+      }
     }
 
     function signUpFunction(){
@@ -102,13 +103,12 @@ function Checkout({elementData}) {
       var pass2 = passConfirmInput.current.value
 
       if(!email || !pass || !pass2){
-        setMessageColor('red')
-        setErrorMessage("please enter account fields (email, password, password re-type)")
+        displayErrorMessage("please enter account fields (email, password, password re-type)", true)
         return
       }
       if(pass !== pass2){
         setMessageColor('red')
-        setErrorMessage("pasword re-type does not match password")
+        displayErrorMessage("pasword re-type does not match password", true)
         return
       }
       
@@ -134,7 +134,6 @@ function Checkout({elementData}) {
 
           // If all good then move to the next step
 
-
       }).catch(err=>{
           setMessageColor("red")
           displayErrorMessage(err.message)
@@ -146,9 +145,20 @@ function Checkout({elementData}) {
   }
 
   function hasRequiredData(){
-    if(!userData?.accountData?.firstName || !userData?.accountData?.lastName || !userData?.accountData?.phone || !userData?.accountData?.address1){
-      setMessageColor("red")
-      setErrorMessage("please fill out all required fields")
+    if(!userData?.accountData?.firstName){      
+      displayErrorMessage("Please fill out first name field", true)
+      return false
+    }
+    if(!userData?.accountData?.lastName){
+      displayErrorMessage("Please fill out last name field", true)
+      return false
+    }
+    if(!userData?.accountData?.phone){      
+      displayErrorMessage("Please fill out phone field", true)
+      return false
+    }
+    if(!userData?.accountData?.address1){      
+      displayErrorMessage("Please fill out address field", true)
       return false
     }
     setErrorMessage("")
@@ -156,25 +166,53 @@ function Checkout({elementData}) {
   }
 
     // Turns a raw error message from firebase auth to something to display to the user
-  function displayErrorMessage(message){
-    if(message === "Firebase: Error (auth/invalid-email).")
-      setErrorMessage("Invalid Email")
-    else if(message === "Firebase: Error (auth/wrong-password).")
-      setErrorMessage("Check Password")
-    else if(message === "Firebase: Error (auth/email-already-in-use).")
-      setErrorMessage("Email Already in use")
-    else if(message === "Firebase: Error (auth/user-not-found).")
-      setErrorMessage("There is no account associate with that email")
-    else{
-      // setErrorMessage(message)
-      setErrorMessage("Auth error")  
-      console.log("auth error: " + message)
+  function displayErrorMessage(message, passthrough){
+    if(passthrough){
+      setErrorMessage(message)
     }
+    else{
+      if(message === "Firebase: Error (auth/invalid-email).")
+        setErrorMessage("Invalid Email")
+      else if(message === "Firebase: Error (auth/wrong-password).")
+        setErrorMessage("Check Password")
+      else if(message === "Firebase: Error (auth/email-already-in-use).")
+        setErrorMessage("Email Already in use")
+      else if(message === "Firebase: Error (auth/user-not-found).")
+        setErrorMessage("There is no account associate with that email")
+      else{
+        // setErrorMessage(message)
+        setErrorMessage("Auth error")  
+        console.log("auth error: " + message)
+      }
+    }
+    // Remove error message after 4 seconds
+    setTimeout(() => {
+      setErrorMessage("")
+    }, 4000);
   }
 
   return (
     <div>
-        <>
+
+        <div>
+          {(userID && !anonID)?
+            <>
+            </>
+            : 
+            <div className='checkoutAuthMenu'>
+                <div>
+                    Create an Account
+                </div>
+                <input type="text" placeholder="Email" ref={emailInput} defaultValue={userData?.email}/>
+                <input type="text" placeholder="Password" ref={passInput}/>
+                <input type="text" placeholder="Password re-type" ref={passConfirmInput}/>
+            </div>
+          }             
+        </div>
+        <div className='checkoutInputs'>
+            <div>
+                User Data
+            </div>
             <ElementDisplayBlock
                 elementData={{type: "User Data Field", content: "First Name", content3: "firstName", inputSize: "Half"}}
             ></ElementDisplayBlock>
@@ -193,30 +231,15 @@ function Checkout({elementData}) {
             <ElementDisplayBlock
                 elementData={{type: "User Data Field", content: "How did you find us?", content3: "customerSource", inputSize: "Whole"}}
             ></ElementDisplayBlock>
-        </>
+        </div>
+        <Card elementData={elementData}></Card>
         <div>
-          {(userID && !anonID)?
-            <>
-            </>
-            : 
-            <div>
-                <div>
-                    Create an account
-                </div>
-                <input type="text" placeholder="Email" ref={emailInput} defaultValue={userData?.email}/>
-                <input type="text" placeholder="Password" ref={passInput}/>
-                <input type="text" placeholder="Password re-type" ref={passConfirmInput}/>
-            </div>
-          }             
-          <div>
+          <div className='errorMessageContainer'>
               <div className={`errorMessage ${messageColor === "red" ? "messageRed":""} ${messageColor === "green" ? "messageGreen":""}`}>
                   {errorMessage}
               </div>
           </div>
-        </div>
-        <Card elementData={elementData}></Card>
-        <div>
-            <button onClick={checkout}>Checkout</button>            
+          <button onClick={checkout}>Checkout</button>            
         </div>
     </div>
   )

@@ -213,9 +213,9 @@ function ElementDisplayBlock({elementData, responseDataOverride}) {
     else if(elementData?.type === "User Data Field"){        
         return (
             <div className={`inputElement inputElement${elementData.inputSize}`} style={{display: "inline-block"}}>
-                <div className='elementInputLabel'>
+                {/* <div className='elementInputLabel'>
                     {languageContent(language, elementData)}
-                </div>
+                </div> */}
                 {elementData?.inputType === "Select" ?
                     <select 
                         ref={responseSelectRef}
@@ -234,7 +234,7 @@ function ElementDisplayBlock({elementData, responseDataOverride}) {
                     </select>
                     :
                     <input 
-                        placeholder='Type your answer here' 
+                        placeholder={languageContent(language, elementData)}
                         ref={userDataInputRef} 
                         onChange={userDataNeedsSave}                         
                         defaultValue={userData?.accountData && userData?.accountData[elementData.content3]}

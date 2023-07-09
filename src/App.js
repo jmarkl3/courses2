@@ -66,8 +66,7 @@ ________________________________________________________________________________
   
   auto generate and email course report with cert to admin email
 
-  bugs:
-  Theme default on first toggle does not reflect what the theme actually is
+  bugs:  
   if user has same course open in multiple tabs is counts time multiple times per second
   timer only goes for 1 second then stops
 

@@ -143,9 +143,11 @@ function AuthMenu() {
         if(anonID) 
           dataTransfer(anonID, user?.uid)
           //dispatcher(transferAnonData({userID: user?.uid, anonID: anonID}))  
-        else
+        else{
           // Save the user ID in state so the userData loads from the useEffect listening for userID state change. This will be done in transferAnonData if there is an anon account
           dispatcher(setUserID(user?.uid))
+          dispatcher(setAnonID(null))
+        }
 
         // Then remove the anonID from state (make sure it does not load anyway)
         //dispatcher(setAnonID(null))
@@ -333,7 +335,7 @@ function AuthMenu() {
                               </>
                             } */}
                             <button onClick={goToDashboard}>{languageConverter(language, "Your Courses")} / Dashboard</button>                            
-                            <button onClick={()=>dispatcher(toggleTheme())}>{theme === "lightTheme" ? languageConverter(language, "Dark Theme") : languageConverter(language, "Light Theme")}</button>                                                                                
+                            <button onClick={()=>dispatcher(toggleTheme())}>{theme === "darkTheme" ? languageConverter(language, "Light Theme") : languageConverter(language, "Dark Theme")}</button>                                                                                
                             <button onClick={()=>dispatcher(saveUserAccountData({kvPairs: {fullAdmin: !fullAdmin}}))}>Toggle fullAdmin {" "+fullAdmin}</button>                                                                                                               
                             {/* <button onClick={passwordReset}>Reset Password</button> */}
                             {/* <button onClick={startEmailChange}>Change Email</button> */}

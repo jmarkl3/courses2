@@ -111,7 +111,7 @@ function SectionButtons({sectionData, chapterID, checkoutSection}) {
 
   return (
     <>
-        {!checkoutSection &&
+        {!checkoutSection ?
             <div className='sectionButtons'>
                 <div className='nextButtonTimer'>            
                     <TimeDisplay2 sectionData={sectionData} chapterID={chapterID} setRemainingTime={setRemainingTimeFunction}></TimeDisplay2>                        
@@ -121,6 +121,10 @@ function SectionButtons({sectionData, chapterID, checkoutSection}) {
                     <FadeMessage message={message} refreshCount={messageRefreshCount} backgroundColor={"rgb(197, 119, 119)"}></FadeMessage>
                 </div>
                 <button onClick={nextSection}>Next</button>
+            </div>
+            :
+            <div>
+                <TimeDisplay2 sectionData={sectionData} chapterID={chapterID} setRemainingTime={setRemainingTimeFunction}></TimeDisplay2>                        
             </div>
         }
     </>
