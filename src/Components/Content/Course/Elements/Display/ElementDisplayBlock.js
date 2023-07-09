@@ -40,9 +40,7 @@ function ElementDisplayBlock({elementData, responseDataOverride}) {
   useEffect(() => {
     if(responseDataOverride){
         setUserResponse(responseDataOverride.response)
-        elementData = responseDataOverride.elementData
-        console.log("elementData")
-        console.log(elementData)
+        elementData = responseDataOverride.elementData        
     }else{
         const responseDataLocationString = "courses/"+selectedCourseID+"/chapterData/"+selectedChapterID+"/sectionData/"+selectedSectionID+"/responseData/"+elementData?.id
         var userResponseData = getUserData(userData, responseDataLocationString)
@@ -115,15 +113,13 @@ function ElementDisplayBlock({elementData, responseDataOverride}) {
   // After 500ms of inactivity after typing into the response box save the result
   const userDataInputTimeoutRef = useRef()
   const userDataInputRef = useRef()
-  function userDataNeedsSave(){                
-        console.log("userDataNeedsSave")
+  function userDataNeedsSave(){                        
         clearTimeout(userDataInputTimeoutRef.current)
         userDataInputTimeoutRef.current = setTimeout(()=>{
             if(!elementData.content3){
                 console.log("error saving user data, invalid key")
                 return
             }
-            console.log("saveUserAccountData in "+elementData.content3)
             dispatcher(saveUserAccountData({kvPairs: {[elementData.content3]: userDataInputRef.current.value}}))
         },500)
 

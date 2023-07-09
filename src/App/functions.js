@@ -382,6 +382,7 @@ export function languageContent2(language, data){
 }
 
 export function log(prop1, prop2, prop3, prop4, prop5){
+    return
     if(prop5 && prop4 && prop3 && prop2 && prop1)
         console.log(prop1, prop2, prop4, prop5)
     else if(prop4 && prop3 && prop2 && prop1)

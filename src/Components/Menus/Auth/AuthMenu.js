@@ -91,7 +91,7 @@ function AuthMenu() {
       // Put some stuff in their user data so it loads
       let date = new Date()      
       let datestring = date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate()
-      console.log("in create user with eail and password, calling saveUserAccountData")      
+      // console.log("in create user with eail and password, calling saveUserAccountData")      
       dispatcher(saveUserAccountData({kvPairs: {creationDate: datestring, email: email, webcamModule: true}}))
 
       dispatcher(saveUserEvent({userID: user.uid, eventData: {type: "New Users", userID: user.uid, eventNote: "New user " + email + " created"}}))
@@ -122,14 +122,11 @@ function AuthMenu() {
     setErrorMessage("")
   }
   // Listen for auth state changes and puts userID in state
-  function authListener(){
-    console.log("in authStateChanged")
+  function authListener(){    
     onAuthStateChanged(auth, (user) => {
       
       // If the user signs in take them to the dashboard and hide the auth menu 
       if(user) {
-        console.log("there is a user")
-
         setCreateNewAccountFromAnon(false)
 
         // This makes it so the window does not show but the auth component is still active
@@ -138,11 +135,11 @@ function AuthMenu() {
         // Look for an anon ID to see if there is data that needs to be transferred
         let anonID = lookForAnonAccount()
 
-        // If there is currently an anon user signed in tranfer the data into the (new or existing) account
-        console.log("anonID: ", anonID)
-        if(anonID) 
+        // If there is currently an anon user signed in tranfer the data into the (new or existing) account        
+        if(anonID){
           dataTransfer(anonID, user?.uid)
-          //dispatcher(transferAnonData({userID: user?.uid, anonID: anonID}))  
+          timeDataTransfer(anonID, user?.uid)          
+        } 
         else{
           // Save the user ID in state so the userData loads from the useEffect listening for userID state change. This will be done in transferAnonData if there is an anon account
           dispatcher(setUserID(user?.uid))
@@ -161,7 +158,6 @@ function AuthMenu() {
       }
       // If the user signed out take them to the home page and clear their user data
       else{
-        console.log("no user")
         dispatcher(setUserID(null))
 
         let anonID = lookForAnonAccount()
@@ -178,22 +174,13 @@ function AuthMenu() {
       }
     })
   }
-  function dataTransfer(anonID, userID){
-    console.log("dataTransfer ", anonID, userID)
+  function dataTransfer(anonID, userID){    
     // Get the data from the main account (if there is any)
     onValue(dbRef(database, "coursesApp/userData/"+userID), mainSnap => {
       // Get the data from the anon account (if there is any, which there should be if there is an an anonID, which there needs to be for this function to be called)
       onValue(dbRef(database, "coursesApp/userData/"+anonID), anonSnap => {
-      
-        // console.log("anonSnap.val()")
-        // console.log(anonSnap.val())
-        // console.log("mainSnap.val()")
-        // console.log(mainSnap.val())
-
         // Combine the data from the anon account and the main account
         let concatedUserData = concatUserData(anonSnap.val(), mainSnap.val())
-        console.log("concatedUserData")
-        console.log(concatedUserData)
 
         // Set the main account data db value to the concated data
         set(dbRef(database, "coursesApp/userData/" + userID), concatedUserData)
@@ -217,14 +204,42 @@ function AuthMenu() {
     // End of onValue1
     })
   }
+  function timeDataTransfer(anonID, userID){    
+    // Get the data from the main account (if there is any)    
+    onValue(dbRef(database, "coursesApp/userDataTimes/"+userID), mainSnap => {
+      // Get the data from the anon account (if there is any, which there should be if there is an an anonID, which there needs to be for this function to be called)
+      onValue(dbRef(database, "coursesApp/userDataTimes/"+anonID), anonSnap => {
+        // Combine the data from the anon account and the main account
+        let concatedUserData = concatUserData(anonSnap.val(), mainSnap.val())
+
+        // Set the main account data db value to the concated data
+        set(dbRef(database, "coursesApp/userDataTimes/" + userID), concatedUserData)
+
+        // Set the userID to the main account ID so the data loads and functions save to the main account        
+        dispatcher(setUserID(userID))
+
+        // Remove the anonID from state and storage so the data transfer only happens once
+        dispatcher(setAnonID(null))
+        window.localStorage.removeItem("anonID")
+
+        // End of onValue2 return snap
+        }, {
+          onlyOnce: true
+      // End of onValue2
+      })
+
+      // End of onValue1 return snap
+      }, {
+        onlyOnce: true
+    // End of onValue1
+    })
+  }
   function lookForAnonAccount(){
-    let anonID = window.localStorage.getItem("anonID")
-    console.log("found anon ID: ", anonID)
+    let anonID = window.localStorage.getItem("anonID")    
     return anonID
   }
   // This puts the anonID into storage so the userData is loaded and saved there
   function getAnonAccountData(anonID){
-    console.log("getting anon account data by setting userID to ", anonID)
     // Look in the db for data stored under that anonID    
     dispatcher(setUserID(anonID))
     dispatcher(setAnonID(anonID))
@@ -307,7 +322,7 @@ function AuthMenu() {
             {showAuthMenu && 
                 // <div className={`authMenu ${sideNavOpen ? "sideNavAuthLeftAdjust":""}`}>
                 <div className={`authMenu`}>
-                  <div>
+                  {/* <div>
                     {"createNewAccountFromAnon: " + createNewAccountFromAnon}                    
                   </div>
                   <div>
@@ -315,7 +330,7 @@ function AuthMenu() {
                   </div>
                   <div>
                     {"anonID: " + anonID}            
-                  </div>
+                  </div> */}
                   <form ref={formRef} className='hidden'>
                     <input name="to_email" ref={formEmailRef}/>
                     <input name="email_subject" value={"Welcome to the courses app"} />

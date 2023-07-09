@@ -154,7 +154,6 @@ const dbslice = createSlice({
 
         // #region user data
         setUserID(state, action){
-            console.log("setting user ID to ", action.payload)
             state.userID = action.payload;
         },   
         setAnonID(state, action){
@@ -240,7 +239,6 @@ const dbslice = createSlice({
         },
         // ex: action.payload = {arrayName: "webcamImages", valueArray: [imageUrl1, imageUrl2]}
         pushToUserSectionData2(state, action){
-            console.log("pushToUserSectionData2")
             if(!action.payload?.arrayName || !action.payload?.valueArray){
                 console.log("pushToUserSectionData2 missing info")
                 return
@@ -433,9 +431,6 @@ const dbslice = createSlice({
                 return
             }
 
-            // Transfer the db data from the anonID to the userID
-            log("transferring from ", anonID, "to", userID)
-
             // The object that will hold the concatenated data
             let concatedUserData = {}
             
@@ -443,13 +438,7 @@ const dbslice = createSlice({
             let anonData = state.userData
 
             // Get the data from the main account (if there is any)
-            onValue(ref(database, "coursesApp/userData/"+userID), snap => {
-
-                console.log("userData: ")
-                console.log(snap.val())
-                console.log("anonData")
-                console.log(anonData)
-                
+            onValue(ref(database, "coursesApp/userData/"+userID), snap => {                
                 // If there is no data in the main account, the anon data will be the only data
                 if(!snap.val()){
                     concatedUserData = anonData                    
@@ -457,16 +446,8 @@ const dbslice = createSlice({
                 // If there is data in the main account, the anon data will be added to it
                 else{
                     // concatedUserData = snap.val()
-                    concatedUserData = concatUserData(anonData, snap.val())
-                    console.log("concatUserData")
-                    console.log(concatedUserData)
-                    
-
+                    concatedUserData = concatUserData(anonData, snap.val())                  
                 }
-
-                // Set the userID to the main account ID
-                //state.userID = userID
-
             }, {
                 onlyOnce: true
             })

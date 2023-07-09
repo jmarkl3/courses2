@@ -73,13 +73,10 @@ function ElementMapper() {
 
     // Checks to see if this a checkout section so it can display the section buttons differently if it is
     function checkIfCheckoutSection(){  
-        console.log("in checkIfCheckoutSection")      
         let hasCheckoutElement = false
-        elementsArray.forEach(element => {
-            console.log(element.type)
+        elementsArray.forEach(element => {            
             if(element.type === "Checkout"){
                 hasCheckoutElement = true
-                console.log(hasCheckoutElement)
             }
         })
         setCheckoutSection(hasCheckoutElement)

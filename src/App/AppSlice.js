@@ -109,7 +109,6 @@ const appSlice = createSlice({
 
         // Puts the course in edit mode
         setEditMode(state, action) {
-            console.log("setEditMode", action.payload)
             state.editMode = action.payload;
         },
         toggleMinimizeAll(state, action) {

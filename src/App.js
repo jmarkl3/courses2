@@ -26,7 +26,7 @@ ________________________________________________________________________________
   testing:          
   DONE
   anon user data saves (account info, course info)  
-  
+  DONE
   anon data is transferred when the user creates a full account 
     DONE
     in the auth menu
@@ -68,7 +68,7 @@ ________________________________________________________________________________
 
   bugs:  
   if user has same course open in multiple tabs is counts time multiple times per second
-  timer only goes for 1 second then stops
+  when refreshing course it does not go to the furthest section
 
   additional features:
   ckeditor 4 text align center button
@@ -705,7 +705,6 @@ function App() {
 
     // When the userID changes loads there data
     useEffect(() => {   
-      console.log("userID changed to ", userID)
       loadUserData()
     }, [userID])
   
@@ -726,13 +725,10 @@ function App() {
     }
  
     // Loads the user data in to state
-    function loadUserData(){
-      log("loading user data for ", userID)
+    function loadUserData(){      
       if(!userID) return
       onValue(ref(database, 'coursesApp/userData/'+userID), (snapshot) => {
         const data = snapshot.val();  
-        // console.log("loaded user data: ") 
-        // console.log(snapshot.val())
         setTimeout(() => {
           dispatcher(setUserData(data))   
           // // If the user is an admin default the view to admin          
