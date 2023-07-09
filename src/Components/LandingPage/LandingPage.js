@@ -156,9 +156,9 @@ function LandingPage({goto}) {
                     <div className='landingNavButton' onClick={()=>dispatcher(setShowSupportMenu(true))}>
                         {languageConverter(language, "Contact / Support")}
                     </div>
-                    <div className='landingNavButton' onClick={()=>dispatcher(setShowCart(true))}>
+                    {/* <div className='landingNavButton' onClick={()=>dispatcher(setShowCart(true))}>
                         {languageConverter(language, "Cart")}
-                    </div>
+                    </div> */}
                     <div className='landingNavButton' onClick={()=>dispatcher(toggleShowAuthMenu())}>
                         {languageConverter(language, "Account")}
                     </div>
