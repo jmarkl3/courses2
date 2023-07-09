@@ -55,6 +55,9 @@ function AuthMenu() {
   useEffect(()=>{
     authListener()    
   },[])
+  useEffect(()=>{
+    setCreateNewAccountFromAnon(false) 
+  },[showAuthMenu])
   
   function close(){
     setErrorMessage("")
@@ -197,8 +200,8 @@ function AuthMenu() {
         dispatcher(setUserID(userID))
 
         // Remove the anonID from state and storage so the data transfer only happens once
-        //dispatcher(setAnonID(null))
-        //window.localStorage.removeItem("anonID")
+        dispatcher(setAnonID(null))
+        window.localStorage.removeItem("anonID")
 
         // End of onValue2 return snap
         }, {
@@ -298,10 +301,19 @@ function AuthMenu() {
 
     return (
         <div className={theme}>
-          
+            
             {showAuthMenu && 
                 // <div className={`authMenu ${sideNavOpen ? "sideNavAuthLeftAdjust":""}`}>
                 <div className={`authMenu`}>
+                  <div>
+                    {"createNewAccountFromAnon: " + createNewAccountFromAnon}                    
+                  </div>
+                  <div>
+                    {"userID: " + userID}
+                  </div>
+                  <div>
+                    {"anonID: " + anonID}            
+                  </div>
                   <form ref={formRef} className='hidden'>
                     <input name="to_email" ref={formEmailRef}/>
                     <input name="email_subject" value={"Welcome to the courses app"} />
@@ -309,7 +321,7 @@ function AuthMenu() {
                   </form>
                     <div className='closeButton' onClick={close}>x</div>
                     <>
-                        {(userID && !createNewAccountFromAnon) ? 
+                        {((userID || anonID) && !createNewAccountFromAnon) ? 
                         <>
                             <div>{languageConverter(language, "Account Actions")}</div>
                             <div>

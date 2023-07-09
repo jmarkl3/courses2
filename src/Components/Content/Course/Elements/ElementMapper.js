@@ -63,16 +63,24 @@ function ElementMapper() {
         setSectionData(sectionData)
         var elementsArrayTemp = objectToArray(sectionData?.items)
         setElementsArray(elementsArrayTemp)
+
+    }, [courseData, selectedChapterID, selectedSectionID])
+
+    useEffect(() => {
         checkIfCheckoutSection()
 
-    }, [courseData, selectedChapterID, selectedSectionID])    
+    }, [elementsArray])    
 
     // Checks to see if this a checkout section so it can display the section buttons differently if it is
-    function checkIfCheckoutSection(){
+    function checkIfCheckoutSection(){  
+        console.log("in checkIfCheckoutSection")      
         let hasCheckoutElement = false
         elementsArray.forEach(element => {
-            if(element.type === "Checkout")
+            console.log(element.type)
+            if(element.type === "Checkout"){
                 hasCheckoutElement = true
+                console.log(hasCheckoutElement)
+            }
         })
         setCheckoutSection(hasCheckoutElement)
     }

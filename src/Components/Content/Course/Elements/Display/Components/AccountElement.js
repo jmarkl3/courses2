@@ -17,7 +17,7 @@ import { useNavigate } from 'react-router-dom'
 */
 
 // attemptSignInCounter triggers the sign in function when it changes
-function AccountElement({showButtons, attemptSignInCounter, createNewAccountRef}) {
+function AccountElement({showButtons, attemptSignInCounter, createNewAccountRef, signUpFunction}) {
     const userID = useSelector(state => state.dbslice.userID)
     const anonID = useSelector(state => state.dbslice.anonID)
     const [createNew, setCreateNew] = useState(true)
@@ -49,48 +49,9 @@ function AccountElement({showButtons, attemptSignInCounter, createNewAccountRef}
             displayErrorMessage(err.message)
           })
     }
-
     function signUp(){
-        var email = emailInput.current.value
-        var pass = passInput.current.value
-        
-        createUserWithEmailAndPassword(auth, email, pass).then( user =>{
-        
-            if(!user) return
-            
-            //sendEmail("", email)
-
-            // If this component is in a checkout comopnent this ref will be sent here and set to true so the checkout pages knows how to save the data
-            // if(createNewAccountRef)
-            //     createNewAccountRef.current = true
-
-            // Save their user ID in state (this is done in the auth listener)
-            ///dispatcher(setUserID(user.user.uid))
-            
-            // Put some stuff in their user data so it loads
-            let date = new Date()      
-            let datestring = date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate()
-            ///console.log("in create user with eail and password, calling saveUserAccountData")      
-            // This saves some date in the user's account data such as the date, their email, and default states
-            dispatcher(saveUserAccountData({kvPairs: {creationDate: datestring, email: email, webcamModule: true}}))
-
-            // This is for the user event log
-            dispatcher(saveUserEvent({userID: user.uid, eventData: {type: "New Users", userID: user.uid, eventNote: "New user " + email + " created"}}))
-
-            // Now check the inputs
-            // Then the card stuff
-
-
-        }).catch(err=>{
-            setMessageColor("red")
-            displayErrorMessage(err.message)
-            // Clear the error message after 3 seconds
-            setTimeout(() => {
-              displayErrorMessage("")
-            }, 3000);
-        })
+      
     }
-
     // Turns a raw error message from firebase auth to something to display to the user
     function displayErrorMessage(message){
         if(message === "Firebase: Error (auth/invalid-email).")

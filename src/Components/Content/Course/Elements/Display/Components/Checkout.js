@@ -68,7 +68,7 @@ import { get, onValue, ref, set } from 'firebase/database'
 */
 function Checkout({elementData}) {
     // To see if an account needs to be created
-    const userID = useSelector(state => state.dbslice.userID)
+    const userID = useSelector(state => state.dbslice.userID)    
     const anonID = useSelector(state => state.dbslice.anonID)
     const userData = useSelector(state => state.dbslice.userData)    
     const [errorMessage, setErrorMessage] = useState("")
@@ -81,20 +81,34 @@ function Checkout({elementData}) {
     function checkout(){    
       // If there is a anonID or no userID then create an account
       if(!userID || anonID)
+        // This checks hasRequiredData()
         signUpFunction()
+      // If there is already an account
+      else{        
+        // Check the required intputs
+        if(!hasRequiredData())
+          return
+        
+        // Then check the card stuff
+
+        // If all good then move to the next step
+      }
+
     }
 
     function signUpFunction(){
       var email = emailInput.current.value
       var pass = passInput.current.value
-      var pass2 = passInput.current.value
+      var pass2 = passConfirmInput.current.value
 
       if(!email || !pass || !pass2){
-        displayErrorMessage("please enter account fields (email, password, password re-type)")
+        setMessageColor('red')
+        setErrorMessage("please enter account fields (email, password, password re-type)")
         return
       }
       if(pass !== pass2){
-        displayErrorMessage("pasword re-type does not match password")
+        setMessageColor('red')
+        setErrorMessage("pasword re-type does not match password")
         return
       }
       
@@ -113,7 +127,12 @@ function Checkout({elementData}) {
           dispatcher(saveUserEvent({userID: user.uid, eventData: {type: "New Users", userID: user.uid, eventNote: "New user " + email + " created"}}))
 
           // Now check the inputs
+          if(!hasRequiredData())
+            return          
+
           // Then the card stuff
+
+          // If all good then move to the next step
 
 
       }).catch(err=>{
@@ -126,14 +145,15 @@ function Checkout({elementData}) {
       })
   }
 
-  function checkInputs(){
-    // Create intput refs for each user data element display block
-    // send them in as props 
-    // set the input refs to a defaultProps or the ref
-    // Check to see if the ones with refs (the reqired ones) have values
-    // If so continue to the next step, if not display an error message 
+  function hasRequiredData(){
+    if(!userData?.accountData?.firstName || !userData?.accountData?.lastName || !userData?.accountData?.phone || !userData?.accountData?.address1){
+      setMessageColor("red")
+      setErrorMessage("please fill out all required fields")
+      return false
+    }
+    setErrorMessage("")
+    return true
   }
-
 
     // Turns a raw error message from firebase auth to something to display to the user
   function displayErrorMessage(message){
@@ -186,13 +206,13 @@ function Checkout({elementData}) {
                 <input type="text" placeholder="Email" ref={emailInput} defaultValue={userData?.email}/>
                 <input type="text" placeholder="Password" ref={passInput}/>
                 <input type="text" placeholder="Password re-type" ref={passConfirmInput}/>
-                <div>
-                    <div className={`errorMessage ${messageColor === "red" ? "messageRed":""} ${messageColor === "green" ? "messageGreen":""}`}>
-                        {errorMessage}
-                    </div>
-                </div>
             </div>
           }             
+          <div>
+              <div className={`errorMessage ${messageColor === "red" ? "messageRed":""} ${messageColor === "green" ? "messageGreen":""}`}>
+                  {errorMessage}
+              </div>
+          </div>
         </div>
         <Card elementData={elementData}></Card>
         <div>
