@@ -18,7 +18,8 @@ import { useNavigate } from 'react-router-dom'
 
 // attemptSignInCounter triggers the sign in function when it changes
 function AccountElement({showButtons, attemptSignInCounter, createNewAccountRef}) {
-    const selectedCourseID = useSelector(state => state.dbslice.userID)
+    const userID = useSelector(state => state.dbslice.userID)
+    const anonID = useSelector(state => state.dbslice.anonID)
     const [createNew, setCreateNew] = useState(true)
     const [errorMessage, setErrorMessage] = useState("")
     const [messageColor, setMessageColor] = useState("")
@@ -34,6 +35,7 @@ function AccountElement({showButtons, attemptSignInCounter, createNewAccountRef}
                 signUp()
             else
                 signIn()
+          setErrorMessage("")
         }
     },[attemptSignInCounter])
 
@@ -59,8 +61,8 @@ function AccountElement({showButtons, attemptSignInCounter, createNewAccountRef}
             //sendEmail("", email)
 
             // If this component is in a checkout comopnent this ref will be sent here and set to true so the checkout pages knows how to save the data
-            if(createNewAccountRef)
-                createNewAccountRef.current = true
+            // if(createNewAccountRef)
+            //     createNewAccountRef.current = true
 
             // Save their user ID in state (this is done in the auth listener)
             ///dispatcher(setUserID(user.user.uid))
@@ -75,9 +77,17 @@ function AccountElement({showButtons, attemptSignInCounter, createNewAccountRef}
             // This is for the user event log
             dispatcher(saveUserEvent({userID: user.uid, eventData: {type: "New Users", userID: user.uid, eventNote: "New user " + email + " created"}}))
 
+            // Now check the inputs
+            // Then the card stuff
+
+
         }).catch(err=>{
             setMessageColor("red")
             displayErrorMessage(err.message)
+            // Clear the error message after 3 seconds
+            setTimeout(() => {
+              displayErrorMessage("")
+            }, 3000);
         })
     }
 
@@ -100,10 +110,10 @@ function AccountElement({showButtons, attemptSignInCounter, createNewAccountRef}
 
   return (
     <div>
-        {/* {userID ?
+        {(userID && !anonID)?
         <>
         </>
-        : */}
+        : 
         <div>
             <div>
                 Create an account
@@ -117,7 +127,7 @@ function AccountElement({showButtons, attemptSignInCounter, createNewAccountRef}
                 </div>
             </div>
         </div>
-    {/* } */}
+     } 
         
     </div>
   )

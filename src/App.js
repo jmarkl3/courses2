@@ -23,23 +23,24 @@ import { log } from './App/functions';
 ________________________________________________________________________________
   Currently working on:
 
-  testing:          DONE (partially)  DONE
+  testing:          
+  DONE
   anon user data saves (account info, course info)  
+  
   anon data is transferred when the user creates a full account 
-    with the checkout page
+    DONE
     in the auth menu
-    doesn't overrite existing data in existing account just adds to it
+    with the checkout page
+      below note may not be necessary because those values are saved automitaclly in the db under the anonID which will transfer when new account is created
+      can have a global state variable that shows if the user is in the checkout menu or not
+      if they are in the checkout menu the auth state listener in the checkout menu will be the one to handle the creation of a new  account
+      so this value will be checked in the auth state listener in app.js
+      otherwise the data transfer will happen in the auth menu listener
+      this is becaue in the checkout menu there are fields witl data that will be saved but are not yet in the anon account db data
+    
   time data saves in anon account
   time data transfers when an anon user creates a full account
   do all neccessary functions work when there is only an anon account?
-
-  note:
-  can have a global state variable that shows if the user is in the checkout menu or not
-  if they are in the checkout menu the auth state listener in the checkout menu will be the one to handle the creation of a new account
-  so this value will be checked in the auth state listener in app.js
-  otherwise the data transfer will happen in the auth menu listener
-  this is becaue in the checkout menu there are fields witl data that will be saved but are not yet in the anon account db data
-  
 
   ability to log into a seperate full acount even when there is an anon account
 

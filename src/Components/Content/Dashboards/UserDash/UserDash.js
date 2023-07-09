@@ -12,56 +12,12 @@ import ProfileEdit from '../ProfileEdit'
 
 function UserDash() {
   const userData = useSelector(state => state.dbslice.userData)
-  const userID = useSelector(state => state.dbslice.userID)
   const language = useSelector(state => state.dbslice?.language)
   const theme = useSelector(state => state.dbslice.userData?.accountData?.theme)
   const webcamModule = useSelector(state => state.dbslice.userData?.accountData?.webcamModule)
-  const [editingProfileInfo, setEditingProfileInfo] = useState(false)
-  const [errorMessage, setErrorMessage] = useState("")
   const [takingNewImage, setTakingNewImage] = useState(false)
   const dispatcher = useDispatch()
-  
-  const nameInputF = useRef()
-  const nameInputL = useRef()
-  const emailInput = useRef()
-  const phoneInput = useRef()
-  const adressInput1 = useRef()
-  const adressInput2 = useRef()
-  const loadCount = useRef(0)
-  
-  // Ensure that the fields show the user data when the it loads
-  useEffect(()=>{
-    if(userData && loadCount.current < 1){
-      loadCount.current++
-      resetFields()
-    }
-  },[userData])
 
-  function resetFields(){
-    nameInputF.current.value = (userData?.accountData?.firstName || '')
-    nameInputL.current.value = (userData?.accountData?.lastName || '')
-    phoneInput.current.value = (userData?.accountData?.phone || '')
-    adressInput1.current.value = (userData?.accountData?.address1 || '')
-    adressInput2.current.value = (userData?.accountData?.address2 || '')
-    emailInput.current.value = (auth.currentUser?.email)
-  }
-
-  function saveUserAccountDataFunction(){
-    let accountDataTemp ={
-      firstName: nameInputF.current.value,
-      lastName: nameInputL.current.value,
-      phone: phoneInput.current.value,
-      address1: adressInput1.current.value,
-      address2: adressInput2.current.value,
-    }        
-    dispatcher(saveUserAccountData({kvPairs: accountDataTemp, userID: userID}))
-    setEditingProfileInfo(false)
-  }
-
-  function startEditingProfileInfo(){
-    nameInputF.current.focus()
-    setEditingProfileInfo(true)
-  }
 
   return (
     <div>

@@ -2,8 +2,8 @@ import React, { useEffect, useRef, useState } from 'react'
 import AccountElement from './AccountElement'
 import Card from './Card'
 import ElementDisplayBlock from '../ElementDisplayBlock'
-import { onAuthStateChanged } from 'firebase/auth'
-import { auth, database, saveUserAccountData } from '../../../../../../App/DbSlice'
+import { createUserWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth'
+import { auth, database, saveUserAccountData, saveUserEvent } from '../../../../../../App/DbSlice'
 import { useDispatch, useSelector } from 'react-redux'
 import { get, onValue, ref, set } from 'firebase/database'
 
@@ -68,69 +68,89 @@ import { get, onValue, ref, set } from 'firebase/database'
 */
 function Checkout({elementData}) {
     // To see if an account needs to be created
-    //const userID = useSelector(state => state.dbslice.userID)
-
+    const userID = useSelector(state => state.dbslice.userID)
     const anonID = useSelector(state => state.dbslice.anonID)
-    const userData = useSelector(state => state.dbslice.userData)
-    const [attemptSignInCounter, setAttemptSignInCounter] = useState(0)
-    const createNewAccountRef = useRef()
-    const dispatcher = useDispatch()
+    const userData = useSelector(state => state.dbslice.userData)    
+    const [errorMessage, setErrorMessage] = useState("")
+    const [messageColor, setMessageColor] = useState("")
+    const emailInput = useRef()
+    const passInput = useRef()
+    const passConfirmInput = useRef()    
+    const dispatcher = useDispatch()        
 
-    useEffect(()=>{
-        authListener()
-    },[])
-    
-    const [hasAccount, setHasAccount] = useState()
-    // useEffect(()=>{
-    //     if(userID)
-    //         setHasAccount(true)
-    // },[userID])
+    function checkout(){    
+      // If there is a anonID or no userID then create an account
+      if(!userID || anonID)
+        signUpFunction()
+    }
 
-    // When a user signs in of signs up while in the checkout section
-    function authListener(){
-        onAuthStateChanged(auth, (user) => {          
-          // Gather and save the user's data into the new or existing account
-          if(user && user.uid) {            
-            // If is currently an anon user save the data from the anon userID, then remove the anon userID
-            if(anonID){
-                // Save the account data from the anon account
-                // dispatcher(saveUserAccountData({userID: user.uid, kvPairs: userData?.accountData}))
-                
-                // If they just created a new account, save all the data from the anon account, there is no reason to worry about overriting because it is a new accouunt
-                if(createNewAccountRef.current){
-                    set(ref(database, "coursesApp/userData/" + user.uid), userData)
-                    
-                          // coursesApp/userDataTimes/userID/courses/courseID/chapterData/chapterID/sectionData/sectionID/userTime
-                    let dbString = "coursesApp/userDataTimes/" + anonID
+    function signUpFunction(){
+      var email = emailInput.current.value
+      var pass = passInput.current.value
+      var pass2 = passInput.current.value
 
-                    // Copy the anon user section times into the new account sections times in the db
-                    onValue(ref(database, dbString), snap => {
-                        // Calculates display time value and sets it to be displayed
-                        set(ref(database, "coursesApp/userDataTimes/" + user.uid), userData)                                            
-                    }, {
-                        onlyOnce: true
-                    })
-
-                }
-
-                // Save the course data from the anon account
-
-                // Remove the anonID from local storage
-                localStorage.removeItem("anonID")
-            }
-
-          }          
-          else{
-            // The account creation section was not completed, so the user will have to update that to contiue
-
-          }
-        })
+      if(!email || !pass || !pass2){
+        displayErrorMessage("please enter account fields (email, password, password re-type)")
+        return
       }
-
-      function checkout(){
-        // This will cause the AccountElement to attempt to sign in or sign up the user up if they are not logged in already
-        setAttemptSignInCounter(attemptSignInCounter + 1)
+      if(pass !== pass2){
+        displayErrorMessage("pasword re-type does not match password")
+        return
       }
+      
+      createUserWithEmailAndPassword(auth, email, pass).then( user =>{
+      
+          if(!user) return        
+          
+          // Put some stuff in their user data so it loads
+          let date = new Date()      
+          let datestring = date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate()
+          
+          // This saves some date in the user's account data such as the date, their email, and default states
+          dispatcher(saveUserAccountData({kvPairs: {creationDate: datestring, email: email, webcamModule: true}}))
+
+          // This is for the user event log
+          dispatcher(saveUserEvent({userID: user.uid, eventData: {type: "New Users", userID: user.uid, eventNote: "New user " + email + " created"}}))
+
+          // Now check the inputs
+          // Then the card stuff
+
+
+      }).catch(err=>{
+          setMessageColor("red")
+          displayErrorMessage(err.message)
+          // Clear the error message after 3 seconds
+          setTimeout(() => {
+            displayErrorMessage("")
+          }, 5000);
+      })
+  }
+
+  function checkInputs(){
+    // Create intput refs for each user data element display block
+    // send them in as props 
+    // set the input refs to a defaultProps or the ref
+    // Check to see if the ones with refs (the reqired ones) have values
+    // If so continue to the next step, if not display an error message 
+  }
+
+
+    // Turns a raw error message from firebase auth to something to display to the user
+  function displayErrorMessage(message){
+    if(message === "Firebase: Error (auth/invalid-email).")
+      setErrorMessage("Invalid Email")
+    else if(message === "Firebase: Error (auth/wrong-password).")
+      setErrorMessage("Check Password")
+    else if(message === "Firebase: Error (auth/email-already-in-use).")
+      setErrorMessage("Email Already in use")
+    else if(message === "Firebase: Error (auth/user-not-found).")
+      setErrorMessage("There is no account associate with that email")
+    else{
+      // setErrorMessage(message)
+      setErrorMessage("Auth error")  
+      console.log("auth error: " + message)
+    }
+  }
 
   return (
     <div>
@@ -154,7 +174,26 @@ function Checkout({elementData}) {
                 elementData={{type: "User Data Field", content: "How did you find us?", content3: "customerSource", inputSize: "Whole"}}
             ></ElementDisplayBlock>
         </>
-        <AccountElement elementData={elementData} attemptSignInCounter={attemptSignInCounter} createNewAccountRef></AccountElement>
+        <div>
+          {(userID && !anonID)?
+            <>
+            </>
+            : 
+            <div>
+                <div>
+                    Create an account
+                </div>
+                <input type="text" placeholder="Email" ref={emailInput} defaultValue={userData?.email}/>
+                <input type="text" placeholder="Password" ref={passInput}/>
+                <input type="text" placeholder="Password re-type" ref={passConfirmInput}/>
+                <div>
+                    <div className={`errorMessage ${messageColor === "red" ? "messageRed":""} ${messageColor === "green" ? "messageGreen":""}`}>
+                        {errorMessage}
+                    </div>
+                </div>
+            </div>
+          }             
+        </div>
         <Card elementData={elementData}></Card>
         <div>
             <button onClick={checkout}>Checkout</button>            

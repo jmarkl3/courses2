@@ -402,12 +402,12 @@ export function concatUserData(souceSet, targetSet, concatSet){
     // console.log(concatSet)
 
     // Start with the target set if no concat set is specified
-    if(!concatSet) concatSet = targetSet
+    if(!concatSet) concatSet = targetSet || {}
     
 if(souceSet && typeof souceSet === "object")
     Object.entries(souceSet).forEach(([key, value]) => {
         // If the key does not exist in the target set, add it with the data from the source set
-        if(!targetSet[key]){
+        if(!targetSet || !targetSet[key]){
             concatSet[key] = value
         }
         // If the key exists in both sets look through each value to determine if it should be added

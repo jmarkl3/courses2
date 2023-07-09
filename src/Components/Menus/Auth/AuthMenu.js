@@ -120,14 +120,15 @@ function AuthMenu() {
   }
   // Listen for auth state changes and puts userID in state
   function authListener(){
+    console.log("in authStateChanged")
     onAuthStateChanged(auth, (user) => {
       
       // If the user signs in take them to the dashboard and hide the auth menu 
       if(user) {
+        console.log("there is a user")
 
         setCreateNewAccountFromAnon(false)
 
-        console.log("there is a user")
         // This makes it so the window does not show but the auth component is still active
         dispatcher(setShowAuthMenu(false))    
         
@@ -155,6 +156,9 @@ function AuthMenu() {
       }
       // If the user signed out take them to the home page and clear their user data
       else{
+        console.log("no user")
+        dispatcher(setUserID(null))
+
         let anonID = lookForAnonAccount()
         // If there is no userID and no anonID clear the user data and return to the landing page
         if(!anonID){
@@ -162,6 +166,7 @@ function AuthMenu() {
           navigate("/")          
         }
         else{
+          dispatcher(setUserID(anonID))
           // Get the anon account data and save it to the user data
           getAnonAccountData(anonID)
         }
@@ -209,7 +214,7 @@ function AuthMenu() {
   }
   function lookForAnonAccount(){
     let anonID = window.localStorage.getItem("anonID")
-    log("found anon ID ", anonID)
+    console.log("found anon ID: ", anonID)
     return anonID
   }
   // This puts the anonID into storage so the userData is loaded and saved there
