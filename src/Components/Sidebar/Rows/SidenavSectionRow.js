@@ -113,8 +113,7 @@ function SidenavSectionRow({itemData, chapterID, setSectionRenaming}) {
 
   }
 
-  function selectSectionFunction(){   
-    console.log("selectSectionFunction "+itemData.name) 
+  function selectSectionFunction(){       
     if(editMode || fullAdmin)      
       dispatcher(selectFirst({chapterID: chapterID, sectionID: itemData?.id}))
     else
@@ -156,7 +155,9 @@ function SidenavSectionRow({itemData, chapterID, setSectionRenaming}) {
             <div onClick={renameFunction}>✔</div>
           </div>
           :
-          itemData?.name
+          <>
+            {itemData?.name}
+          </>
         }
         
         <>

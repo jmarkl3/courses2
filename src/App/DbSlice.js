@@ -3,8 +3,7 @@ import {initializeApp} from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getStorage } from "firebase/storage";
 import { get, getDatabase, onValue, push, ref, remove, runTransaction, set, update } from "firebase/database";
-import { concatUserData, gePreviousItem, getFirstItem, getItem, getLastItemID, getNextItem, getUserData, insertItem, log, newIDsObject, nItemsInObject, objectToArray, removeItem, removeUndefined } from "./functions";
-import { act } from "react-dom/test-utils";
+import { concatUserData, gePreviousItem, getFirstItem, getItem, getLastItemID, getNextItem, getUserData, insertItem, log, newIDsObject, nItemsInObject, objectToArray, removeItem, removeUndefined } from "./functions";import { act } from "react-dom/test-utils";
 
 /*
 ================================================================================
@@ -126,6 +125,7 @@ const dbslice = createSlice({
         timerSaveCounter: 0,
         theme: "lightTheme",
         language: "English",
+        sectionArray: [],
     },
     reducers: {
         // #region loading data
@@ -719,9 +719,71 @@ const dbslice = createSlice({
                 }
             })
         },
+        setSectionArray(state, action){
+            state.sectionArray = action.payload
+        },
         selectNextSection(state, action) {
+            console.log("in selectNextSection")
             var chapterID = state.selectedChapterID
             var sectionID = state.selectedSectionID
+
+            let sectionArrayLocal = state.sectionArray
+
+            // Make sure there is a valid section array
+            if(typeof sectionArrayLocal !== "object" || !sectionArrayLocal.length){
+                console.log("no valid section array")
+                return
+            }
+
+            // Update the current selection to show that it is complete
+            update(ref(database, 'coursesApp/userData/'+state.userID+'/courses/'+state.selectedCourseID+"/chapterData/"+state.selectedChapterID+"/sectionData/"+state.selectedSectionID), {complete: true})
+            
+            // Flag vars
+            let selectNext = false
+            let foundNext = false
+            // For logging
+            let nextSectionData = null
+            // Look through each section for the currently selected one, then select the next one
+            sectionArrayLocal.forEach(section => {
+                // If the next section was found don't look for another one
+                if(foundNext)
+                    return
+                // If this flag is set then the current itteration has the next section
+                if(selectNext){
+                    state.selectedSectionID = section.id
+                    // If moving to the next chapter set the current chapter as complete
+                    if(section.id !== state.selectedChapterID)
+                        update(ref(database, 'coursesApp/userData/'+state.userID+'/courses/'+state.selectedCourseID+"/chapterData/"+state.selectedChapterID), {complete: true})
+                    // Go to the next chapter
+                    state.selectedChapterID = section.chapterID
+
+                    // Save the data for checking and logging
+                    nextSectionData = section
+
+                    // So it only goes ahead one
+                    foundNext = true
+                }
+                // If the current section is found set the flag so the next one is selected
+                if(sectionID === section.id){
+                    selectNext = true
+                }
+            })
+            
+            // If ther is a next sectin log its data to show what was selected
+            if(nextSectionData){
+                console.log("found next section: "+nextSectionData.name)
+
+            }
+            // If there is no next section look through to see if they are all complete
+            else{
+                console.log("no next section found")            
+                // If they are not all complete select the earliest non-complete section
+
+                // Else set course as complete
+
+            }
+
+            return
 
             // Get the object with the sections in it
             var chapterSections = getItem(state.courseData, chapterID).items
@@ -730,13 +792,15 @@ const dbslice = createSlice({
 
             // If there is no next section, get the first section in the next chapter. Also mark chapter as complete (if all sections are complete)
             if(!nextSection){
+                console.log("no next section after "+sectionID+", looking for next chapter")
                 // Set the chapter as complete
                 update(ref(database, 'coursesApp/userData/'+state.userID+'/courses/'+state.selectedCourseID+"/chapterData/"+state.selectedChapterID), {complete: true})
                 var nextChapter = getNextItem(state.courseData.items, chapterID)
                 // If there is no next chapter the course is complete
                 if(!nextChapter){
-                    // Mark the course as complete
-                    update(ref(database, 'coursesApp/userData/'+state.userID+'/courses/'+state.selectedCourseID), {complete: true})
+                    console.log("no next chapter after "+chapterID+", course may be complete")
+                    // // Mark the course as complete
+                    // update(ref(database, 'coursesApp/userData/'+state.userID+'/courses/'+state.selectedCourseID), {complete: true})
                     return
                 }
                 // Look for the first section in the next chapter
@@ -1355,7 +1419,7 @@ export const {
     transferAnonData,
 } = dbslice.actions;
 // Selection actions
-export const {selectCourse, selectChapter, selectSection, selectElement, selectNextSection, selectPreviousSection, selectSectionIfValid, selectChapterIfValid} = dbslice.actions;
+export const {setSectionArray, selectCourse, selectChapter, selectSection, selectElement, selectNextSection, selectPreviousSection, selectSectionIfValid, selectChapterIfValid} = dbslice.actions;
 // Course actions
 export const {addCourse, deleteCourse, copyCourse, updateCourseInfo, updateCourseInfo2} = dbslice.actions;
 // Chapter actions

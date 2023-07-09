@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import "./ElementDisplayComponents.css"
 import { useDispatch, useSelector } from 'react-redux'
 import { database, saveUserSectionData, saveUserSectionData2, selectNextSection, selectPreviousSection } from '../../../../../../App/DbSlice'
@@ -22,6 +22,12 @@ function SectionButtons({sectionData, chapterID, checkoutSection}) {
 
     const userData = useSelector(state => state.dbslice.userData)
 
+    useEffect(() => {
+        // This solved an issue where the remaining time was not being set to 0 when there was no section data
+        if(!sectionData?.id)
+            setRemainingTime(0)
+    },[sectionData])
+
     /**
      * Check to see if the user has answered all questions and if there is still remaining time, aff all requirements are met go to the next section
      */
@@ -42,6 +48,7 @@ function SectionButtons({sectionData, chapterID, checkoutSection}) {
         
         // Check to see if there is still remaining time
         if(remainingTime > 0){
+            //console.log("remaining time: ", remainingTime)  
             setMessage("There is still remaining time")
             seMessageRefreshCount(messageRefreshCount + 1)
             return
@@ -113,7 +120,7 @@ function SectionButtons({sectionData, chapterID, checkoutSection}) {
     <>
         {!checkoutSection ?
             <div className='sectionButtons'>
-                <div className='nextButtonTimer'>            
+                <div className='nextButtonTimer'>    
                     <TimeDisplay2 sectionData={sectionData} chapterID={chapterID} setRemainingTime={setRemainingTimeFunction}></TimeDisplay2>                        
                 </div>
                 <button onClick={()=>dispacher(selectPreviousSection())}>Back</button>

@@ -167,6 +167,11 @@ function Checkout({elementData}) {
 
     // Turns a raw error message from firebase auth to something to display to the user
   function displayErrorMessage(message, passthrough){
+    if(!message || typeof message !== "string"){
+      setErrorMessage("")
+      return
+    }
+
     if(passthrough){
       setErrorMessage(message)
     }
@@ -179,6 +184,8 @@ function Checkout({elementData}) {
         setErrorMessage("Email Already in use")
       else if(message === "Firebase: Error (auth/user-not-found).")
         setErrorMessage("There is no account associate with that email")
+      else if(message.includes("Password should be at least 6 characters"))
+        setErrorMessage("Password should be at least 6 characters")
       else{
         // setErrorMessage(message)
         setErrorMessage("Auth error")  

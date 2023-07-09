@@ -9,12 +9,11 @@ import { useEffect } from 'react';
 import {database, setCourseData, setCoursesData, setUserData, setUserID } from './App/DbSlice';
 import Dashboard from './Components/Content/Dashboards/Dashboard';
 import { onValue, ref } from 'firebase/database';
-import { setLoading, setViewAsAdmin } from './App/AppSlice';
+import { setLoading } from './App/AppSlice';
 import Course from './Components/Content/Course/Course';
 import About from './Components/LandingPage/About';
 import Cart from './Components/Menus/Cart/Cart';
 import Support from './Components/Menus/Support/Support';
-import { log } from './App/functions';
 
 // TODO
 /*      
@@ -22,56 +21,24 @@ import { log } from './App/functions';
 2023-7-2
 ________________________________________________________________________________
   Currently working on:
-
-  testing:          
-  DONE
-  anon user data saves (account info, course info)  
-  DONE
-  anon data is transferred when the user creates a full account 
-    DONE
-    in the auth menu
-    with the checkout page
-      below note may not be necessary because those values are saved automitaclly in the db under the anonID which will transfer when new account is created
-      can have a global state variable that shows if the user is in the checkout menu or not
-      if they are in the checkout menu the auth state listener in the checkout menu will be the one to handle the creation of a new  account
-      so this value will be checked in the auth state listener in app.js
-      otherwise the data transfer will happen in the auth menu listener
-      this is becaue in the checkout menu there are fields witl data that will be saved but are not yet in the anon account db data
-    
-  time data saves in anon account
-  time data transfers when an anon user creates a full account
-  do all neccessary functions work when there is only an anon account?
-
-  ability to log into a seperate full acount even when there is an anon account
-
-  ability to go from anon account to full account from auth menu
-    will need the same functions as in the checkout page
-
-  account creation element
-    displays a component when this element is present
-    if user is already logged in it says they are already logged in and maybe gives accout options or shows their info
-    if no account is logged in it has input fields and a create account button
-    if user loggs in for the first time all local data or db data with an anonymous user id is transferred to the new account
-      will need to handle all of the inputs being processed at once including user data inputs, card, and creationg of an account all at once
-        could put this component in a section before this one and not let user continue to card section unlsess they create an account
-        could use setTimeout with userData stored in a ref so that is saved first and then the updated userData is used to create the account
   
   card element
 
-  checkout element
-  contains all of the userData input fields, account creation element, and card element
-
-  find all of the locations the time data is being used and update where it is getting the data from
-    check the timer components, section completion status components, section next buttons, and the course report, total time in course in course report and maybe on certificate
-  
-  auto generate and email course report with cert to admin email
+  testing:          
+  full walkthgough of the app
 
   bugs:  
   if user has same course open in multiple tabs is counts time multiple times per second
   when refreshing course it does not go to the furthest section
+  course went right to cert when course was not complete
+  time component not working properly
+    was saying still time on section w no time
+    being on next section then back to prev w no time
 
   additional features:
+  language translation
   ckeditor 4 text align center button
+  auto generate and email course report with cert to admin email
   ________________________________________________________________________________
   Done:
 
@@ -103,7 +70,7 @@ ________________________________________________________________________________
   ================================================================================
 
   courses 3
-  main page with the ourse itles 
+  main page with the ourse tiles 
   the tiles will only have a view button
   when user clicks view it opens the course
   there is a title then a description saying anything they do WILL  be saved as progress towars completion of the course
@@ -185,6 +152,11 @@ ________________________________________________________________________________
   any user can create courses if they have the correct account type
   main landing page will be for creating courses
   and there will be other projects pointing to the app that have different course types and landing pages
+
+  users can generate courses
+  saved under their userID
+  they can edit them
+  they can appoint types of admins
 
   DONE
   1) generate certificate as a pdf and save it in storage then save storage link in user data
@@ -694,7 +666,6 @@ function App() {
     const userID = useSelector(state => state.dbslice.userID)
     const theme = useSelector(state => state.dbslice.userData?.accountData?.theme)
     const selectedCourseID = useSelector(state => state.dbslice.selectedCourseID)
-    const changedViewAdmin = useSelector(state => state.appslice.changedViewAdmin)
     const dispatcher = useDispatch()   
 
     // Loads the courses meta data on start

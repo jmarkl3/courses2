@@ -333,7 +333,7 @@ function AuthMenu() {
                   </div> */}
                   <form ref={formRef} className='hidden'>
                     <input name="to_email" ref={formEmailRef}/>
-                    <input name="email_subject" value={"Welcome to the courses app"} />
+                    <input name="email_subject" readOnly value={"Welcome to the courses app"} />
                     <input name="message" ref={formMessageRef} />            
                   </form>
                     <div className='closeButton' onClick={close}>x</div>

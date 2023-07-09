@@ -5,11 +5,12 @@ import SideNav from '../../Sidebar/SideNav'
 import ElementMapper from './Elements/ElementMapper'
 import DisplayPage from '../DisplayPage'
 import { useParams } from 'react-router-dom'
-import { saveUserChapterData, saveUserCourseData, selectCourse } from '../../../App/DbSlice'
+import { saveUserChapterData, saveUserCourseData, selectCourse, setSectionArray } from '../../../App/DbSlice'
 import "./Course.css"
 import certificateImage from "../../../Images/certificateNoName.jpg"
 import Certificate from './Elements/Display/Components/Certificate'
-import { getUserData, removeUndefined } from '../../../App/functions'
+import { getUserData, objectToArray, removeUndefined } from '../../../App/functions'
+import { type } from '@testing-library/user-event/dist/type'
 
 /*
 ================================================================================
@@ -100,10 +101,40 @@ function Course() {
     // console.log(courseID)
     // console.log(userData)
 
+    generateSectionsArray()
+
     checkIfComplete()
     if(userData && userData.accountData && !(userData.accountData.fullAdmin || userData.accountData.isCourseAdmin))
       dispatcher(setEditMode(false))
+
+    
   },[courseID, userData])
+
+  // Generates an array of sections in order with the id and completion status
+  function generateSectionsArray(){
+    console.log("generateSectionsArray")
+    console.log("courseData")
+    console.log(courseData)
+
+    let sectionsArray = []
+    if(typeof courseData?.items === "object"){
+      Object.entries(courseData?.items).forEach(([chapterID, chapterData]) => {
+        if(typeof chapterData?.items === "object"){
+          Object.entries(chapterData?.items).forEach(([sectionID, sectionData]) => {
+            sectionsArray.push({
+              id: sectionID,
+              chapterID: chapterID,
+              name: sectionData.name,
+              complte: sectionData.complete
+            })
+          })
+        }
+      })
+    }
+    console.log("sectionsArray")
+    console.log(sectionsArray)
+    dispatcher(setSectionArray(sectionsArray))
+  }
 
   function checkIfComplete(){
     if(!userData?.courses || !userData?.courses[courseID] || editMode || displayCertificateOverride.current)

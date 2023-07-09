@@ -6,6 +6,7 @@ import jsPDF from 'jspdf'
 import emailjs from '@emailjs/browser'
 import { saveUserAccountData, storage } from '../../../../../../App/DbSlice'
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
+import { setSideNavOpen } from '../../../../../../App/AppSlice'
 
 
 /*
@@ -43,14 +44,19 @@ function Certificate() {
   const [certificatePDFUrl, setCertificatePDFUrl] = useState()
   const dispatcher = useDispatch()
 
+
+  useEffect(()=>{
+    
+     dispatcher(setSideNavOpen(false))
+      
+  },[])
+
   const generatedPDF = useRef()
   useEffect(()=>{
     
       if(userData && courseData)
         checkForCertificate()
       
-    
-
   },[userData, courseData])
   
   function checkForCertificate(){
@@ -58,16 +64,19 @@ function Certificate() {
     if(generatedPDF.current)
       return
     generatedPDF.current = true
+    
+    let certUrl = userData?.accountData?.certificateUrl
 
     console.log("checkForCertificate")
     console.log("userData")
     console.log(userData)
     
     console.log("saved cert:")
-    console.log(userData.accountData.certificateUrl)
+    console.log(certUrl)
 
-    if(userData.accountData.certificateUrl) 
-      setCertificatePDFUrl(userData.accountData.certificateUrl)
+
+    if(certUrl) 
+      setCertificatePDFUrl(certUrl)
     else
       generateCertificatePDF()
   }
@@ -130,7 +139,7 @@ function Certificate() {
 
     // Create a file name 
     let date = new Date()
-    let fileName = "certificateOfCompletion_" + userData.accountData.firstName+"_"+userData.accountData.firstName+"_"+ courseData.name +"_"+date.getFullYear()+"_"+date.getMonth()+"_"+date.getDate()+"_"+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds()
+    let fileName = "certificateOfCompletion_" + userData?.accountData?.firstName+"_"+userData?.accountData?.firstName+"_"+ courseData?.name +"_"+date.getFullYear()+"_"+date.getMonth()+"_"+date.getDate()+"_"+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds()
 
     // Create a file from the blob
     let file = new File([blob], fileName, {type: "pdf"})                

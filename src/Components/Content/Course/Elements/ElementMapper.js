@@ -59,7 +59,10 @@ function ElementMapper() {
   }, [sectionData])
 
     useEffect(() => {
+        // console.log("element mapper selecting new section")
         var sectionData = getItem(courseData, selectedChapterID, selectedSectionID)
+        // console.log("sectionData: ")
+        // console.log(sectionData)
         setSectionData(sectionData)
         var elementsArrayTemp = objectToArray(sectionData?.items)
         setElementsArray(elementsArrayTemp)

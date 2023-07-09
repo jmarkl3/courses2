@@ -32,8 +32,25 @@ function TimeDisplay2({sectionData, chapterID, viewOnly, setRemainingTime}) {
     const activeRef = useRef(false)
     const dispatcher = useDispatch()
 
+    useEffect(()=>{
+        // This will run when the component dismounts
+        return () => {
+            if(typeof unsubscribeRef.current === "function")        
+                unsubscribeRef.current()
+        }
+    },[])
+
     // When the course, chapter, or section ID change listen for the time stored in the corresponding location
     useEffect(() => {       
+        // console.log("in use effect in time display 2")
+        // console.log("selectedSectionID: ")
+        // console.log(selectedSectionID)
+        // console.log("sectionData: ")
+        // console.log(sectionData)
+
+        if(typeof unsubscribeRef.current === "function")        
+            unsubscribeRef.current()
+        
         startValueListener()
 
     },[selectedCourseID, chapterID, selectedSectionID, sectionData?.id])
@@ -46,6 +63,12 @@ function TimeDisplay2({sectionData, chapterID, viewOnly, setRemainingTime}) {
 
        // Save this in a ref so it can be acecssed by the countdownTimeString function
        requiredTimeRef.current = sectionData?.requiredTime
+        if(!requiredTimeRef.current || typeof requiredTimeRef.current !== "string"){
+            requiredTimeRef.current = 0
+        }
+
+        // console.log("found required time: ", requiredTimeRef.current)
+        // console.log(sectionData)
 
        // If the timer is on the selected section start the timer, else pause it
        if(selectedSectionID === sectionData?.id && !viewOnly){
@@ -65,18 +88,21 @@ function TimeDisplay2({sectionData, chapterID, viewOnly, setRemainingTime}) {
 
     },[])
 
+    const unsubscribeRef = useRef()
+
     // Listens for the time stored in the corresponing location
     function startValueListener(){
         // If all of the data is not loaded and available return, it will be called again
         if(!userID || !selectedCourseID || !chapterID || !sectionData   ){
             //console.log("missing data in startValueListener: ", userID, selectedCourseID, chapterID, sectionData)
+            setRemainingTime(0)
             return
         }
 
         // coursesApp/userDataTimes/userID/courses/courseID/chapterData/chapterID/sectionData/sectionID/userTime
         let dbString = "coursesApp/userDataTimes/" + userID + "/courses/" + selectedCourseID + "/chapterData/" + chapterID + "/sectionData/" + sectionData?.id+"/userTime"
-
-        onValue(ref(database, dbString), snap => {
+        //console.log("startValueListener dbString: ", dbString)
+        unsubscribeRef.current =  onValue(ref(database, dbString), snap => {
             // Calculates display time value and sets it to be displayed
             calculateCountdownTimeString2(snap.val())
         })
@@ -153,8 +179,8 @@ function TimeDisplay2({sectionData, chapterID, viewOnly, setRemainingTime}) {
             return
  
         // If the required time is being stored as a string convert it into an intiger
-        if(typeof requiredTimeRef.current === "string")
-            requiredTimeRef.current = parseInt(requiredTimeRef.current)
+        // if(typeof requiredTimeRef.current === "string")
+        //     requiredTimeRef.current = parseInt(requiredTimeRef.current)
 
         // If ther is no required time for this section return an empty string (this component will still keep track of the time the user spent in thes section though)
         if(!requiredTimeRef.current)
@@ -168,6 +194,8 @@ function TimeDisplay2({sectionData, chapterID, viewOnly, setRemainingTime}) {
             remainingTime = requiredTimeRef.current
         else
             remainingTime = 0
+
+        //console.log("calculated remaining time: ", remainingTime)
 
         // Create a time string with the difference (hh:mm:ss)
         setDisplayTime(timeString(remainingTime))
