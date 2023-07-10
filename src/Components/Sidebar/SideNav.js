@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { setSideNavOpen } from '../../App/AppSlice'
-import { addChapter, selectFirst } from '../../App/DbSlice'
+import { addChapter, selectFirst, setSectionArray } from '../../App/DbSlice'
 import { newID, objectToArray } from '../../App/functions'
 import SidenavChapterRow from './Rows/SidenavChapterRow'
 import "./SideNav.css"
@@ -29,6 +29,7 @@ function SideNav() {
     const sideNavOpen = useSelector(state => state.appslice.sideNavOpen)
     const courseData = useSelector((state) => state.dbslice.courseData);
     const selectedChapterID = useSelector((state) => state.dbslice.selectedChapterID);
+    const sectionArray = useSelector((state) => state.dbslice.sectionArray);
     const dispacher = useDispatch()    
 
     // The array of chapters to be displayed in the sidebar as rows
@@ -37,7 +38,7 @@ function SideNav() {
         setItemArray(objectToArray(courseData?.items))
         if(!selectedChapterID)
             dispacher(selectFirst())
-    }, [courseData])
+    }, [courseData, sectionArray])
 
     function addChapterFunction(){
         dispacher(addChapter({       

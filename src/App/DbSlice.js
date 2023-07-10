@@ -3,7 +3,7 @@ import {initializeApp} from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getStorage } from "firebase/storage";
 import { get, getDatabase, onValue, push, ref, remove, runTransaction, set, update } from "firebase/database";
-import { concatUserData, gePreviousItem, getFirstItem, getItem, getLastItemID, getNextItem, getUserData, insertItem, log, newIDsObject, nItemsInObject, objectToArray, removeItem, removeUndefined } from "./functions";import { act } from "react-dom/test-utils";
+import { concatUserData, gePreviousItem, getFirstItem, getItem, getLastItemID, getNextItem, getUserData, insertItem, log, newIDsObject, nItemsInObject, objectToArray, removeItem, removeUndefined, validSectionSelection } from "./functions";import { act } from "react-dom/test-utils";
 
 /*
 ================================================================================
@@ -602,131 +602,169 @@ const dbslice = createSlice({
             state.responsePath = "responses/"+state.selectedCourseID+"/"+state.selectedChapterID+"/"+state.selectedSectionID
 
         },
+        // Selects the first incomplete section in the course, or the first incomplete section in the specified chapter, or the last section, or the first section in the chapter
         selectFirst(state, action) {
       
-            // If there is no course data, return
-            if(!state.courseData)
+            // If there is no section Array this function will not work so return
+            if(!state.sectionArray){
+                console.log("no section array")
                 return
+            }
             
-            // If there is a specified first chapter, use that
-            var firstChapter = null
+            // If all sections are complete
+            let lastSection = null
+            // If there is no chapter specified and this is found it will be selected
+            let firstIncompleteSection = null
+            // If there is no incomplete sections in the chapter this one will be selected
+            let firstSectionInChapter = null
+            // If there is a chapter specified and an incomplete (and valid) section is found it will be selected
+            let firstIncompleteSectionInChapter = null
+            // Counter            
+            let indexCounter = 0
+            // Find all of the above things
+            state.sectionArray.forEach(section => {
+
+                // The first incomplete section in the course
+                if(!section.complete && !firstIncompleteSection){
+                    firstIncompleteSection = section
+                }
+
+                // If there is a chapterID specified
+                if(action?.payload?.chapterID && section.chapterID === action.payload.chapterID){
+                    // The first section in the chapter
+                    if(!firstSectionInChapter){
+                        firstSectionInChapter = section  
+                    }
+                    // The first incomplere section in the chapter
+                    if(!section.complete && !firstIncompleteSectionInChapter){
+                        firstIncompleteSectionInChapter = section        
+                    }
+                }
+
+                // The last section in the course
+                if(indexCounter == state.sectionArray.length-1){
+                    lastSection = section
+                }
+                
+                indexCounter++ 
+            })
+
+            // Chose which one is to be selected
+            let sectionToSelect = null
+
+            // If there is a chapter specified
             if(action?.payload?.chapterID){
-                firstChapter = getItem(state.courseData, action?.payload?.chapterID)
+                // If the chapter has an incomplete section
+                if(firstIncompleteSectionInChapter)
+                    sectionToSelect = firstIncompleteSectionInChapter
+                else
+                    sectionToSelect = firstSectionInChapter
             }
-            // Else just get the first one
             else{
-                firstChapter = getFirstItem(state.courseData.items)
+                // If the course has an incomplete section
+                if(firstIncompleteSection){
+                    sectionToSelect = firstIncompleteSection
+                }
+                else{
+                    sectionToSelect = lastSection
+                }
             }
-            // If there was no first chapter found there may be no chapters in the course
-            if(!firstChapter)
-                return
 
-            // Set the selected chapter to the specied one or the first one
-            state.selectedChapterID = firstChapter.id
-
-            // Get the first section in the chapter (or the specified one)
-            var firstSection = null
-            if(action?.payload?.sectionID && action?.payload?.chapterID){
-                firstSection = getItem(state.courseData, action?.payload?.chapterID, action?.payload?.sectionID)
+            // Make sure its valid
+            if(validSectionSelection(state.sectionArray, sectionToSelect?.id)){
+                state.selectedSectionID = sectionToSelect?.id
+                state.selectedChapterID = sectionToSelect?.chapterID
             }else{
-                firstSection = getFirstItem(firstChapter.items)
-            }                        
-            if(!firstSection)
-                return
-
-            state.selectedSectionID = firstSection.id
-
-            // This is used to get user resopnse data
-            state.responsePath = "responses/"+state.selectedCourseID+"/"+firstChapter.id+"/"+firstSection.id
-
-            // Get the first element in the chapter (or the specified one)
-            var firstElement = null
-            if(action?.payload?.sectionID && action?.payload?.chapterID && action?.payload?.elementID){
-                firstElement = getItem(state.courseData, action?.payload?.chapterID, action?.payload?.sectionID, action?.payload?.elementID)
-            }else{
-                firstElement = getFirstItem(firstSection.items)
-            }                        
-            if(!firstElement)
-                return
-            state.selectedElementID = firstElement.id
-            
+                console.log(sectionToSelect?.id+" is not a valid section to select")
+            }                 
         },
         selectSectionIfValid(state, action) {
-            // Look into the userData to see if the specified section has the complted property set to true
-            var sectionIsCompleted = getUserData(state.userData, "courses/"+state.selectedCourseID+"/chapterData/"+state.selectedChapterID+"/sectionData/"+action.payload.sectionID+"/complete")
-
-            // If it is select it
-            if(sectionIsCompleted == true){
-                state.selectedSectionID = action.payload.sectionID
-                return
-            }
-    
-            // Get the array of sections
-            var chapter = getItem(state.courseData, state.selectedChapterID)
-            var sectionArray = objectToArray(chapter.items)
-
-            // Check to see if the index is the one after the index of the last completed section
-            var previousComplete = true            
-            sectionArray.forEach(section => {
-                // If the previous section was completed and the section is found select it
-                if(section.id == action.payload.sectionID && previousComplete){     
-                        state.selectedSectionID = action.payload.sectionID
+            // Look through the sections to see if the ID of the section is valid to be selected
+            let prevSectionComplete = false
+            let selectedSection = false
+            state.sectionArray.forEach(section => {
+                // If the section is the one that was passed in
+                if(section.id === action.payload.sectionID){                    
+                    // If the section is complete or the section before it is complete select that section and chapter 
+                    if(section.complete || prevSectionComplete){
+                        state.selectedSectionID = section.id
+                        state.selectedChapterID = section.chapterID
+                        selectedSection = true
+                    }
                 }
-                // Get the user data for this section                
-                let userDataForThisSection = getUserData(state.userData, "courses/"+state.selectedCourseID+"/chapterData/"+state.selectedChapterID+"/sectionData/"+section?.id)
-                // Set the flag based on the section is completed property
-                if(userDataForThisSection?.complete){                    
-                    previousComplete = true
-                }
-                else {                    
-                    previousComplete = false                
+                
+                // Set the flag variable based on if this section is complete so the next itteration will know if the previous section was complete
+                if (section.complete){
+                    prevSectionComplete = true
+                }else{
+                    prevSectionComplete = false
                 }
             })
 
+            // Logging
+            // if(selectedSection){
+            //     console.log("selected "+action.payload.id)
+            // }else{
+            //     console.log("section "+action.payload.sectionID+" is not valid to be selected")
+            // }
+                        
         },
         selectChapterIfValid(state, action) {            
-            if(!action.payload.chapterID)
+            if(!action?.payload?.chapterID)
                 return
-
-           // Look into the userData to see if the specified section has the complted property set to true
-            var chapterIsCompleted = getUserData(state.userData, "courses/"+state.selectedCourseID+"/chapterData/"+state.selectedChapterID+"/complete")            
-
-            // If it is select it
-            if(chapterIsCompleted == true){
-                state.selectedChapterID = action.payload.chapterID
-                state.selectedSectionID = getFirstItem(state.courseData?.items[action.payload.chapterID]?.items)?.id
+                
+            // If there is no section Array this function will not work so return
+            if(!state.sectionArray){
+                console.log("no section array")
                 return
             }
-   
-            var chapterArray = objectToArray(state.courseData?.items)
+                 
+            let firstSectionInChapter = null
+            let firstIncompleteSectionInChapter = null
+            state.sectionArray.forEach(section => {                
+                // The first section in the chapter
+                if(!firstSectionInChapter)
+                    firstSectionInChapter = section
 
-            // Check to see if the index is the one after the index of the last completed section
-            var previousComplete = true            
-            chapterArray.forEach(chapter => {
-                // If the previous section was completed and the section is found select it
-                if(chapter.id == action.payload.chapterID && previousComplete){     
-                        state.selectedChapterID = action.payload.chapterID
-                        state.selectedSectionID = getFirstItem(state.courseData?.items[action.payload.chapterID]?.items)?.id
-                }
-                // Get the user data for this section                
-                let userDataForThisChapter = getUserData(state.userData, "courses/"+state.selectedCourseID+"/chapterData/"+chapter?.id)
-                // Set the flag based on the section is completed property
-                if(userDataForThisChapter?.complete){                    
-                    previousComplete = true
-                }
-                else {                    
-                    previousComplete = false                
+                // The first incomplete section in the chapter
+                if(section.chapterID === action.payload.chapterID){
+                    if(!section.complete && !firstIncompleteSectionInChapter){
+                        firstIncompleteSectionInChapter = section                    
+                    }            
                 }
             })
+            
+            // Chose which one is to be selected
+            let sectionToSelect = null
+
+            // If there is no incomplete sections in the chapter select the first one
+            if(!firstIncompleteSectionInChapter)
+                sectionToSelect = firstSectionInChapter
+            // If there are incomplete sections select the first incomplete one
+            else
+                sectionToSelect = firstIncompleteSectionInChapter
+
+            // Make sure its valid
+            if(validSectionSelection(state.sectionArray, sectionToSelect?.id)){
+                state.selectedSectionID = sectionToSelect?.id
+                state.selectedChapterID = sectionToSelect?.chapterID
+            }else{
+                console.log(sectionToSelect?.id+" is not a valid section to select")
+            }   
+           
         },
         setSectionArray(state, action){
             state.sectionArray = action.payload
         },
         selectNextSection(state, action) {
+
             console.log("in selectNextSection")
+
+            // Local variables for simplicity
             var chapterID = state.selectedChapterID
             var sectionID = state.selectedSectionID
 
+            // Putting it in a local variable so it can be edited immediately to check for course completion, changing the state is async
             let sectionArrayLocal = state.sectionArray
 
             // Make sure there is a valid section array
@@ -741,8 +779,9 @@ const dbslice = createSlice({
             // Flag vars
             let selectNext = false
             let foundNext = false
-            // For logging
+            // For logging and checking if a next section was found
             let nextSectionData = null
+            let indexCount = 0
             // Look through each section for the currently selected one, then select the next one
             sectionArrayLocal.forEach(section => {
                 // If the next section was found don't look for another one
@@ -766,7 +805,9 @@ const dbslice = createSlice({
                 // If the current section is found set the flag so the next one is selected
                 if(sectionID === section.id){
                     selectNext = true
+                    sectionArrayLocal[indexCount].complete = true
                 }
+                indexCount++
             })
             
             // If ther is a next sectin log its data to show what was selected
@@ -778,8 +819,20 @@ const dbslice = createSlice({
             else{
                 console.log("no next section found")            
                 // If they are not all complete select the earliest non-complete section
-
-                // Else set course as complete
+                let foundASection = false
+                sectionArrayLocal.forEach(section => {
+                    if(foundASection)   
+                        return
+                    if(!section.complete){
+                        console.log(section.name+" is not complete, selecting it")
+                        state.selectedSectionID = section.id
+                        foundASection = true
+                    }
+                })
+                // If there are no more sections and all sections are complete mark the course as complete
+                if(!foundASection){
+                    update(ref(database, 'coursesApp/userData/'+state.userID+'/courses/'+state.selectedCourseID), {complete: true})
+                }
 
             }
 

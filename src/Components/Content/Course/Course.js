@@ -28,6 +28,7 @@ function Course() {
   const userData = useSelector(state => state.dbslice.userData)
   const userDataOverride = useSelector(state => state.dbslice.userDataOverride)
   const courseData = useSelector(state => state.dbslice.courseData)
+  const selectedCourseID = useSelector(state => state.dbslice.selectedCourseID)
   const editMode = useSelector(state => state.appslice.editMode)
   const [courseComplete, setCourseComplete] = useState()
   const [displayCertificate, setDisplayCertificate] = useState()
@@ -110,27 +111,35 @@ function Course() {
     
   },[courseID, userData])
 
-  // Generates an array of sections in order with the id and completion status
+  // Generates an array of sections in order with the id and completion status  
   function generateSectionsArray(){
-    console.log("generateSectionsArray")
-    console.log("courseData")
-    console.log(courseData)
-
     let sectionsArray = []
-    if(typeof courseData?.items === "object"){
-      Object.entries(courseData?.items).forEach(([chapterID, chapterData]) => {
-        if(typeof chapterData?.items === "object"){
-          Object.entries(chapterData?.items).forEach(([sectionID, sectionData]) => {
-            sectionsArray.push({
-              id: sectionID,
-              chapterID: chapterID,
-              name: sectionData.name,
-              complte: sectionData.complete
-            })
+    let userChaptersData = userData?.courses?.[selectedCourseID]?.chapterData
+    if(!userChaptersData || typeof userChaptersData !== "object"){
+      console.log("no userCourseData")
+      return
+    }
+
+    Object.entries(userChaptersData).forEach(([chapterID, chapterData]) => {
+      let userSectionsData = chapterData?.sectionData
+      if(!userSectionsData || typeof userSectionsData !== "object"){
+        console.log("no userSectionsData for chapter " + chapterID)
+        return
+      }
+      
+      Object.entries(userSectionsData).forEach(([sectionID, sectionData]) => {
+        // If the object does not have a name it is not a valid section
+        if(sectionData.name){
+          sectionsArray.push({
+            id: sectionID,
+            chapterID: chapterID,
+            name: sectionData.name,
+            complete: sectionData.complete
           })
         }
-      })
-    }
+      })      
+    })
+    
     console.log("sectionsArray")
     console.log(sectionsArray)
     dispatcher(setSectionArray(sectionsArray))

@@ -506,4 +506,31 @@ export function getEnrolledCourses(userData){
     return tempEnrolledCoursesArray
 }
 
+export function validSectionSelection(sectionArray, sectionID){
+    // Make sure there are valid inputs
+    if(!sectionArray || typeof sectionArray !== "object" || !sectionID)
+    {
+        console.log("invalid inputs")
+        return false
+    }
+
+    var valid = false
+    let lastSectionComplete = false
+    sectionArray.forEach(section => {
+        // If the specified section is complete or the last one was complete return true
+        if(section.id == sectionID)
+            if (section.complete || lastSectionComplete)
+                valid = true
+        
+        // Set this flag variable to determine if the last section was complete
+        if(section.complete)
+            lastSectionComplete = true
+        else
+            lastSectionComplete = false
+        
+    })
+
+    return valid
+
+}
 // #endregion user data functions

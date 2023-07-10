@@ -156,6 +156,9 @@ function SidenavSectionRow({itemData, chapterID, setSectionRenaming}) {
           </div>
           :
           <>
+            {/* <div>
+              {itemData?.id}
+            </div> */}
             {itemData?.name}
           </>
         }
