@@ -611,6 +611,8 @@ const dbslice = createSlice({
                 return
             }
             
+            // If there are no sections complete
+            let firstSection = null
             // If all sections are complete
             let lastSection = null
             // If there is no chapter specified and this is found it will be selected
@@ -623,6 +625,11 @@ const dbslice = createSlice({
             let indexCounter = 0
             // Find all of the above things
             state.sectionArray.forEach(section => {
+
+                // The first section in the course
+                if(!firstSection){
+                    firstSection = section
+                }
 
                 // The first incomplete section in the course
                 if(!section.complete && !firstIncompleteSection){
@@ -675,7 +682,7 @@ const dbslice = createSlice({
                 state.selectedSectionID = sectionToSelect?.id
                 state.selectedChapterID = sectionToSelect?.chapterID
             }else{
-                console.log(sectionToSelect?.id+" is not a valid section to select")
+                //console.log(sectionToSelect?.id+" is not a valid section to select")
             }                 
         },
         selectSectionIfValid(state, action) {
@@ -684,9 +691,9 @@ const dbslice = createSlice({
             let selectedSection = false
             state.sectionArray.forEach(section => {
                 // If the section is the one that was passed in
-                if(section.id === action.payload.sectionID){                    
+                if(section.id === action.payload?.sectionID){                                    
                     // If the section is complete or the section before it is complete select that section and chapter 
-                    if(section.complete || prevSectionComplete){
+                    if(validSectionSelection(state.sectionArray, section.id)){
                         state.selectedSectionID = section.id
                         state.selectedChapterID = section.chapterID
                         selectedSection = true
@@ -758,135 +765,74 @@ const dbslice = createSlice({
         },
         selectNextSection(state, action) {
 
-            console.log("in selectNextSection")
-
-            // Local variables for simplicity
-            var chapterID = state.selectedChapterID
-            var sectionID = state.selectedSectionID
-
-            // Putting it in a local variable so it can be edited immediately to check for course completion, changing the state is async
-            let sectionArrayLocal = state.sectionArray
-
-            // Make sure there is a valid section array
-            if(typeof sectionArrayLocal !== "object" || !sectionArrayLocal.length){
-                console.log("no valid section array")
+            if(!state.sectionArray)   
                 return
-            }
 
-            // Update the current selection to show that it is complete
-            update(ref(database, 'coursesApp/userData/'+state.userID+'/courses/'+state.selectedCourseID+"/chapterData/"+state.selectedChapterID+"/sectionData/"+state.selectedSectionID), {complete: true})
-            
-            // Flag vars
-            let selectNext = false
-            let foundNext = false
-            // For logging and checking if a next section was found
-            let nextSectionData = null
-            let indexCount = 0
-            // Look through each section for the currently selected one, then select the next one
-            sectionArrayLocal.forEach(section => {
-                // If the next section was found don't look for another one
-                if(foundNext)
+            let foundCurrentSection = false
+            let selectedNext = false
+            let firstIncomplete = null
+            state.sectionArray.forEach(section => {                                
+
+                // Save the first incomplete section in case it is needed later
+                if(!section.complete && !firstIncomplete)
+                    firstIncomplete = section
+
+                // Only select one next section
+                if(selectedNext)
                     return
-                // If this flag is set then the current itteration has the next section
-                if(selectNext){
+
+                // If the previous section is the selected one select this one (the next one)
+                if(foundCurrentSection){
                     state.selectedSectionID = section.id
-                    // If moving to the next chapter set the current chapter as complete
-                    if(section.id !== state.selectedChapterID)
-                        update(ref(database, 'coursesApp/userData/'+state.userID+'/courses/'+state.selectedCourseID+"/chapterData/"+state.selectedChapterID), {complete: true})
-                    // Go to the next chapter
                     state.selectedChapterID = section.chapterID
-
-                    // Save the data for checking and logging
-                    nextSectionData = section
-
-                    // So it only goes ahead one
-                    foundNext = true
+                    selectedNext = true
                 }
-                // If the current section is found set the flag so the next one is selected
-                if(sectionID === section.id){
-                    selectNext = true
-                    sectionArrayLocal[indexCount].complete = true
-                }
-                indexCount++
-            })
+
+                // If this is the selected section set the flag
+                if(section.id === state.selectedSectionID)
+                    foundCurrentSection = true
+                else        
+                    foundCurrentSection = false
+                
+            })    
             
-            // If ther is a next sectin log its data to show what was selected
-            if(nextSectionData){
-                console.log("found next section: "+nextSectionData.name)
-
-            }
-            // If there is no next section look through to see if they are all complete
-            else{
-                console.log("no next section found")            
-                // If they are not all complete select the earliest non-complete section
-                let foundASection = false
-                sectionArrayLocal.forEach(section => {
-                    if(foundASection)   
-                        return
-                    if(!section.complete){
-                        console.log(section.name+" is not complete, selecting it")
-                        state.selectedSectionID = section.id
-                        foundASection = true
-                    }
-                })
-                // If there are no more sections and all sections are complete mark the course as complete
-                if(!foundASection){
-                    update(ref(database, 'coursesApp/userData/'+state.userID+'/courses/'+state.selectedCourseID), {complete: true})
+            // If there was no next section selected select first incomplete section, if no incomplete sections set course to complere
+            if(!selectedNext){
+                // If there is an incomplete section select that
+                if(firstIncomplete){
+                    state.selectedSectionID = firstIncomplete.id
+                    state.selectedChapterID = firstIncomplete.chapterID
                 }
-
-            }
-
-            return
-
-            // Get the object with the sections in it
-            var chapterSections = getItem(state.courseData, chapterID).items
-            // Look for the section after the currently selected section
-            var nextSection = getNextItem(chapterSections, sectionID)
-
-            // If there is no next section, get the first section in the next chapter. Also mark chapter as complete (if all sections are complete)
-            if(!nextSection){
-                console.log("no next section after "+sectionID+", looking for next chapter")
-                // Set the chapter as complete
-                update(ref(database, 'coursesApp/userData/'+state.userID+'/courses/'+state.selectedCourseID+"/chapterData/"+state.selectedChapterID), {complete: true})
-                var nextChapter = getNextItem(state.courseData.items, chapterID)
-                // If there is no next chapter the course is complete
-                if(!nextChapter){
-                    console.log("no next chapter after "+chapterID+", course may be complete")
-                    // // Mark the course as complete
-                    // update(ref(database, 'coursesApp/userData/'+state.userID+'/courses/'+state.selectedCourseID), {complete: true})
-                    return
+                // If there is no next section and no incomplete sections set the course to complete
+                else{
+                    update(ref(database, "coursesApp/userData/"+state.userID+"/courses/"+state.selectedCourseID), {complete: true})
                 }
-                // Look for the first section in the next chapter
-                nextSection = getFirstItem(nextChapter.items)
             }
-
-            // Save the ID of the next section
-            state.selectedSectionID = nextSection.id
-
         },
         selectPreviousSection(state, action) {
-            var chapterID = state.selectedChapterID
-            var sectionID = state.selectedSectionID
-
-            // Get the object with the sections in it
-            var chapterSections = getItem(state.courseData, chapterID).items
-            // Look for the section before the currently selected section
-            var previousSection = gePreviousItem(chapterSections, sectionID)
-
-            // If there is no last section, get the first section in the next chapter
-            if(!previousSection){
-                console.log("!previousSection")
+            
+            if(!state.sectionArray)   
                 return
-                var previousChapter = gePreviousItem(state.courseData.items, chapterID)
-                // If there is no previous chapter the user is at the first section of the first chapter
-                if(!previousChapter)
-                    return
-                // Look for the first section in the last chapter
-                previousSection = getFirstItem(previousChapter.items)
-            }
 
-            // Save the ID of the next section
-            state.selectedSectionID = previousSection.id
+            let previousSection = null
+            let foundPreviousSection = false
+            state.sectionArray.forEach(section => {                                                
+
+                // Only select one previous section
+                if(foundPreviousSection)
+                    return
+
+                // If this is the selected section select the previous section
+                if(section.id === state.selectedSectionID && previousSection){
+                    state.selectedSectionID = previousSection.id
+                    state.selectedChapterID = previousSection.chapterID
+                    foundPreviousSection = true
+                }
+                
+                // Save this section in case the next one is the currently selected one
+                previousSection = section
+
+            })     
 
         },
 

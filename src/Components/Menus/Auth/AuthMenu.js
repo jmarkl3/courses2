@@ -295,7 +295,10 @@ function AuthMenu() {
     });
   }
   function clearAnonAccount(){
+    console.log("clearing anon account")
     window.localStorage.removeItem("anonID")
+    dispatcher(setUserID(null))
+    dispatcher(setAnonID(null))
   }
   // This function sends an email by setting the values of a hidden form and using emailjs to send the form values via email
   const formRef = useRef()  

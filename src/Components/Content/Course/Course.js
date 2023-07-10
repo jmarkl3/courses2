@@ -88,8 +88,6 @@ function Course() {
         let coursePartialData = generatePartialData(courseData)
         let kvPairs = {savedCourseData: true, name: coursePartialData.name, chapterData: coursePartialData.chapterData}
         kvPairs = removeUndefined(kvPairs)
-        console.log("kvPairs")
-        console.log(kvPairs)
         dispatcher(saveUserCourseData({kvPairs: kvPairs, courseID: courseID}))
       }
 
@@ -98,10 +96,6 @@ function Course() {
   },[courseData])
   
   useEffect(() => {
-    // console.log("in use effect")
-    // console.log(courseID)
-    // console.log(userData)
-
     generateSectionsArray()
 
     checkIfComplete()
@@ -116,7 +110,7 @@ function Course() {
     let sectionsArray = []
     let userChaptersData = userData?.courses?.[selectedCourseID]?.chapterData
     if(!userChaptersData || typeof userChaptersData !== "object"){
-      console.log("no userCourseData")
+      //console.log("no userCourseData")
       return
     }
 
@@ -140,8 +134,6 @@ function Course() {
       })      
     })
     
-    console.log("sectionsArray")
-    console.log(sectionsArray)
     dispatcher(setSectionArray(sectionsArray))
   }
 

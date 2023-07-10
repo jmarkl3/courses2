@@ -129,8 +129,8 @@ function SectionButtons({sectionData, chapterID, checkoutSection}) {
                     <FadeMessage message={message} refreshCount={messageRefreshCount} backgroundColor={"rgb(197, 119, 119)"}></FadeMessage>
                 </div>
                 <button onClick={nextSection}>Next</button>
-                <button onClick={()=>console.log(sectionArray)}>Log SectionArray</button>
-                <button onClick={()=>console.log(userData)}>Log User Data</button>
+                {/* <button onClick={()=>console.log(sectionArray)}>Log SectionArray</button>
+                <button onClick={()=>console.log(userData)}>Log User Data</button> */}
             </div>
             :
             <div>

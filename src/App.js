@@ -27,13 +27,8 @@ ________________________________________________________________________________
   testing:          
   full walkthgough of the app
 
-  bugs:  
+  bugs:        
   if user has same course open in multiple tabs is counts time multiple times per second
-  when refreshing course it does not go to the furthest section
-  course went right to cert when course was not complete
-  time component not working properly
-    was saying still time on section w no time
-    being on next section then back to prev w no time
 
   additional features:
   language translation
@@ -41,6 +36,22 @@ ________________________________________________________________________________
   auto generate and email course report with cert to admin email
   ________________________________________________________________________________
   Done:
+
+    bugs:
+    DONE
+    the remaining time state was only being calculated if there was required time, now it calculates either way
+    time component not working properly
+      was saying still time on section w no time when being on next section then back to prev w no time  
+    DONE
+    first section was not selectable
+    updated function that determines if a section selection is valid so the first section in a course is always valid
+    DONE 
+    it was the firebase rules
+    ladnding page does not show available and enrolled courses for anon user
+    DONE
+    when refreshing course it does not go to the furthest section
+    DONE
+    course went right to cert when course was not complete
 
     userData input fields:
     DONE
@@ -685,7 +696,7 @@ function App() {
     }, [selectedCourseID])
 
     // Loads the meta data so all of the course tiles can be displayed
-    function loadCoursesData(){
+    function loadCoursesData(){      
       onValue(ref(database, 'coursesApp/coursesMetaData'), (snapshot) => {
         const data = snapshot.val();   
         if(!data) return
@@ -726,6 +737,7 @@ function App() {
     }
 
     function logDB(){
+      console.log("logging entire db: ")
       onValue(ref(database, 'coursesApp'), (snapshot) => {
         console.log("Entire DB:")
         console.log(snapshot.val())

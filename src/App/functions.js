@@ -510,18 +510,23 @@ export function validSectionSelection(sectionArray, sectionID){
     // Make sure there are valid inputs
     if(!sectionArray || typeof sectionArray !== "object" || !sectionID)
     {
-        console.log("invalid inputs")
+        //console.log("invalid inputs")
         return false
     }
 
     var valid = false
     let lastSectionComplete = false
-    sectionArray.forEach(section => {
+    // The first section in the chapter is always valid
+    let isFirstSection = true
+    sectionArray.forEach(section => {        
         // If the specified section is complete or the last one was complete return true
         if(section.id == sectionID)
-            if (section.complete || lastSectionComplete)
+            if (section.complete || lastSectionComplete || isFirstSection)
                 valid = true
         
+        // Set this flag variable to determine if the section being looked at is the first section
+        isFirstSection = false
+
         // Set this flag variable to determine if the last section was complete
         if(section.complete)
             lastSectionComplete = true
