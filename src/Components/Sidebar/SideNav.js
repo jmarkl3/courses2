@@ -36,8 +36,12 @@ function SideNav() {
     const [itemArray, setItemArray] = useState([])
     useEffect(() => {
         setItemArray(objectToArray(courseData?.items))
-        if(!selectedChapterID)
+        if(!selectedChapterID){
+            // console.log("calling selecting first from Siednav")            
             dispacher(selectFirst())
+        }else{
+            // console.log("not calling selecting first from Siednav")            
+        }
     }, [courseData, sectionArray])
 
     function addChapterFunction(){

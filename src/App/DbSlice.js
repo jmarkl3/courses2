@@ -590,10 +590,9 @@ const dbslice = createSlice({
 
         },
         selectSection(state, action) {
-            console.log("selectSection depreciated")
-            return
+
             state.selectedSectionID = action.payload;
-            state.responsePath = "responses/"+state.selectedCourseID+"/"+state.selectedChapterID+"/"+state.selectedSectionID
+            //state.responsePath = "responses/"+state.selectedCourseID+"/"+state.selectedChapterID+"/"+state.selectedSectionID
 
         },
         selectElement(state, action) {
@@ -604,9 +603,9 @@ const dbslice = createSlice({
         },
         // Selects the first incomplete section in the course, or the first incomplete section in the specified chapter, or the last section, or the first section in the chapter
         selectFirst(state, action) {
-      
+            console.log("selecting first")
             // If there is no section Array this function will not work so return
-            if(!state.sectionArray){
+            if(!state.sectionArray || state.sectionArray.length == 0){
                 console.log("no section array")
                 return
             }
@@ -677,12 +676,15 @@ const dbslice = createSlice({
                 }
             }
 
+            console.log("sectionToSelect")
+            console.log(sectionToSelect.name)            
+
             // Make sure its valid
             if(validSectionSelection(state.sectionArray, sectionToSelect?.id)){
                 state.selectedSectionID = sectionToSelect?.id
                 state.selectedChapterID = sectionToSelect?.chapterID
             }else{
-                //console.log(sectionToSelect?.id+" is not a valid section to select")
+                console.log(sectionToSelect?.id+" is not a valid section to select")
             }                 
         },
         selectSectionIfValid(state, action) {
@@ -764,8 +766,7 @@ const dbslice = createSlice({
             state.sectionArray = action.payload
         },
         selectNextSection(state, action) {
-
-            if(!state.sectionArray)   
+            if(!state.sectionArray || typeof state.sectionArray != "object" || state.sectionArray.length == 0)   
                 return
 
             let foundCurrentSection = false
@@ -1012,6 +1013,55 @@ const dbslice = createSlice({
             set(newDbLocationRef, newItem)
             
         },
+        addSection2(state, action){
+            // Currently not in use
+            if(!action.payload || !action.payload.chapterID) return
+
+            // Calculate the new number of sections
+
+            let numberOfSections = state.sectionArray.length
+
+            // let chapters = state.courseData.items                      
+            // if(chapters && typeof chapters === "object"){
+            //     let totalSections = 0                
+            //     Object.entries(chapters).forEach(([key, value]) => {
+            //         if(value?.items)
+            //             totalSections += Object.entries(value?.items).length
+            //     })    
+    
+            //     // Save the new number of sections in the db
+            //     update(ref(database, 'coursesApp/coursesMetaData/'+state.selectedCourseID), {totalSections: totalSections+1})
+            // }
+
+            // If there are no chapters or sections yet there will now be one section
+            // else{
+            //     // Save the new number of sections in the db
+            //     update(ref(database, 'coursesApp/coursesMetaData/'+state.selectedCourseID), {totalSections: 1})
+            // }
+
+            // Get a ref to the places the new course data will be stored
+            var newDbLocationRef = push(ref(database, 'coursesApp/coursesData/'+state.selectedCourseID+'/items/'+action.payload.chapterID+'/items'))
+            
+            // Create an object to represent the new section
+            var newItem = {...defaultSection}
+
+            // Set the index and name of the new section
+            newItem.index = state.sectionArray.length
+            newItem.name = newItem.name + " "+state.sectionArray.length
+
+            // Add an id field for easy access
+            newItem.id = newDbLocationRef.key
+
+            // If there is an index in the payload, add it to the new element
+            // if(action.payload.index){
+                // newItem.index = sectionArray.length
+                // newItem.name = newItem.name + " "+sectionArray.length
+            // }
+
+            // Add it to the db
+            set(newDbLocationRef, newItem)
+            
+        },
         deleteSection(state, action){
             if(!action.payload || !action.payload.sectionID || !action.payload.chapterID) return            
 
@@ -1040,7 +1090,6 @@ const dbslice = createSlice({
             // Delete the section from the db (if it is there)
             if(foundSection)
                 set(ref(database, 'coursesApp/coursesData/'+state.selectedCourseID+'/items/'+action.payload.chapterID+"/items/"+action.payload.sectionID), null)
-
             
         },
         copySection(state, action){

@@ -27,7 +27,7 @@ ________________________________________________________________________________
   testing:          
   full walkthgough of the app
 
-  bugs:        
+  bugs:     
   if user has same course open in multiple tabs is counts time multiple times per second
 
   additional features:
@@ -38,6 +38,9 @@ ________________________________________________________________________________
   Done:
 
     bugs:
+    DONE
+    course says view certificate (in user dash cart course) even when it is not complete   
+    updated cart course completion status function
     DONE
     the remaining time state was only being calculated if there was required time, now it calculates either way
     time component not working properly

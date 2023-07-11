@@ -10,8 +10,9 @@ import TimedWebcam from '../../../Webcam/TimedWebcam'
 import { languageConverter, log } from '../../../../App/functions'
 import ProfileEdit from '../ProfileEdit'
 
-function UserDash() {
+function UserDash() {  
   const userData = useSelector(state => state.dbslice.userData)
+  const anonID = useSelector(state => state.dbslice.anonID)
   const language = useSelector(state => state.dbslice?.language)
   const theme = useSelector(state => state.dbslice.userData?.accountData?.theme)
   const webcamModule = useSelector(state => state.dbslice.userData?.accountData?.webcamModule)
@@ -31,32 +32,13 @@ function UserDash() {
         </div>
       <div>
         <h3>
-          {languageConverter(language, "Profile")}
+          {"Profile" + (anonID ? " (Anonymous)" : "")}
         </h3>
         <div className='profileSection'>
           <div className='profileImage'><img src={userData?.accountData?.profileImageUrl}></img></div>
           <div className={"profileImageButton"} onClick={()=>setTakingNewImage(true)}>{languageConverter(language, "Take New Picture")}</div>
           {takingNewImage && <TimedWebcam once removeDisplay={()=>setTakingNewImage(false)}></TimedWebcam>}
-        </div>
-        {/* <div className='profileSection'>
-          <div>
-            <input readOnly={editingProfileInfo? false: "readOnly"} className='half' defaultValue={userData?.accountData?.firstName} ref={nameInputF} placeholder={languageConverter(language, "First Name")}></input>          
-            <input readOnly={editingProfileInfo? false: "readOnly"} className='half' defaultValue={userData?.accountData?.lastName} ref={nameInputL} placeholder={languageConverter(language, "Last Name")}></input>          
-          </div>
-          <input readOnly={editingProfileInfo? false: "readOnly"}  defaultValue={userData?.accountData?.phone} ref={phoneInput} placeholder={languageConverter(language, "Phone")}></input>          
-          <input readOnly={editingProfileInfo? false: "readOnly"}  defaultValue={userData?.accountData?.address1} ref={adressInput1} placeholder={languageConverter(language, "Address Line 1")}></input>          
-          <input readOnly={editingProfileInfo? false: "readOnly"}  defaultValue={userData?.accountData?.address2} ref={adressInput2} placeholder={languageConverter(language, "Address Line 2")}></input>                            
-          <input readOnly={"readOnly"} defaultValue={auth?.currentUser?.email} ref={emailInput} title={languageConverter(language, 'To edit email click the account button, then click "Change Email"')} placeholder={languageConverter(language, "Email")}></input>          
-          {editingProfileInfo?
-            <>
-              <div className={"profileImageButton"} onClick={resetFields}> {languageConverter(language, "Reset")}</div>
-              <div className={"profileImageButton"} onClick={saveUserAccountDataFunction}> {languageConverter(language, "Save")}</div>
-              {errorMessage}
-            </>
-            :
-            <div className={"profileImageButton"} onClick={startEditingProfileInfo}> {languageConverter(language, "Edit Info")}</div>
-          }
-        </div> */}
+        </div>        
         <ProfileEdit></ProfileEdit>
         <div className='profileSection'>
           <div>            

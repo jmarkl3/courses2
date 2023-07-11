@@ -49,7 +49,58 @@ function CartCourse({courseData, selected, draggable, readOnly, userDataOverride
 
     const [courseCompletionString, setCourseCompletionString] = useState()
     const [courseCompletionTitleString, setCourseCompletionTitleString] = useState()
-    function checkCourseProgress(){        
+    function checkCourseProgress(){ 
+        
+        let sectionsArray = []
+        let chaptersData = userData?.courses?.[courseData.id]?.chapterData
+        if(!chaptersData || typeof chaptersData !== "object"){
+          //console.log("no userCourseData")
+          return
+        }
+    
+        Object.entries(chaptersData).forEach(([chapterID, chapterData]) => {
+          let userSectionsData = chapterData?.sectionData
+          if(!userSectionsData || typeof userSectionsData !== "object"){
+            console.log("no userSectionsData for chapter " + chapterID)
+            return
+          }
+          
+          Object.entries(userSectionsData).forEach(([sectionID, sectionData]) => {
+            // If the object does not have a name it is not a valid section
+            if(sectionData.name){
+              sectionsArray.push({
+                id: sectionID,
+                chapterID: chapterID,
+                name: sectionData.name,
+                complete: sectionData.complete
+              })
+            }
+          })      
+        })
+
+        let total = 0
+        let complete = 0
+        sectionsArray.forEach(section => {
+            total ++
+            if(section.complete)
+                complete++
+        })
+
+        if(courseData?.complete){
+            // The string that shows on the tile
+            setCourseCompletionString("✔")            
+            // The tooltip that shows on hover
+            setCourseCompletionTitleString("Course Completed")
+        }
+        else{
+            // The string that shows on the tile
+            setCourseCompletionString(complete + " / " + total)
+            // The tooltip that shows on hover
+            setCourseCompletionTitleString("Completed " + complete + " of " + total + " sections")
+        }    
+
+
+        return
         let completedSections = 0
         // If there is a valid userData.courses object (meaning the user is enrolled in the course)
         if(userData && userData?.courses && userData?.courses[courseData.id]){
@@ -75,7 +126,7 @@ function CartCourse({courseData, selected, draggable, readOnly, userDataOverride
         }
 
         // If the user has completed all the sections show a check and give user ability to view certificate
-        if(courseData?.totalSections == completedSections){
+        if(courseData?.complete){
             // The string that shows on the tile
             setCourseCompletionString("✔")            
             // The tooltip that shows on hover
