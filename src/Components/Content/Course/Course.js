@@ -206,9 +206,6 @@ function Course() {
       section.complete = sectionObject[section.id]?.complete || false      
     })
 
-    // console.log("sectionsArray")
-    // console.log(sectionsArray)
-
     // Set the section array in the global state to be used by various functions relating to selecting the next or previous section
     dispatcher(setSectionArray(sectionsArray))
   }

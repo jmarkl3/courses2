@@ -700,7 +700,7 @@ const dbslice = createSlice({
             }                 
         },
         selectSectionIfValid(state, action) {
-            //  // console.log("selecting section if valid"+action.payload.sectionID)
+            //  console.log("selecting section if valid"+action.payload.sectionID)
 
             // If there is a section specified and it is valid select it
             if(action?.payload?.sectionID){
@@ -708,7 +708,7 @@ const dbslice = createSlice({
                     state.selectedSectionID = action.payload.sectionID
                     state.selectedChapterID = action.payload.chapterID
                 }else{
-                    //  // console.log(action.payload.sectionID+" is not a valid section to select")
+                    //  console.log(action.payload.sectionID+" is not a valid section to select")
                 }
             }
 

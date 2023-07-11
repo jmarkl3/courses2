@@ -520,9 +520,11 @@ export function validSectionSelection(sectionArray, sectionID){
     let isFirstSection = true
     sectionArray.forEach(section => {        
         // If the specified section is complete or the last one was complete return true
-        if(section.id == sectionID)
+        if(section.id == sectionID){
             if (section.complete || lastSectionComplete || isFirstSection)
                 valid = true
+            
+        }
         
         // Set this flag variable to determine if the section being looked at is the first section
         isFirstSection = false
