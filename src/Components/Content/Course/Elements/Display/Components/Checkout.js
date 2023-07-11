@@ -3,7 +3,7 @@ import AccountElement from './AccountElement'
 import Card from './Card'
 import ElementDisplayBlock from '../ElementDisplayBlock'
 import { createUserWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth'
-import { auth, database, saveUserAccountData, saveUserEvent } from '../../../../../../App/DbSlice'
+import { auth, database, saveUserAccountData, saveUserEvent, selectNextSection } from '../../../../../../App/DbSlice'
 import { useDispatch, useSelector } from 'react-redux'
 import { get, onValue, ref, set } from 'firebase/database'
 import "./Checkout.css"
@@ -72,6 +72,7 @@ function Checkout({elementData}) {
     const userID = useSelector(state => state.dbslice.userID)    
     const anonID = useSelector(state => state.dbslice.anonID)
     const userData = useSelector(state => state.dbslice.userData)    
+    const courseData = useSelector(state => state.dbslice.courseData)
     const [errorMessage, setErrorMessage] = useState("")
     const [messageColor, setMessageColor] = useState("red")
     const emailInput = useRef()
@@ -80,6 +81,7 @@ function Checkout({elementData}) {
     const dispatcher = useDispatch()        
 
     function checkout(){    
+
       // If there is a anonID or no userID then create an account
       if(!userID || anonID)
         // This checks hasRequiredData()
@@ -89,10 +91,15 @@ function Checkout({elementData}) {
         // Check the required intputs
         if(!hasRequiredData())
           return
-        
+                  
         // Then check the card stuff
+        if(!courseData?.paid){
+          displayErrorMessage("Please pay for the course to continue", true)
+          return
+        }
 
-        // If all good then move to the next step
+        // If all good then move to the next section
+        dispatcher(selectNextSection())
 
       }
     }
