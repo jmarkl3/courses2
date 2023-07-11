@@ -28,6 +28,7 @@ ________________________________________________________________________________
   full walkthgough of the app
 
   bugs:     
+  if user refreshes course it does not go to the furthest section, if they go there from the landing page it does though
   if user has same course open in multiple tabs is counts time multiple times per second
 
   additional features:

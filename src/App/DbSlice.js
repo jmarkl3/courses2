@@ -129,7 +129,6 @@ const dbslice = createSlice({
     },
     reducers: {
         // #region loading data
-
         // The loading data actions put data into the store when it is loaded from the database
 
         // Set the courses data (metadata for all courses including title, description, etc.)
@@ -153,6 +152,17 @@ const dbslice = createSlice({
         // #endregion  loading data
 
         // #region user data
+        clearUserData: (state, action) => {
+            state.userID = null
+            state.anonID = null
+            state.userData = null
+            state.sectionArray = []
+            state.selectedCourseID = null
+            state.selectedChapterID = null
+            state.selectedSectionID = null
+            state.selectedElementID = null
+
+        },
         setUserID(state, action){
             state.userID = action.payload;
         },   
@@ -180,10 +190,10 @@ const dbslice = createSlice({
         // This saves the user's response to a section
         // var locationString = "coursesApp/userData/"+state.userID+"/responses/"+state.selectedCourseID+"/"+action.payload.chapterID+"/"+action.payload.sectionID+"/"+action.payload.property
         saveUserSectionData(state, action){
-            console.log("saveUserSectionData depreciated")
+            //  // console.log("saveUserSectionData depreciated")
             
             if(!action.payload.sectionID || !action.payload.chapterID || action.payload.value == undefined || !action.payload.property){
-                console.log("Error: saveRemainingSectionTime: missing data")
+                //  // console.log("Error: saveRemainingSectionTime: missing data")
                 return
             }
             // This is the location that the remaining time will be saved
@@ -194,7 +204,7 @@ const dbslice = createSlice({
         // New: saveUserCourseData (for enrolled, completed, and certificate path)
         saveUserCourseData(state, action){
             if(!action.payload.kvPairs){
-                console.log("saveUserCourseData missing info")
+                //  // console.log("saveUserCourseData missing info")
                 return
             }
             
@@ -208,7 +218,7 @@ const dbslice = createSlice({
         // New: saveUserChapterData (for chapter complete)
         saveUserChapterData(state, action){
             if(!action.payload.kvPairs){
-                console.log("saveUserChapterData missing info")
+                //  // console.log("saveUserChapterData missing info")
                 return
             }
             
@@ -224,7 +234,7 @@ const dbslice = createSlice({
         saveUserSectionData2(state, action){
            
             if(!action.payload.kvPairs || typeof action.payload.kvPairs !== "object"){
-                console.log("saveUserSectionData2 missing info")
+                //  // console.log("saveUserSectionData2 missing info")
                 return
             }
             
@@ -240,7 +250,7 @@ const dbslice = createSlice({
         // ex: action.payload = {arrayName: "webcamImages", valueArray: [imageUrl1, imageUrl2]}
         pushToUserSectionData2(state, action){
             if(!action.payload?.arrayName || !action.payload?.valueArray){
-                console.log("pushToUserSectionData2 missing info")
+                //  // console.log("pushToUserSectionData2 missing info")
                 return
             }
             
@@ -307,7 +317,7 @@ const dbslice = createSlice({
         // New: saveUserResponse (for answered questions)
         saveUserResponse(state, action){
             if(!action.payload.kvPairs || !action.payload.elementID){
-                console.log("saveUserResponse missing info")
+                //  // console.log("saveUserResponse missing info")
                 return
             }
             
@@ -325,7 +335,7 @@ const dbslice = createSlice({
         saveUserAccountData(state, action){                   
 
             if(action.payload.kvPairs == undefined){
-                console.log("Error: saveUserAccountData: missing data")
+                //  // console.log("Error: saveUserAccountData: missing data")
                 return
             }
 
@@ -335,11 +345,11 @@ const dbslice = createSlice({
             // This is the location that the remaining time will be saved
             var locationString = "coursesApp/userData/"+ tempUserID +"/accountData"          
             
-            // console.log("locationString")
-            // console.log(locationString)
+            //  // console.log("locationString")
+            //  // console.log(locationString)
             
-            // console.log("dbslice saveUserAccountData")
-            // console.log(action.payload.kvPairs)
+            //  // console.log("dbslice saveUserAccountData")
+            //  // console.log(action.payload.kvPairs)
 
             // Save the remaining time in the db (shouldnt overwrite other data)
             update(ref(database, locationString), action.payload.kvPairs)
@@ -347,7 +357,7 @@ const dbslice = createSlice({
         // depreciated
         enrollUserInCourses(state, action){
             if(!action.payload || !action.payload.userID || !Array.isArray(action.payload.courseIDArray)) {
-                console.log("Error: enrollUserInCourses: missing data")
+                //  // console.log("Error: enrollUserInCourses: missing data")
                 return
             }
 
@@ -373,14 +383,14 @@ const dbslice = createSlice({
                     // Filter out the ones the user is already enrolled in 
                     coursesToAdd = coursesToAdd.filter(courseID => !enrolledCourses.includes(courseID))
                     
-                    // console.log("enrolling user " + action.payload.userID + "in courses: ")
-                    // console.log(action.payload.courseIDArray)
+                    //  // console.log("enrolling user " + action.payload.userID + "in courses: ")
+                    //  // console.log(action.payload.courseIDArray)
 
                     // Add the new ones
                     enrolledCourses = enrolledCourses.concat(coursesToAdd)
 
-                    // console.log("they are now enrolled in ")
-                    // console.log(enrolledCourses)
+                    //  // console.log("they are now enrolled in ")
+                    //  // console.log(enrolledCourses)
 
                     // Return the new array to update the db
                     return enrolledCourses
@@ -390,7 +400,7 @@ const dbslice = createSlice({
         // New: enrollUserInCourses2
         enrollUserInCourses2(state, action){
             if(!action.payload || !action.payload.userID || !Array.isArray(action.payload.courseIDArray)) {
-                // console.log("Error: enrollUserInCourses: missing data")
+                //  // console.log("Error: enrollUserInCourses: missing data")
                 return
             }
             // For each course ID in the array
@@ -419,7 +429,7 @@ const dbslice = createSlice({
             update(ref(database, "coursesApp/userData/"+userID+"/courses/"+courseID), {enrolled: true})
         },
         transferAnonData(state, action){
-            console.log("in dbslice transferAnonData")
+            //  // console.log("in dbslice transferAnonData")
 
             // Get both IDs
             let anonID = action.payload?.anonID || state.anonID
@@ -427,7 +437,7 @@ const dbslice = createSlice({
 
             // If there is no anonID return
             if(!anonID || !userID){
-                console.log("dbslice transferAnonData: need both IDs")
+                //  // console.log("dbslice transferAnonData: need both IDs")
                 return
             }
 
@@ -542,7 +552,7 @@ const dbslice = createSlice({
         },
         saveUserEvent(state, action){
             if(!(action?.payload?.userID || state.userID)){
-                console.log("saveUserEvent with no userID")
+                //  // console.log("saveUserEvent with no userID")
                 return
             }
 
@@ -577,12 +587,12 @@ const dbslice = createSlice({
         
         selectCourse(state, action) {  
             state.selectedCourseID = action.payload;
-            // console.log(state.coursesData)          
+            //  // console.log(state.coursesData)          
             // if(state.coursesArray.find(course => course.id))
             //     // Set the selected course ID
             //     state.selectedCourseID = action.payload;
             // else
-            // console.log(action.payload + " is not a valid course ID")
+            //  // console.log(action.payload + " is not a valid course ID")
 
         },
         selectChapter(state, action) {
@@ -603,10 +613,10 @@ const dbslice = createSlice({
         },
         // Selects the first incomplete section in the course, or the first incomplete section in the specified chapter, or the last section, or the first section in the chapter
         selectFirst(state, action) {
-            console.log("selecting first")
+            //  // console.log("selecting first")
             // If there is no section Array this function will not work so return
             if(!state.sectionArray || state.sectionArray.length == 0){
-                console.log("no section array")
+                //  // console.log("no section array")
                 return
             }
             
@@ -631,7 +641,9 @@ const dbslice = createSlice({
                 }
 
                 // The first incomplete section in the course
-                if(!section.complete && !firstIncompleteSection){
+                if(!section.complete && !firstIncompleteSection){                    
+                     // console.log(section.name+" complete: ")
+                     // console.log(section.complete)
                     firstIncompleteSection = section
                 }
 
@@ -668,7 +680,7 @@ const dbslice = createSlice({
             }
             else{
                 // If the course has an incomplete section
-                if(firstIncompleteSection){
+                if(firstIncompleteSection){                    
                     sectionToSelect = firstIncompleteSection
                 }
                 else{
@@ -676,18 +688,30 @@ const dbslice = createSlice({
                 }
             }
 
-            console.log("sectionToSelect")
-            console.log(sectionToSelect.name)            
+            //  // console.log("sectionToSelect")
+            //  // console.log(sectionToSelect.name)            
 
             // Make sure its valid
             if(validSectionSelection(state.sectionArray, sectionToSelect?.id)){
                 state.selectedSectionID = sectionToSelect?.id
                 state.selectedChapterID = sectionToSelect?.chapterID
             }else{
-                console.log(sectionToSelect?.id+" is not a valid section to select")
+                //  // console.log(sectionToSelect?.id+" is not a valid section to select")
             }                 
         },
         selectSectionIfValid(state, action) {
+            //  // console.log("selecting section if valid"+action.payload.sectionID)
+
+            // If there is a section specified and it is valid select it
+            if(action?.payload?.sectionID){
+                if(validSectionSelection(state.sectionArray, action.payload.sectionID)){
+                    state.selectedSectionID = action.payload.sectionID
+                    state.selectedChapterID = action.payload.chapterID
+                }else{
+                    //  // console.log(action.payload.sectionID+" is not a valid section to select")
+                }
+            }
+
             // Look through the sections to see if the ID of the section is valid to be selected
             let prevSectionComplete = false
             let selectedSection = false
@@ -712,9 +736,9 @@ const dbslice = createSlice({
 
             // Logging
             // if(selectedSection){
-            //     console.log("selected "+action.payload.id)
+            //     //  // console.log("selected "+action.payload.id)
             // }else{
-            //     console.log("section "+action.payload.sectionID+" is not valid to be selected")
+            //     //  // console.log("section "+action.payload.sectionID+" is not valid to be selected")
             // }
                         
         },
@@ -724,7 +748,7 @@ const dbslice = createSlice({
                 
             // If there is no section Array this function will not work so return
             if(!state.sectionArray){
-                console.log("no section array")
+                //  // console.log("no section array")
                 return
             }
                  
@@ -758,7 +782,7 @@ const dbslice = createSlice({
                 state.selectedSectionID = sectionToSelect?.id
                 state.selectedChapterID = sectionToSelect?.chapterID
             }else{
-                console.log(sectionToSelect?.id+" is not a valid section to select")
+                //  // console.log(sectionToSelect?.id+" is not a valid section to select")
             }   
            
         },
@@ -873,7 +897,7 @@ const dbslice = createSlice({
             var coursesArray = objectToArray(state.coursesData)
             var courseToCopy = coursesArray.find(course => course.id === action.payload)
             if(!courseToCopy) {
-                console.log("copyCourse: no course found with id " + action.payload)
+                //  // console.log("copyCourse: no course found with id " + action.payload)
                 return
             }        
             var tempCourse = {...courseToCopy}
@@ -898,7 +922,7 @@ const dbslice = createSlice({
                     set(ref(database, "coursesApp/coursesData/"+metaDataRef.key), tempCourse)
 
                 } else {
-                    console.log("No data available");
+                    //  // console.log("No data available");
                 }
             }).catch((error) => {
                 console.error(error);
@@ -1236,7 +1260,7 @@ const dbslice = createSlice({
 
             // Check to see if the item is being dropped onto itself
             if(state.dragStartIDs.elementID == action.payload.elementID && state.dragStartIDs.sectionID == action.payload.sectionID && state.dragStartIDs.chapterID == action.payload.chapterID){
-                // console.log("Dropped onto itself")
+                //  // console.log("Dropped onto itself")
                 return
             }
             
@@ -1403,15 +1427,15 @@ const dbslice = createSlice({
         // updates data on or deletes the specified item (course, chapter, section, or element)
         updateItemInfo(state, action) { 
             if(!action.payload.chapterID){
-                console.log("updateItemInfo: missing payload chapterID")
+                //  // console.log("updateItemInfo: missing payload chapterID")
                 return
             }
             if(action.payload.value == undefined || action.payload.value == null){
-                console.log("updateItemInfo: missing payload value", action.payload.value)
+                //  // console.log("updateItemInfo: missing payload value", action.payload.value)
                 return
             }
             if(typeof(action.payload.value) === "string" && action.payload.value.replaceAll(" ", "") === ""){
-                console.log("updateItemInfo: payload value empty string", action.payload.value)
+                //  // console.log("updateItemInfo: payload value empty string", action.payload.value)
                 
             }
 
@@ -1465,6 +1489,7 @@ export const {
     incrementUserSectionTime,
     saveUserEvent,
     transferAnonData,
+    clearUserData,
 } = dbslice.actions;
 // Selection actions
 export const {setSectionArray, selectCourse, selectChapter, selectSection, selectElement, selectNextSection, selectPreviousSection, selectSectionIfValid, selectChapterIfValid} = dbslice.actions;

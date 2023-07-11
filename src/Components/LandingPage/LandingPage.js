@@ -114,8 +114,8 @@ function LandingPage({goto}) {
         if(Array.isArray(tempAvailableCourses))
             setAvailableCourses(tempAvailableCourses)
         setEnrolledCoursesArray(getEnrolledCourses(userData))
-        console.log("coursesArray:")
-        console.log(coursesArray)
+         // console.log("coursesArray:")
+         // console.log(coursesArray)
     }, [coursesArray, userData])
 
     function scrollToAbout(){

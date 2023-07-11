@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setShowAuthMenu, toggleShowAuthMenu} from '../../../App/AppSlice'
 import "../../../Styles/Themes.css"
 import { createUserWithEmailAndPassword, onAuthStateChanged, sendPasswordResetEmail, signInWithEmailAndPassword, signOut, updateEmail } from 'firebase/auth'
-import { auth, clearAllCourseData, clearAllUserData, clearEnrolledCourses, database, enrollUserInCourses, saveUserAccountData, saveUserEvent, selectChapter, selectSection, setAnonID, setUserData, setUserID, toggleTheme, transferAnonData } from '../../../App/DbSlice'
+import { auth, clearAllCourseData, clearAllUserData, clearEnrolledCourses, clearUserData, database, enrollUserInCourses, saveUserAccountData, saveUserEvent, selectChapter, selectSection, setAnonID, setSectionArray, setUserData, setUserID, toggleTheme, transferAnonData } from '../../../App/DbSlice'
 import { useNavigate } from 'react-router-dom'
 import { concatUserData, languageConverter, log } from '../../../App/functions'
 import emailjs from '@emailjs/browser'
@@ -297,11 +297,7 @@ function AuthMenu() {
   function clearAnonAccount(){
     console.log("clearing anon account")
     window.localStorage.removeItem("anonID")
-    dispatcher(setUserID(null))
-    dispatcher(setAnonID(null))
-    dispatcher(setUserData(null))
-    dispatcher(selectChapter(null))
-    dispatcher(selectSection(null))
+    dispatcher(clearUserData())
     navigate("/")
   }
   // This function sends an email by setting the values of a hidden form and using emailjs to send the form values via email

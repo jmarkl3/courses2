@@ -107,8 +107,8 @@ function Course() {
 
   // Generates an array of sections in order with the id and completion status  
   function generateSectionsArray(){
-    console.log("courseData")
-    console.log(courseData)
+    // console.log("courseData")
+    // console.log(courseData)
     let sectionsArray = []
     let userChaptersData = userData?.courses?.[selectedCourseID]?.chapterData
     if(!userChaptersData || typeof userChaptersData !== "object"){
@@ -119,15 +119,15 @@ function Course() {
     Object.entries(userChaptersData).forEach(([chapterID, chapterData]) => {
       let userSectionsData = chapterData?.sectionData
       if(!userSectionsData || typeof userSectionsData !== "object"){
-        console.log("no userSectionsData for chapter " + chapterID)
+        // console.log("no userSectionsData for chapter " + chapterID)
         return
       }
       
       Object.entries(userSectionsData).forEach(([sectionID, sectionData]) => {
         // If the object does not have a name it is not a valid section
         if(sectionData.name){
-          console.log("sectionData")
-          console.log(sectionData)
+          // console.log("sectionData")
+          // console.log(sectionData)
           sectionsArray.push({
             id: sectionID,
             chapterID: chapterID,
@@ -143,32 +143,30 @@ function Course() {
   // Creates an array of sections that are in the correct order and have all necessary data for its uses including completion status and chapterID    
   function generateSectionsArray2(){
     
-    console.log("userData")
-    console.log(userData)
-    console.log("selectedCourseID")
-    console.log(selectedCourseID)
+    // console.log("userData")
+    // console.log(userData)
+    // console.log("selectedCourseID")
+    // console.log(selectedCourseID)
     
     let sectionObject = {}    
     // Get the data from the user data
     let userChaptersData = userData?.courses?.[selectedCourseID]?.chapterData
-    console.log("userChaptersData")
-    console.log(userChaptersData)
+    // console.log("userChaptersData")
+    // console.log(userChaptersData)
     // If there is user data compile it into an object of sections with the completion status
     if(userChaptersData && typeof userChaptersData === "object"){
-      console.log("there is user data")
+      // console.log("there is user data")
       // This creates an object with all of the sections to be used to add the completion status to the section array
       Object.entries(userChaptersData).forEach(([chapterID, chapterData]) => {
         let userSectionsData = chapterData?.sectionData
         if(!userSectionsData || typeof userSectionsData !== "object"){
-          console.log("no userSectionsData for chapter " + chapterID)
+          // console.log("no userSectionsData for chapter " + chapterID)
           return
         }
         
         Object.entries(userSectionsData).forEach(([sectionID, sectionData]) => {
           // If the object does not have a name it is not a valid section
           if(sectionData.name){
-            console.log("sectionData")
-            console.log(sectionData)
             sectionObject[sectionID]={
               id: sectionID,
               chapterID: chapterID,
@@ -176,12 +174,13 @@ function Course() {
               complete: sectionData.complete
             }
           }
-        })      
+        })              
       })
-
+      // console.log("sectionObject: ")
+      // console.log(sectionObject)
     }
     else{
-      console.log("no user data in generateSectionsArray2")
+      // console.log("no user data in generateSectionsArray2")
     }
 
     // An ordered array of chapters (ordered by the index property in the chapterData)
@@ -207,8 +206,8 @@ function Course() {
       section.complete = sectionObject[section.id]?.complete || false      
     })
 
-    console.log("sectionsArray")
-    console.log(sectionsArray)
+    // console.log("sectionsArray")
+    // console.log(sectionsArray)
 
     // Set the section array in the global state to be used by various functions relating to selecting the next or previous section
     dispatcher(setSectionArray(sectionsArray))

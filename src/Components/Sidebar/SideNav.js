@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { setSideNavOpen } from '../../App/AppSlice'
 import { addChapter, selectFirst, setSectionArray } from '../../App/DbSlice'
@@ -30,18 +30,25 @@ function SideNav() {
     const courseData = useSelector((state) => state.dbslice.courseData);
     const selectedChapterID = useSelector((state) => state.dbslice.selectedChapterID);
     const sectionArray = useSelector((state) => state.dbslice.sectionArray);
+    const thereWasNoSectionArray = useRef(true)
     const dispacher = useDispatch()    
 
     // The array of chapters to be displayed in the sidebar as rows
     const [itemArray, setItemArray] = useState([])
     useEffect(() => {
+
+
         setItemArray(objectToArray(courseData?.items))
-        if(!selectedChapterID){
+        if(!selectedChapterID || thereWasNoSectionArray.current){
             // console.log("calling selecting first from Siednav")            
             dispacher(selectFirst())
         }else{
             // console.log("not calling selecting first from Siednav")            
         }
+
+        // Keep track of if a section array loads for the first time so it can select the first section after it loads
+        if(sectionArray && sectionArray.length > 0)
+            thereWasNoSectionArray.current = false
     }, [courseData, sectionArray])
 
     function addChapterFunction(){

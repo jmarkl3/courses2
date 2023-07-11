@@ -57,6 +57,9 @@ function TimeDisplay2({sectionData, chapterID, viewOnly, setRemainingTime}) {
    // When the selected section changes check to the section data, if they match start the timer
    const selectedSectionIDRef = useRef()
    useEffect(() => {
+        if(viewOnly)
+            return
+            
        // Save this in a ref so it can be accessed in the leavePageListener
        selectedSectionIDRef.current = selectedSectionID
 
