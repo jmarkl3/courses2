@@ -21,8 +21,6 @@ import Support from './Components/Menus/Support/Support';
 2023-7-2
 ________________________________________________________________________________
   Currently working on:
-  
-  card element
 
   testing:          
   full walkthgough of the app
@@ -57,6 +55,9 @@ ________________________________________________________________________________
     when refreshing course it does not go to the furthest section
     DONE
     course went right to cert when course was not complete
+
+    DONE
+    card element
 
     userData input fields:
     DONE

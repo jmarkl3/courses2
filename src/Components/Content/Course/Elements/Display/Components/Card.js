@@ -12,6 +12,7 @@ https://www.youtube.com/watch?v=AGDaLOawJSc
 function Card() {
   const selectedCourseID = useSelector(state => state.dbslice.selectedCourseID)
   const courseData = useSelector(state => state.dbslice.courseData)
+  const coursesData = useSelector(state => state.dbslice.coursesData)
   const dispatcher = useDispatch()
 
   return (
@@ -28,7 +29,7 @@ function Card() {
                 purchase_units: [
                   {
                     amount: {
-                      value: '12.00',
+                      value: coursesData[selectedCourseID]?.price,
                     },
                   },
                 ],
