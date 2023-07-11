@@ -16,6 +16,7 @@ function SectionButtons({sectionData, chapterID, checkoutSection}) {
     const selectedCourseID = useSelector(state => state.dbslice.selectedCourseID)
     const sectionArray = useSelector(state => state.dbslice.sectionArray)
     const userID = useSelector(state => state.dbslice.userID)
+    const courseData = useSelector(state => state.dbslice.courseData)
     const selectedChapterID = useSelector(state => state.dbslice.selectedChapterID)
     const selectedSectionID = useSelector(state => state.dbslice.selectedSectionID)
     const fullAdmin = useSelector(state => state.dbslice.userData?.accountData?.fullAdmin)
@@ -55,6 +56,12 @@ function SectionButtons({sectionData, chapterID, checkoutSection}) {
             return
         }  
 
+        // If this is a checkout section check to see if the user has paid for the course
+        if(checkoutSection && !courseData?.paid){
+            setMessage("Please pay for the course to continue")
+            seMessageRefreshCount(messageRefreshCount + 1)
+            return
+        }
         // Saving the completion status to show the user has completed the sectin
         dispacher(saveUserSectionData2({sectionID: sectionData?.id, chapterID: chapterID, kvPairs: {complete: true}}))
         // Save the index to easily check the index of the last completed section

@@ -26,6 +26,7 @@ ________________________________________________________________________________
 
   testing:          
   full walkthgough of the app
+  create a course, go through it, create an account, checkout, complete the course, view and email the report and certificate, view the dashboard, view the admin dashboard
 
   bugs:     
   if user refreshes course it does not go to the furthest section, if they go there from the landing page it does though
