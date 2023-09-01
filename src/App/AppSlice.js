@@ -202,9 +202,11 @@ const appSlice = createSlice({
         },
         setDraggingCourse(state, action) {
             state.draggingCourseID = action.payload;
-        }
+        },
 
         // #endregion Cart
+
+        
     }
 })
 

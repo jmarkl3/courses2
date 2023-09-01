@@ -41,6 +41,10 @@
     background-color: rgb(61, 61, 87);
     background-image: linear-gradient(rgb(107, 107, 131), rgba(207, 207, 235, 0));
 }
+.darkTheme .setBox  {
+    background-color: rgb(61, 61, 87);
+    background-image: linear-gradient(rgb(107, 107, 131), rgba(207, 207, 235, 0));
+}
 .darkTheme .courseTile{
     color: white;
 }
@@ -76,4 +80,8 @@
 }
 .darkTheme .timeDisplay{
     background-color: #474444a6;
+}
+.darkTheme .largeBox{        
+    background-color: #474444;
+    color: white;    
 }

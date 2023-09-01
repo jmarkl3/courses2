@@ -150,8 +150,8 @@ function AuthMenu() {
         //dispatcher(setAnonID(null))
 
         // If the user is on the landing page and they log in take them to the dashboard (it will have a # if there on any other page because using hash router)
-        if(!window.location.href.toLocaleLowerCase().includes("#"))          
-          setTimeout(()=>navigate("/Dashboard"), 250)
+        // if(!window.location.href.toLocaleLowerCase().includes("#"))          
+        //   setTimeout(()=>navigate("/Dashboard"), 250)
 
         // This should be set in the transferAnonData function but it is not working
         //dispatcher(setUserID(user?.uid))
@@ -259,6 +259,7 @@ function AuthMenu() {
     dispatcher(toggleShowAuthMenu(false))
     // Give the state time to update before navigating
     setTimeout(() => {
+      // if(!window.location.href.includes("#"))
       navigate("/Dashboard")      
     }, 250);
   }
@@ -352,8 +353,8 @@ function AuthMenu() {
                                 <button onClick={()=>dispatcher(setViewAsAdmin(!viewAsAdmin))}>{`View As ${viewAsAdmin ? "User": "Admin"}`}</button>                            
                               </>
                             } */}
-                            <button onClick={goToDashboard}>{languageConverter(language, "Your Courses")} / Dashboard</button>                            
-                            <button onClick={()=>dispatcher(toggleTheme())}>{theme === "darkTheme" ? languageConverter(language, "Light Theme") : languageConverter(language, "Dark Theme")}</button>                                                                                
+                            <button onClick={goToDashboard}>Your Courses / Dashboard</button>                            
+                            <button onClick={()=>dispatcher(toggleTheme())}>{theme === "darkTheme" ? "Light Theme" : languageConverter(language, "Dark Theme")}</button>                                                                                
                             <button onClick={()=>dispatcher(saveUserAccountData({kvPairs: {fullAdmin: !fullAdmin}}))}>Toggle fullAdmin {" "+fullAdmin}</button>                                                                                                               
                             {/* <button onClick={passwordReset}>Reset Password</button> */}
                             {/* <button onClick={startEmailChange}>Change Email</button> */}

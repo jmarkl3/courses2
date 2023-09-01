@@ -22,31 +22,33 @@ function Card() {
           Payment Complete
         </div>
         :
-        <PayPalScriptProvider options={{"client-id": "AQa4_xB8PM--YGfXjgIygo3H6M9rCm7Cvl-4PqYrTx6bGTy2yNKnHfcy7ctIKsfu8XTmdsQHepeLNs62"}}>
-          <PayPalButtons
-            createOrder={(data, actions) => {
-              return actions.order.create({
-                purchase_units: [
-                  {
-                    amount: {
-                      value: coursesData[selectedCourseID]?.price,
+        <div className='cardMenuInner'>
+          <PayPalScriptProvider options={{"client-id": "AQa4_xB8PM--YGfXjgIygo3H6M9rCm7Cvl-4PqYrTx6bGTy2yNKnHfcy7ctIKsfu8XTmdsQHepeLNs62"}}>
+            <PayPalButtons
+              createOrder={(data, actions) => {
+                return actions.order.create({
+                  purchase_units: [
+                    {
+                      amount: {
+                        value: coursesData[selectedCourseID]?.price,
+                      },
                     },
-                  },
-                ],
-              });
-            }}
-            onApprove={(data, actions) => {
-              return actions.order.capture().then(function (details) {
-                // Used for dev testing
-                alert('Transaction completed by ' + details.payer.name.given_name);
-                
-                // Update the database to show that the user has paid
-                dispatcher(updateCourseInfo({courseID: selectedCourseID, valuesObject: {paid: true}}))
+                  ],
+                });
+              }}
+              onApprove={(data, actions) => {
+                return actions.order.capture().then(function (details) {
+                  // Used for dev testing
+                  alert('Transaction completed by ' + details.payer.name.given_name);
+                  
+                  // Update the database to show that the user has paid
+                  dispatcher(updateCourseInfo({courseID: selectedCourseID, valuesObject: {paid: true}}))
 
-              });
-            }}
-          ></PayPalButtons>
-        </PayPalScriptProvider>      
+                });
+              }}
+            ></PayPalButtons>
+          </PayPalScriptProvider>      
+        </div>
       }
     </div>
   )

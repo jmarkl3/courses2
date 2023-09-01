@@ -1,6 +1,5 @@
 .banner{
-    height: calc(100vh - 20px);    
-    height: 100vh;
+    height: calc(100vh - 20px);        
     width: 100%;
     position: fixed;
     top: 0;
@@ -12,12 +11,20 @@
     object-fit: cover;
 }
 .landingPageOver{
-    height: 100vh;
+    top: 30px;
+    height: calc(100vh - 30px);
     width: 100%;
+    vertical-align: top;    
+    position: absolute;    
+    display: inline-block;
 }
 .landingContent{
     min-height: 500px;
     background-color: white;
+    position: absolute;
+    top: 100vh;
+    left: 0;
+    width: 100%;
 }
 .landingPageTitleContainerOuter{
     background-color: rgba(0, 0, 0, 0.3);
@@ -48,7 +55,7 @@
     width: 100%;
     background-color: white;
     position: absolute;
-    bottom: 0;
+    bottom: 0;    
     border-bottom: 1px solid #f2f2f2;
 }
 .landingNavButton{
@@ -59,7 +66,8 @@
     box-sizing: border-box;
     user-select: none;
     cursor: pointer;
-    transition: 500ms;    
+    transition: 500ms;  
+    color: black;  
 }
 .landingNavButton:hover{
     background-color: #f2f2f2;
@@ -90,4 +98,33 @@ li a{
         width: 1000px;
         margin: 0 calc(50% - 500px);
     }
+}
+.editToggleButton{
+    position: absolute;
+    top: 5px;
+    right: 20px;
+    height: 20px;
+    width: 20px;
+    cursor: pointer;   
+    z-index: 100;     
+    
+}
+.editToggleButton img{
+    height: 95%;
+    width: 95%;   
+    box-shadow: 0 0 10px white; 
+    background-color: rgba(255, 255, 255, 0.5);
+}
+.rel{
+    position: relative;
+}
+.bottomButtons{
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    left: 0px;
+}
+.testBox{
+    padding: 20px;
+    background-color: blue;
 }

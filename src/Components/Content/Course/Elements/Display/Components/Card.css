@@ -2,9 +2,19 @@
     border: 1px solid #ccc;
     padding: 10px;
     margin-top: 10px;    
+    text-align: center;
 }
 .paymentCompleteMessage{
     color: green;
     font-weight: bold;
     font-size: 20px;
+}
+.cardMenuInner{    
+    width: 750px;        
+    display: inline-block;
+}
+@media screen and (max-width: 1225px) {
+    .cardMenuInner{
+        width: 100%;
+    }
 }

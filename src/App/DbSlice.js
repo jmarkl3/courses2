@@ -126,8 +126,90 @@ const dbslice = createSlice({
         theme: "lightTheme",
         language: "English",
         sectionArray: [],
+        // The meta data for all sets
+        setData: {},
+        selectedSetData: {},
+        selectedSetID: null,
     },
     reducers: {
+        // ================================================================================
+        // #region sets
+        setSets (state, action) {
+            state.setData = action.payload
+        },
+        // Saves set data such as the name to the selected set (uses a string path from payload and selectedSetID from setData)
+        saveSetData(state, action){
+            if(!state.setData?.id){
+                console.log("can't set set data with no selscted set")
+                return
+            }
+            // The location where the data should be saved 
+            let path = action.payload.path
+            // The value that will be saved
+            let value = action.payload.value
+
+            console.log("saving:")
+            console.log(value)
+            console.log("at "+path)
+
+            update(ref(database, "/sets/"+state.setData.id+"/"+path), value)
+        },
+        // Given an ID selects the given set
+        selectSet(state, action){
+            if(!action.payload) {
+                console.log("in dbslice selectSet with no specified id")
+                return
+            }
+            // Look for the selected set based on the ID
+            let newSelectedSetData = state.setData[action.payload]
+            // If its found save it so the data will be displayed
+            if(newSelectedSetData){
+                console.log("loaded set with name "+newSelectedSetData.name)
+                state.selectedSetData = newSelectedSetData
+            }
+            else
+                console.log("no set data found for set with ID " + action.payload)
+        },
+        setSelectedSetID(state, action) {
+            state.selectedSetID = action.payload
+        },
+        setSelectedSetData(state, action) {
+            state.selectedSetData = action.payload
+        },
+        createSet(state, action) {            
+            const setTemplate = {
+                // Id comes from the key and is inserted when the json in converted to an arrray
+                name: "New Set",
+                url: "url",
+                owner: "userID",
+                admins: [],                
+                landingPage: {
+                    bannerUrl: "http://localhost:3000/static/media/momAndChildBackground.71c13dcb3be4fb143c2b.jpg",
+                    topImgUrl: "url for top image",
+                    title: "Title",
+                    description: "Description of the courses set",
+                    content1: "The text that will show on the landing page before the courses",
+                    // An array of course IDs showing which courses are available in this set
+                    courseIDs: [],
+                    content2: "The text that will show on the landing page after the courses",
+                }        
+            }
+
+            let newSet = {...setTemplate}
+            newSet.owner = state.userID
+
+            let newRef = push(ref(database, "coursesApp/sets"))
+            set(newRef, newSet)
+        },
+        deleteSet(state, action){
+            if(!action.payload)
+                return
+        
+            set(ref(database, "coursesApp/sets/"+action.payload), null)        
+        },
+        // #endregion sets
+
+        // ================================================================================
         // #region loading data
         // The loading data actions put data into the store when it is loaded from the database
 
@@ -148,9 +230,11 @@ const dbslice = createSlice({
         setCourseData (state, action) {        
             state.courseData = action.payload;
         },        
-        
-        // #endregion  loading data
 
+        // ================================================================================
+        // #endregion  loading data
+        
+        // ================================================================================
         // #region user data
         clearUserData: (state, action) => {
             state.userID = null
@@ -581,7 +665,8 @@ const dbslice = createSlice({
 
         },
         // #endregion user data
-
+        
+        // ================================================================================
         // #region selections
         // The selections actions select items such as chapters, sections, and elements based on their ID
         
@@ -862,7 +947,8 @@ const dbslice = createSlice({
         },
 
         // #endregion selections
-
+        
+        // ================================================================================
         // #region course actions
         // The course actions are actions pertaining to the course such as adding, deleting, copying, or updating a course
 
@@ -945,7 +1031,8 @@ const dbslice = createSlice({
         },
 
         // #endregion course actions
-
+        
+        // ================================================================================
         // #region chapter actions
         // The chapter actions are actions pertaining to the course such as adding, deleting, or copying a chapter
 
@@ -996,7 +1083,8 @@ const dbslice = createSlice({
         },
 
         // #endregion chapter actions
-       
+               
+        // ================================================================================
         // #region section actions
         // The section actions are actions pertaining to the section such as adding, deleting, or copying a chapter        
         addSection(state, action){
@@ -1153,7 +1241,8 @@ const dbslice = createSlice({
         },
 
         // #endregion section actions
-
+        
+        // ================================================================================
         // #region element actions
         // The element tttttare actions pertaining to the element such as adding, deleting, or copying a chapter
   
@@ -1226,7 +1315,8 @@ const dbslice = createSlice({
         },
         
         // #endregion element actions
-        
+                
+        // ================================================================================
         // #region drag and drop actions
         // The drag and drop actions are called when a sidebar element is dragged, dropped, or hovered over
 
@@ -1420,7 +1510,8 @@ const dbslice = createSlice({
             state.sidenavHoverItemID = action.payload
         },        
         // #endregion drag and drop actions
-
+        
+        // ================================================================================
         // #region helper actions
         // the helper actions do anything else such as updating specified database values
 
@@ -1505,5 +1596,7 @@ export const {addElement, deleteElement, copyElement} = dbslice.actions;
 export const {sidenavDragStart, sidenavDragEnd, sidenavDragOver} = dbslice.actions;
 // Helper actions
 export const {updateItemInfo, selectFirst, incrementTimerSaveCounter} = dbslice.actions;
+// Set actions
+export const {setSets, saveSetData, selectSet, setSelectedSetData, createSet, deleteSet, setSelectedSetID} = dbslice.actions;
 
 // #endregion exports

@@ -6,7 +6,6 @@ import jsPDF from 'jspdf'
 import topImage from "../../../../../../Images/topImage.jpg"
 import html2canvas from 'html2canvas'
 import { timeString } from '../../../../../../App/functions'
-import { FromPixels } from '@tensorflow/tfjs'
 /*
   When user data changes generateChaptersReportObject is called from a useEffect
   This generates the chapters array which is saved in state

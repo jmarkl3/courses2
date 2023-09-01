@@ -1,0 +1,60 @@
+.setsDash{
+
+}
+.setBox{    
+    width:200px;
+    margin: 5px;
+    padding: 20px;
+    box-sizing: border-box;
+    background-color: rgb(207, 207, 235);
+    background-image: linear-gradient(rgba(207, 207, 235, 0), rgb(178, 178, 209));
+    display: inline-block;
+    position: relative;
+    transition: 500ms;
+    border: 1px solid rgba(127, 255, 212, 0);
+}
+.setBox:hover{
+    border: 1px solid aquamarine;
+    box-shadow: 0 0px 8px aquamarine;
+    cursor: pointer;
+}
+.floatingMenu{
+    position: fixed;
+    min-height: 400px;
+    width: 400px;
+    top: calc(50% - 300px);
+    left: calc(50% - 200px);
+    padding: 10px;
+    padding-top: 50px;
+    padding-bottom: 50px;
+}
+.setDetailRow{
+    display: flex;
+    justify-content: space-between;
+    padding: 5px;
+}
+.topBox{
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    height: 30px;
+    width: 30px; 
+    cursor: pointer;   
+}
+.topBox img{
+    height: 100%;
+    width: 100%;
+}
+.landingPageFloatingMenu{
+    height: calc(100vh - 180px);
+    width: 90vw;
+    left: 5vw;
+    top: 80px;
+    padding: 0;
+    padding-top: 30px;
+}
+.blue{
+    background-color: blue;
+    min-height: 100px;
+    min-width: 100px;
+}

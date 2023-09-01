@@ -1,4 +1,3 @@
-import { Conv2DBackpropFilter } from '@tensorflow/tfjs';
 import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { copyElement, deleteElement, selectChapter, selectElement, selectSection, sidenavDragEnd, sidenavDragOver, sidenavDragStart, updateElementInfo, updateItemInfo } from '../../../App/DbSlice'

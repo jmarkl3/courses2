@@ -1,0 +1,76 @@
+.landingPageOuterBox{
+    position: absolute;
+    overflow: hidden;
+    box-shadow: 0 4px 10px black;
+    height: 100%;
+    width: 100%;
+    padding: 0;
+}
+.banner{
+    position: absolute;
+    background-image: radial-gradient(gray, rgba(128, 128, 128, 0));
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+}
+.banner img{
+    height: 100%;
+    width: 100%;
+}
+.pageBox{
+    position: absolute;    
+    position: relative;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    overflow-y: auto;    
+    text-align: center; 
+}
+.bottomBox{
+    position: absolute;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.473);
+    height: 200px;
+    width: 100%;
+}
+.spacer{
+    height: calc(100%);
+    width: 20px;
+    background-color: rgba(0, 0, 255, 0.507);
+}
+.largeBox{
+    /* margin-top: calc(100% - 250px); */
+    min-height: 800px;
+    /* background-image: linear-gradient(red, black); */
+    background-color: white;
+    color: black;
+    margin-top: -10px;
+}
+.landingTopText{
+    padding-top: 10px;
+    text-align: center;
+    height:     100%;    
+}
+.landingTopText h1{
+    margin: 5px;
+}
+.landingTopText h5{
+    margin: 5px;
+}
+
+.bannerUrlEdit{
+    z-index: 100;
+    position: absolute;
+    top: 0;
+    width: 100%;
+}
+.centeredInput{
+    text-align: center;    
+}
+.landingPageContent{
+    width: 60%;
+    max-width: 800px;
+    min-width: 600px;    
+    display: inline-block;
+}

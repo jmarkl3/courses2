@@ -230,8 +230,10 @@ function CheckOutPage() {
     if(selectedCourses.length == 1)    
       navigate("/Course/"+selectedCourses[0].id)
     // Else go to the dashboard
-    else
-      navigate("/Dashboard")
+    else{
+
+    }
+      // navigate("/Dashboard")
     
   }
 

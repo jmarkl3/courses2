@@ -19,7 +19,6 @@
     "json2md": "^2.0.0",
     "jspdf": "^2.5.1",
     "markdown-to-jsx": "^7.2.0",
-    "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^8.0.5",
     "react-router-dom": "^6.10.0",
@@ -52,5 +51,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "eslint-plugin-react": "^7.33.2"
   }
 }

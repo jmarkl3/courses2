@@ -66,8 +66,8 @@ select:last-child{
 select:first-child{
   margin-left: 0;
 }
-button{
-  width: calc(50% - 5px);
+button {
+  width: calc(50% - 10px);
   height: 30px;
   box-sizing: border-box;
   border: none;
@@ -75,6 +75,7 @@ button{
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   padding: 5px 10px;
   margin-right: 5px;
+  margin-bottom: 5px;
   cursor: pointer;
   border-radius: 3px;
   transition: 500ms;

@@ -6,25 +6,83 @@ import { useDispatch, useSelector } from 'react-redux';
 import CheckOutPage from './Components/Content/Checkout/CheckOutPage';
 import { HashRouter, Route, Routes} from 'react-router-dom';
 import { useEffect } from 'react';
-import {database, setCourseData, setCoursesData, setUserData, setUserID } from './App/DbSlice';
+import {database, setCourseData, setCoursesData, setSelectedSetData, setSelectedSetID, setSets, setUserData, setUserID } from './App/DbSlice';
 import Dashboard from './Components/Content/Dashboards/Dashboard';
-import { onValue, ref } from 'firebase/database';
+import { onValue, ref, set, update } from 'firebase/database';
 import { setLoading } from './App/AppSlice';
 import Course from './Components/Content/Course/Course';
 import About from './Components/LandingPage/About';
 import Cart from './Components/Menus/Cart/Cart';
 import Support from './Components/Menus/Support/Support';
+import SetsDash from './Components/Sets/SetsDash';
+import LandingPageSet from './Components/LandingPage/LandingPageSet';
+import LandingPage2 from './Components/LandingPage/LandingPage2';
+
+
 
 // TODO
 /*      
+================================================================================
+2023-8-22
+
+
+create sets page
+   load sets in App.js and put them in state
+     can use sample data initially, or put that sample data in the db under sets/
+   show them on this page
+create and view sets
+  create a new set in the db that is loaded in App.js and displayed in sets page
+  can click button on the set and it sets url to show /set/setID
+    all of the regular functionality will work there but this will be implemented later
+edit set
+  can click detail view that will show info about the set
+  all the data values in the object showin in App.js can be edited with an edit popup menu
+  prebiew is also shown here with ability to edit landing page
+
+then create sets/setID/ for landing page
+and other functionality from there
+===============
+
+course set page
+create a set of courses that go together
+user can view all sets of courses that they have access to (created or are admins for) 
+
+a home page creator
+image, upload or url
+formatable text for home page
+
+url that has app route to that homepage
+might be slower than a static page though
+
+can select from users to set types of admins
+
+admin charts for all of the sets a user owns combined
+
+route /sets brings to the sets admin page
+they are stored as the metadata for the set and display as cards
+user can create new onees or edit existing
+there is a edit homepage option that brings up an overlay 
+  allows image upload or url paste
+  text editor
+  prebiew of all of it
+  saves automatically
+go to course button on the card
+brings user to the course via a route using the setID instead of the url in case the url is not set up
+from there can get to all of the app pages such as dashboard, home, etc
+same as if there was a custom url/dashboard = localhost/set/setID/dashboard
+
+can save set data in local storage for faster loading when user returns
+
 ================================================================================
 2023-7-2
 ________________________________________________________________________________
   Currently working on:
 
-  testing:          
+  testing:            
   full walkthgough of the app
   create a course, go through it, create an account, checkout, complete the course, view and email the report and certificate, view the dashboard, view the admin dashboard
+
+  create a production course  
 
   bugs:     
   if user refreshes course it does not go to the furthest section, if they go there from the landing page it does though
@@ -34,6 +92,11 @@ ________________________________________________________________________________
   language translation
   ckeditor 4 text align center button
   auto generate and email course report with cert to admin email
+  user created courses 
+  same app on different domains with different landing pages and course lists
+  moblie styling
+  others listed below  
+
   ________________________________________________________________________________
   Done:
 
@@ -687,8 +750,9 @@ function App() {
 
     // Loads the courses meta data on start
     useEffect(() => {   
+      loadSet()
       loadCoursesData()
-      //logDB()
+      logDB()
     }, [])
 
     // When the userID changes loads there data
@@ -700,6 +764,93 @@ function App() {
     useEffect(() => {   
       loadCourseData(selectedCourseID)
     }, [selectedCourseID])
+
+    function loadSet(){
+      // Load predefined urls, couls also load all homepage data and scan through it so not waiting for 2 requests
+      // Load this data into state along with the setID that is found in this function
+      // const setTemplate = {
+      //   // Id comes from the key and is inserted when the json in converted to an arrray
+      //   name: "Test Set",
+      //   url: "url",
+      //   owner: "userID",
+      //   admins: ["userID", "userID"],
+      //   landingPage: {
+      //     bannerUrl: "http://localhost:3000/static/media/momAndChildBackground.71c13dcb3be4fb143c2b.jpg",
+      //     topImgUrl: "url for top image",
+      //     title: "Title",
+      //     description: "Description of the courses set",
+      //     content1: "The text that will show on the landing page before the courses",
+      //     content2: "The text that will show on the landing page after the courses",
+      //   }        
+      // }
+      
+      // let set1 = {...setTemplate}
+      // set1.url = "localhost"
+      // set1.name = "Localhost Test Set"
+      // set1.landingPage.title = "Localhost Set Title"
+      // set1.landingPage.description = "This is the set description for the localhost set"
+      
+      // let set2 = {...setTemplate}
+      // let set3 = {...setTemplate}
+      // let set4 = {...setTemplate}
+
+      // // Simulating getting it from the db
+      // const setData = {
+      //   setID1: set1,
+      //   setID2: set2,
+      //   setID3: set3, 
+      //   setID4: set4,
+      // }
+
+      // Put the initial data in the database
+      // update(ref(database, "coursesApp/sets/"), setData)
+
+      // Load the data from the database
+      onValue(ref(database, "coursesApp/sets"), snap => {
+        let setData = snap.val()
+        console.log("loaded set data from database:")
+        // console.log(snap.val())       
+        
+        setTimeout(() => {
+          dispatcher(setSets(snap.val()))
+        }, 250)
+        // Put all of the set dat in the store
+        
+
+        // Compare the url to the predefined urls
+        const currentUrl = window.location.href
+
+        let selectedSetID = null
+        let firstSetID = null        
+        // Save the data for the selected set to be displayed (based on the url)
+        Object.entries(setData).forEach(setData => {
+          // Get the first one as a default
+          if(!firstSetID)
+            firstSetID = setData[0]
+
+          // Maybe organize the sets by length first so the longer ones are checked first
+          console.log("looking at setDataUrl: " + setData[1]?.url)
+
+          // If the url matches the url that this set object is for save it
+          if(!selectedSetID && currentUrl.includes(setData[1]?.url)){
+            console.log("matched")
+            selectedSetID = setData[0]
+          }
+          
+        })
+
+        // If none was found use the first one as a default
+        if(!selectedSetID){
+          selectedSetID = firstSetID
+        }
+
+        // If there is a valid set data object save it to the store to be displayed
+        if(selectedSetID)
+          setTimeout(() => {          
+            dispatcher(setSelectedSetID(selectedSetID))
+          }, 250)
+      })
+    }
 
     // Loads the meta data so all of the course tiles can be displayed
     function loadCoursesData(){      
@@ -755,12 +906,17 @@ function App() {
     <div className={theme}>      
       <HashRouter>
         <Routes>
-          <Route path='/' Component={LandingPage}></Route>
+          <Route path=':default' Component={LandingPage2}></Route>
+          <Route path='/' Component={LandingPage2}></Route>
+          {/* <Route path='/landing' Component={LandingPage}></Route> */}
+          <Route path='/Sets' Component={SetsDash}></Route>
+          <Route path=' ' Component={LandingPageSet}></Route>
           <Route path='/About' Component={About}></Route>
-          <Route path='/Checkout' Component={CheckOutPage}></Route>
+          {/* <Route path='/Checkout' Component={CheckOutPage}></Route> */}
           <Route path='/Dashboard' Component={Dashboard}></Route>
           <Route path='/Course' Component={Course}></Route>
           <Route path='/Course/:courseID' Component={Course}></Route>
+          {/* default lost page */}
         </Routes>
         <AuthMenu></AuthMenu>
         <Support></Support>

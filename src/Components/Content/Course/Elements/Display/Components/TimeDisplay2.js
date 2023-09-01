@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import "./ElementDisplayComponents.css"
 import { database, incrementUserSectionTime, saveUserSectionData2 } from '../../../../../../App/DbSlice'
 import { getUserData, timeString } from '../../../../../../App/functions'
-import { data, string } from '@tensorflow/tfjs'
 import { off, onValue, ref } from 'firebase/database'
 
 /*
