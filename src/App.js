@@ -558,6 +558,32 @@ ________________________________________________________________________________
   ________________________________________________________________________________
   Misc notes
         
+  Application usage flow:
+
+    Normal User:
+      user visits the url 
+      user views landing page
+        (maybe) user clicks more information on a course title
+      user clicks view course, takes them to the course
+        they make easy progress initally
+      user progresses through course until payment page
+      user pays on payment page
+      user continues course until completion
+      user downloads course certificate    
+
+    Admin User:
+      redirected to dashboard
+      options:
+        create a new course (and edit it)
+        edit a course
+        create a new set (and edit it)
+        edit a set 
+          landing page shows in window 
+          ability to add courses there
+          ability to create new course, creates it, adds it, and opens the editor 
+
+  ________________________________________________________________________________
+
   ability to show only a portion of the content in a section at a time with a continue button to show the next part
   so the user only has a small amount of data at a time and it is easier to digest
 
