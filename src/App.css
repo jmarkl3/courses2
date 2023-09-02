@@ -145,3 +145,7 @@ button:hover{
   user-select: none;
   cursor: pointer;
 }
+li {
+  text-align: left;
+  margin-left: 20px;
+}

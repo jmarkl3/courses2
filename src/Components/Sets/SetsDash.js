@@ -4,12 +4,19 @@ import "./SetsDash.css"
 import SetDetail from './SetDetail'
 import { useDispatch, useSelector } from 'react-redux'
 import { createSet } from '../../App/DbSlice'
+import { setSideNavOpen } from '../../App/AppSlice'
 
 function SetsDash() {
 
   // The id of the set that will be displayed in the detail window
   const [detailSetID, setDetailSetID] = useState()
   const dispatch = useDispatch()
+
+  useEffect(() => {
+    dispatch(setSideNavOpen(false))
+  
+  }, [])
+  
 
   const setDataArray = Object.entries(useSelector(state => state.dbslice.setData)).map(entry =>{
     let object = {...entry[1]}

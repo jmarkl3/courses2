@@ -18,6 +18,7 @@
     box-shadow: 0 0px 8px aquamarine;
     cursor: pointer;
 }
+
 .floatingMenu{
     position: fixed;
     min-height: 400px;
@@ -26,7 +27,12 @@
     left: calc(50% - 200px);
     padding: 10px;
     padding-top: 50px;
-    padding-bottom: 50px;
+    padding-bottom: 80px;
+}
+.setDashMenu{
+    top: 80px;
+    max-height: calc(100vh - 160px);
+    overflow-y: auto;
 }
 .setDetailRow{
     display: flex;

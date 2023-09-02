@@ -5,6 +5,7 @@ import EditTextToggle from './EditTextToggle'
 import { setShowSupportMenu, toggleShowAuthMenu } from '../../App/AppSlice'
 import { toggleLanguage } from '../../App/DbSlice'
 import LandingCourses from './LandingCourses'
+import BottomNav from './BottomNav'
 
 function LandingPage2({allowEdit, setIDOverride, goto}) {
 
@@ -45,7 +46,7 @@ function LandingPage2({allowEdit, setIDOverride, goto}) {
     }
 
   return (
-    <div className='landingPageOuterBox'>
+    <div className='landingPageOuterBox'>        
         <div className='banner'>
             <img src={localSetData?.landingPage?.bannerUrl}></img>
         </div>
@@ -89,6 +90,7 @@ function LandingPage2({allowEdit, setIDOverride, goto}) {
                         </div>
                         <EditTextToggle verbose path={"coursesApp/sets/"+localSetData.id+"/landingPage/content2"} value={localSetData?.landingPage?.content2} className={"landingPageTextSection"} type={"content"} allowEdit={allowEdit}></EditTextToggle>                    
                     </div>
+                    <BottomNav></BottomNav>
                 </div>
             </div>
 

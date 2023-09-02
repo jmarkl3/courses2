@@ -3,6 +3,7 @@ import "./DisplayPage.css"
 import topImage from "../../Images/topImage.jpg"
 import Navbar from '../Navbar/Navbar'
 import { useSelector } from 'react-redux'
+import BottomNav from '../LandingPage/BottomNav'
 
 /*
 ================================================================================
@@ -30,6 +31,7 @@ function DisplayPage(props) {
                 {props.children}
             </div>
         </div>  
+        {!props.hideBottomBar && <BottomNav></BottomNav>}
     </div>
   )
 }

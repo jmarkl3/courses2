@@ -128,7 +128,6 @@ const dbslice = createSlice({
         sectionArray: [],
         // The meta data for all sets
         setData: {},
-        selectedSetData: {},
         selectedSetID: null,
     },
     reducers: {
@@ -181,16 +180,18 @@ const dbslice = createSlice({
                 // Id comes from the key and is inserted when the json in converted to an arrray
                 name: "New Set",
                 url: "url",
+                contactEmail: "email@email.com",
+                contactPhone: "(123) 456-7890",
                 owner: "userID",
-                admins: [],                
+                admins: [],   
+                courseIDs: [],             
                 landingPage: {
                     bannerUrl: "http://localhost:3000/static/media/momAndChildBackground.71c13dcb3be4fb143c2b.jpg",
                     topImgUrl: "url for top image",
                     title: "Title",
                     description: "Description of the courses set",
                     content1: "The text that will show on the landing page before the courses",
-                    // An array of course IDs showing which courses are available in this set
-                    courseIDs: [],
+                    // An array of course IDs showing which courses are available in this set                    
                     content2: "The text that will show on the landing page after the courses",
                 }        
             }

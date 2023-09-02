@@ -906,7 +906,6 @@ function App() {
     <div className={theme}>      
       <HashRouter>
         <Routes>
-          <Route path=':default' Component={LandingPage2}></Route>
           <Route path='/' Component={LandingPage2}></Route>
           {/* <Route path='/landing' Component={LandingPage}></Route> */}
           <Route path='/Sets' Component={SetsDash}></Route>
@@ -916,6 +915,7 @@ function App() {
           <Route path='/Dashboard' Component={Dashboard}></Route>
           <Route path='/Course' Component={Course}></Route>
           <Route path='/Course/:courseID' Component={Course}></Route>
+          <Route path=':default' Component={LandingPage2}></Route>
           {/* default lost page */}
         </Routes>
         <AuthMenu></AuthMenu>

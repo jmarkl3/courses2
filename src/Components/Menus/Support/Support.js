@@ -19,6 +19,8 @@ import emailjs from '@emailjs/browser'
 function Support() {
     const showSupportMenu = useSelector(state => state.appslice.showSupportMenu)
     const userData = useSelector(state => state.dbslice.userData)
+    let selectedSetID = useSelector(state => state.dbslice.selectedSetID)
+    let setData = useSelector(state => state.dbslice.setData)[selectedSetID]    
     const [feedback, setFeedback] = useState('')
     const form = useRef()
     const dispatcher = useDispatch()
@@ -51,10 +53,10 @@ function sendSupportMessage(e){
                     Contact Us Here:
                   </div>
                   <div className='supportInfoInfo'>
-                    727-500-5075
+                    {setData.contactPhone || "<phone>"}
                   </div>
                   <div className='supportInfoInfo'>
-                    email@email.com
+                    {setData.contactEmail || "<email>"}
                   </div>                                    
                 </div>
                 <hr></hr>

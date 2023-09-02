@@ -1,0 +1,27 @@
+.bottomNav{
+    min-height: 180px;
+    background-color: black;
+    width: 100%;
+    padding-top: 20px;
+    box-sizing: border-box;
+}
+.bottomNavColumn{
+    width: 30%;
+    display: inline-block;
+    vertical-align: top;
+}
+.bottomNavColumn a{
+    display: block;
+    cursor: pointer;
+    padding: 10px;
+    margin: 5px;
+    transition: 500ms;
+    text-decoration: none;
+    color: white;
+}
+.bottomNavColumn a.active{
+    color: white;
+}
+.bottomNavColumn a:hover{
+    background-color: rgba(240, 240, 240, 0.274);
+}

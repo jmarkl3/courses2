@@ -6,6 +6,7 @@ import editIcon from '../../Images/editIconS.png'
 import ConfirmationBox from '../../Utils/ConfirmationBox'
 import EditDisplay from './EditDisplay'
 import LandingPage2 from '../LandingPage/LandingPage2'
+import CourseSelector from '../LandingPage/CourseSelector'
 
 function SetDetail({setID, close}) {
     const dispacher = useDispatch()
@@ -48,7 +49,7 @@ function SetDetail({setID, close}) {
   return (
     <>
         {setID && 
-            <div className='box floatingMenu'>
+            <div className='box floatingMenu setDashMenu'>
                 <div className='topBox' title="Edit" onClick={()=>setEditMode(!editMode)}>
                     <img src={editIcon}></img>
                 </div>
@@ -56,6 +57,8 @@ function SetDetail({setID, close}) {
                 <div>
                     <EditDisplay value={setData.name} label={"Name"} path={"coursesApp/sets/"+setID+"/name"} editMode={editMode} ></EditDisplay>                    
                     <EditDisplay value={setData.url} label={"URL"} path={"coursesApp/sets/"+setID+"/url"} editMode={editMode} ></EditDisplay>                    
+                    <EditDisplay value={setData.contactPhone} label={"Contact Phone"} path={"coursesApp/sets/"+setID+"/contactPhone"} editMode={editMode} ></EditDisplay>                    
+                    <EditDisplay value={setData.contactEmail} label={"Contact Email"} path={"coursesApp/sets/"+setID+"/contactEmail"} editMode={editMode} ></EditDisplay>                    
                     <EditDisplay value={setID} label={"Set ID"} path={"coursesApp/sets/"+setID+"/id"} editMode={false} ></EditDisplay>                    
                     {/* 
                         Later will create a user selector with a "assign me" option and a search field to search users by name or id. This will save the selected user to the specified location 
@@ -63,6 +66,7 @@ function SetDetail({setID, close}) {
                         courses selector (for landing page)
                     */}
                     <EditDisplay value={setData.owner} label={"Owner ID"} path={"coursesApp/sets/"+setID+"/owner"} editMode={false} ></EditDisplay>                    
+                    <CourseSelector setID={setID}></CourseSelector>
                     <hr></hr>
                 </div>
                 {/* <div>
@@ -85,7 +89,7 @@ function SetDetail({setID, close}) {
                     {/* opens a floading menu with the landing page. Can edit the content and also courses from the courses the user has created */}                    
                     <button onClick={()=>{setLandingEditSetID(setID); console.log(setID)}}>Edit Landing Page</button>  
                     {/* sets/setID/Dashboard shows the dashboard for that set */}
-                    <button>Dashboard</button>
+                    
                     <button onClick={()=>setDelteMessage("Delte "+setData.name+"?")}>Delete</button>
                 </div>
             </div>      

@@ -1,0 +1,13 @@
+.courseSelectorRow{
+    cursor: pointer;
+    user-select: none;
+}
+.courseSelectorRow button{
+    width: auto;
+}
+.courseSelectorButtonContainer{
+    display: inline-block;    
+    box-sizing: border-box;
+    float: right;
+    margin-top: -5px;
+}
