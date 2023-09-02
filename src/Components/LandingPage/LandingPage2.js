@@ -6,30 +6,39 @@ import { setShowSupportMenu, toggleShowAuthMenu } from '../../App/AppSlice'
 import { toggleLanguage } from '../../App/DbSlice'
 import LandingCourses from './LandingCourses'
 import BottomNav from './BottomNav'
+import LandingCourses2 from './LandingCourses2'
 
 function LandingPage2({allowEdit, setIDOverride, goto}) {
 
     const setData = useSelector(state => state.dbslice?.setData)
     //const selectedSetData = useSelector(state => state.dbslice?.selectedSetData)
+    
+    // Create a variable with the setID that will be used to display the content (may come from url or override)
     const selectedSetID = useSelector(state => state.dbslice?.selectedSetID)
+    let localSetID = selectedSetID
+    if(setIDOverride)
+        localSetID = setIDOverride
+    
+    // Create an object with the set data (will update if setData updates)
+    let localSetData
+    localSetData = {...setData[localSetID]}
+    localSetData.id = localSetID
+
     const language = useSelector(state => state.dbslice?.language)
 
-    const dispatcher = useDispatch()
+    const dispatcher = useDispatch()    
 
-    let localSetData
-    if(setIDOverride){
-        localSetData = {...setData[setIDOverride]}
-        localSetData.id = setIDOverride
-    }else{
-        localSetData = {...setData[selectedSetID]}
-    }    
+    
 
     useEffect(() => {
         if(goto === "about")
-        setTimeout(() => {
-            scrollToAbout()
-
-        }, 250)                
+            setTimeout(() => {
+                scrollToAbout()
+            }, 250)                
+        if(goto === "courses")
+            setTimeout(() => {
+                scrollToCourses()
+            }, 250)                
     }, [])
 
     // const allowEdit = true
@@ -86,7 +95,7 @@ function LandingPage2({allowEdit, setIDOverride, goto}) {
                     <div className='landingPageContent' ref={aboutRef}>
                         <EditTextToggle verbose path={"coursesApp/sets/"+localSetData.id+"/landingPage/content1"} value={localSetData?.landingPage?.content1} className={"landingPageTextSection"} type={"content"} allowEdit={allowEdit}></EditTextToggle>
                         <div ref={coursesRef}>
-                            <LandingCourses></LandingCourses>
+                            <LandingCourses2 setID={localSetID}></LandingCourses2>
                         </div>
                         <EditTextToggle verbose path={"coursesApp/sets/"+localSetData.id+"/landingPage/content2"} value={localSetData?.landingPage?.content2} className={"landingPageTextSection"} type={"content"} allowEdit={allowEdit}></EditTextToggle>                    
                     </div>
